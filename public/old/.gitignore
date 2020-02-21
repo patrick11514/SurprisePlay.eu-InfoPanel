@@ -1,0 +1,10 @@
+/plugins/
+/pages/
+/js/*
+/dist/
+/build/
+/private/php/vendor/
+/private/php/config/config.php
+/private/php/composer.lock
+/private/cache/
+/conventer.php

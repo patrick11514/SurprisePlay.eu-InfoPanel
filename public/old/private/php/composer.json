@@ -1,0 +1,8 @@
+{
+    "require": {
+        "ezyang/htmlpurifier": "^4.12",
+        "wruczek/php-file-cache": "^0.0.4",
+        "catfan/medoo": "^1.7",
+        "sonata-project/google-authenticator": "^2.2"
+    }
+}
