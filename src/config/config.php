@@ -212,7 +212,8 @@ return [
         "page_perms" => [
             "MainPage" => "all",
             "Settings" => "all",
-            "ErrorPage" => "all"
+            "ErrorPage" => "all",
+            "Logout" => "all",
         ],
         "group-perms" => [
             "full" => [
