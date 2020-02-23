@@ -7,6 +7,7 @@ use patrick115\Main\Database;
 use patrick115\Main\Error;
 use patrick115\Main\Config;
 use patrick115\Main\Session;
+use patrick115\Main\Tools\Utils;
 
 class Stats
 {
@@ -69,7 +70,7 @@ class Stats
         $rv = $this->database->select(["uuid"], "main_perms`.`perms_players", "LIMIT 1", "username", strtolower($this->username));
         $uuid = @$rv->fetch_object()->uuid;
         if (empty($uuid)) return "Error";
-        $rv = $this->database->execute("SELECT `value` FROM `main_perms`.`perms_user_permissions` WHERE `uuid` = '" . @$rv->fetch_object()->uuid . "' AND `permission` = 'antiproxy.proxy' LIMIT 1;", true);
+        $rv = $this->database->execute("SELECT `value` FROM `main_perms`.`perms_user_permissions` WHERE `uuid` = '{$uuid}' AND `permission` = 'antiproxy.proxy' LIMIT 1;", true);
         if ($this->database->num_rows($rv) > 0) {
             return "Povolen";
         }
@@ -103,6 +104,28 @@ class Stats
                 $expiry, 
                 time()
             ) . ")";
+    }
+
+    public function getEMail()
+    {
+        $user_id = Utils::getAuthmeIDByName($this->username);
+        $email = $this->database->execute("SELECT `e-mail` AS `email` FROM `accounts` WHERE `authme_id` = '{$user_id}' LIMIT 1", true);
+        if ($this->database->num_rows($email) == 0) {
+            \patrick115\Main\Error::init()->catchError("Your record in global database not found, please contact Administrators!", debug_backtrace());
+            return;
+        }
+        $email = @$email->fetch_object()->email;
+        if (empty($email)) {
+            return "Nenastaven";
+        }
+        return $email;
+    }
+
+    public function getUserPassword()
+    {
+        $cid = Utils::getClientID($this->username);
+        $rv = $this->database->select(["pass_length"], "pass_storage", "LIMIT 1", "user_id", $cid);
+        return $rv->fetch_object()->pass_length;
     }
 
     public function getUserData()
