@@ -2,13 +2,13 @@
 
 /**
  * Database Class
- * 
+ *
  * @author    patrick115 <info@patrick115.eu>
  * @copyright ©2020
  * @link      https://patrick115.eu
  * @link      https://github.com/patrick11514
  * @version   1.0.0
- * 
+ *
  */
 
 namespace patrick115\Main;
@@ -77,6 +77,16 @@ class Database extends Error
                 $this->errors->catchError($this->errorConvert($conn->connect_error), debug_backtrace());
             }
 
+            if (!@$conn->query("SELECT 1 FROM `accounts`")) {
+                $conn->query("CREATE TABLE `adminka`.`accounts` ( `id` INT NOT NULL AUTO_INCREMENT , `authme_id` MEDIUMINT(8) NOT NULL , `e-mail` TEXT NULL DEFAULT NULL , `last-ip` TEXT NOT NULL , `ip-list` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `accounts` CHANGE `authme_id` `authme_id` MEDIUMINT(8) UNSIGNED NOT NULL;");
+                $conn->query("ALTER TABLE `accounts` ADD CONSTRAINT `authme_id` FOREIGN KEY (`authme_id`) REFERENCES `main_authme`.`authme`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
+            if (!@$conn->query("SELECT 1 FROM `pass_storage`")) {
+                $conn->query("CREATE TABLE `adminka`.`pass_storage` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `pass_length` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `pass_storage` ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
+
             $this->conn      = $conn;
             self::$connected = true;
             return $conn;
@@ -131,7 +141,7 @@ class Database extends Error
      */
     public function select($params, $table, $options = "", $haystack = null, $needle = null)
     {
-        
+
         if (empty($params) || empty($table)) {
             $this->errors->catchError("Empty parameter(s).", debug_backtrace());
         }
@@ -202,8 +212,7 @@ class Database extends Error
             return;
         }
 
-        
-        $vals  = "";
+        $vals = "";
         for ($i = 0; $i < (count($values) - 1); $i++) {
             $vals .= "`" . \patrick115\Main\Tools\Utils::chars($values[$i]) . "`, ";
         }
@@ -216,6 +225,7 @@ class Database extends Error
         $pars .= "'" . $params[(count($params) - 1)] . "'";
 
         $command = "INSERT INTO $table ($vals) VALUES ($pars);";
+
         $this->execute($command, false);
     }
 
@@ -259,8 +269,6 @@ class Database extends Error
             $this->errors->catchError("Haystack and needle must have same count", debug_backtrace());
             return;
         }
-
-        
 
         $sets = "";
 
@@ -310,33 +318,35 @@ class Database extends Error
             return;
         }
 
-        
-
         $cond = "";
 
-        for ($i = 0; $i < count($haystack); $i++)
-        {
+        for ($i = 0; $i < count($haystack); $i++) {
             if (is_int($needle[$i])) {
                 $cond .= "`$table`.`{$haystack[$i]}` = {$needle[$i]}";
             } else {
                 $cond .= "`$table`.`{$haystack[$i]}` = '{$needle[$i]}'";
             }
         }
-        
+
         $command = "DELETE FROM `$table` WHERE {$cond};";
-        
+
         $this->execute($command);
     }
 
     public function num_rows($rv)
     {
-        return $rv->num_rows;
+        $rows = $rv->num_rows;
+
+        if ($rows == null) {
+            return 0;
+        }
+        return $rows;
     }
 
     public function getCountRows($table, $condition = null)
     {
-        
-        $rv    = $this->execute("SELECT COUNT(*) FROM `$table` $condition;", true);
+
+        $rv = $this->execute("SELECT COUNT(*) FROM `$table` $condition;", true);
         while ($row = $rv->fetch_assoc()) {
             $count = $row["COUNT(*)"];
         }
