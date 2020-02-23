@@ -1,6 +1,7 @@
 <?php
 
 use patrick115\Adminka\Main;
+use patrick115\Main\Tools\Utils;
 
 include __DIR__ . "/src/Functions/autoload.php";
 
@@ -19,9 +20,6 @@ if (empty($app->getErrors())) {
     \patrick115\Main\Tools\Utils::header("./" . $app->getPost()["source_page"]);
 } else {
     $_SESSION["Request"]["Errors"] = $app->getErrors();
-    \patrick115\Main\Tools\Utils::header("./" . $app->getPost()["source_page"]);
+    \patrick115\Main\Tools\Utils::header("./" . Utils::chars($_POST["source_page"]));
 }
-
-print_r($_SESSION);
-
-$errors->returnError();
+#$errors->returnError();
