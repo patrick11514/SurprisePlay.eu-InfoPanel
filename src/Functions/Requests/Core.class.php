@@ -24,7 +24,7 @@ class Core
      * @var array
      */
     private $avilable_requests = [
-        "login",
+        "login"
     ];
     /**
      * Store method
@@ -57,12 +57,15 @@ class Core
         $this->database = Database::init();
 
         if (empty($post_data["method"])) {
+            $this->errors[] = "Někde nastala chyba! Opakujte vyplnění formuláře";
             $this->error->catchError("Invalid post method!", debug_backtrace());
             return;
         }
         $post_data["method"] = Utils::chars($post_data["method"]);
+
         if (!in_array($post_data["method"], $this->avilable_requests)) {
-            $this->error->catchError("Invalid method {$post_data["method"]}. Aviliable method: " . implode(", ", $this->avilable_requests), debug_backtrace());
+            $this->error->catchError("Invalid method {$post_data["method"]}. Available method: " . implode(", ", $this->avilable_requests), debug_backtrace());
+            $this->errors[] = "Invalid method {$post_data["method"]}. Available method: " . implode(", ", $this->avilable_requests);
             return;
         }
         $this->method = $post_data["method"];
@@ -130,6 +133,12 @@ class Core
         unset($_SESSION["Request"]["Data"]);
         unset($_SESSION["Request"]["Check"]);
         unset($_SESSION["Request"]["Errors"]);
+
+        if (!empty($checkings["return_from_post"])) {
+            foreach ($checkings["return_from_post"] as $to_sesssion) {
+                $_SESSION["Request"]["FromPost"][$to_sesssion] = Utils::createPackage($this->post[$to_sesssion]);
+            }
+        }
 
         if ($checkings["db_requests"]["use"]) {
             foreach ($checkings["db_requests"]["databases"] as $database => $tables) {
