@@ -36,6 +36,28 @@
         return $randomString;
     }
 
+    public static function getUserIP()
+    {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP'])){
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        }else if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }else if(isset($_SERVER['HTTP_X_FORWARDED'])){
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        }else if(isset($_SERVER['HTTP_FORWARDED_FOR'])){
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        }else if(isset($_SERVER['HTTP_FORWARDED'])){
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        }else if(isset($_SERVER['REMOTE_ADDR'])){
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        }else{
+            $ipaddress = 'UNKNOWN';
+        }
+    
+        return $ipaddress;
+    }
+
     public static function compare_passwords($password, $hash, $hash_type)
     {
         switch ($hash_type) {
@@ -105,5 +127,62 @@
         }
         $day = floor((($diff / 60) / 60) / 24);
         return $day . "Dní";
+    }
+
+    public static function getAuthmeIDByName($username)
+    {
+        $app = \patrick115\Main\Database::init();
+        $rv = $app->
+            select(["id"], "main_authme`.`authme", "LIMIT 1", "realname", $username);
+        if ($app->num_rows($rv) > 0) {
+            return $rv->fetch_object()->id;
+        } else {
+            \patrick115\Main\Error::init()->catchError("Your record in global database not found, please contact Administrators!", debug_backtrace());
+            return;
+        }
+    }
+
+    public static function getClientID($username)
+    {
+        $a_id = self::getAuthmeIDByName($username);
+        $app = \patrick115\Main\Database::init();
+        $rv = $app->
+            select(["id"], "accounts", "LIMIT 1", "authme_id", $a_id);
+        return $rv->fetch_object()->id;
+    }
+
+    public static function createDots(int $length)
+    {
+        $return = "";
+        for ($i = 0; $i < $length; $i++)
+        {
+            $return .= "*";
+        }
+        return $return;
+    }
+
+    public static function transferPasswordToDots(string $password)
+    {
+        $return = "";
+        for ($i = 0; $i < mb_strlen($password); $i++)
+        {
+            $return .= "*";
+        }
+        return $return;
+    }
+
+    public static function createPackage($data)
+    {
+        $method = "H*";
+        $return = unpack($method, $data);
+        return $return;
+    }
+
+    public static function getPackage($data)
+    {
+        $method = "H*";
+        $path = $data[1];
+        $return = pack($method, $path);
+        return $return;
     }
  }
