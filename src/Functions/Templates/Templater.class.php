@@ -58,6 +58,12 @@ class Templater
             "special_vars" => [
                 "navigation",
                 "copyright",
+                "autologin_first_value",
+                "autologin_second_value",
+                "autologin_first_name",
+                "autologin_second_name",
+                "user-email",
+                "password"
             ],
             "page_name" => "Nastavení profilu"
         ],
@@ -85,7 +91,13 @@ class Templater
         "copyright" => "%%copyright%%",
         "logout" => "%%logout%%",
         "navigation" => "%%NAVIGATION%%",
-        "error_data" => "%%error_data%%"
+        "error_data" => "%%error_data%%",
+        "autologin_first_value" => "%%autologin_st%%",
+        "autologin_second_value" => "%%autologin_nd%%",
+        "autologin_first_name" => "%%autologin_st_name%%",
+        "autologin_second_name" => "%%autologin_nd_name%%",
+        "user-email" => "%%user-email%%",
+        "password" => "%%password%%",
     ];
     /**
      * Pages with custom repalcemenest
@@ -156,7 +168,11 @@ class Templater
             $template = $this->pageAliases[$template]["name"];
         }
         if (file_exists($this->templatesDir . "/{$template}")) {
-            echo $this->prepare($this->templatesDir . "/{$template}", $this->pageAliases[$sourceTpl]["sourcefile"], $sourceTpl);
+            $prepared = $this->prepare($this->templatesDir . "/{$template}", $this->pageAliases[$sourceTpl]["sourcefile"], $sourceTpl);
+            if (Error::init()->errorExist()) {
+                $prepared = $this->prepare($this->templatesDir . "/ErrorMain.tpl", "empty.tpl", "ErrorPage");
+            }
+            echo $prepared;
         } else {
             $this->error->catchError("Template $template not found!", debug_backtrace());
             return;
@@ -165,14 +181,13 @@ class Templater
 
     /**
      * Prepare page to show
-     * @param string $tempalte
+     * @param string $template
      * @param string $source
      * @param string $sourceName
      * @return string
      */
     private function prepare($template, $source, $sourceName)
     {
-        
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
@@ -206,10 +221,13 @@ class Templater
         }
 
         if ($session->isExist("Request/Errors")) {
-            $errors = "";
+            $errors = "<center>
+            <h2 style=\"color:red;padding-top:1%;\">";
             foreach ($session->getData("Request/Errors") as $error) {
                 $errors .= "<p>$error</p>";
             }
+            $errors .= "</h2></center>";
+            unset($_SESSION["Request"]["Errors"]);
         } else {
             $errors = "";
         }
@@ -218,7 +236,11 @@ class Templater
         $CSRF->newToken();
 
         $main = str_replace("%%content%%", file_get_contents($template), file_get_contents($this->templatesDir . "/" . $source));
-
+        if ($sourceName == "Settings") {
+            $forms = \patrick115\Adminka\Main::Create("\patrick115\Adminka\Generator", ["form"]);
+            
+            $main = str_replace("%%custom_form%%", $forms->getForm("settings")->generate(), $main);
+        }
         $main = str_replace(
             [
                 "%%domain%%",
@@ -375,7 +397,43 @@ class Templater
                     $error = Error::init();
                     $replacement = $error->getErrorHTML();
                 break;
+                case "autologin_first_value":
+                    if ($app->getAutologinStatus() == "Zapnut") {
+                        $replacement = "allow";
+                    } else {
+                        $replacement = "disallow";
+                    }
+                break;
+                case "autologin_second_value":
+                    if ($app->getAutologinStatus() == "Zapnut") {
+                        $replacement = "disallow";
+                    } else {
+                        $replacement = "allow";
+                    }
+                break;
+                case "autologin_first_name":
+                    if ($app->getAutologinStatus() == "Zapnut") {
+                        $replacement = "Zapnut";
+                    } else {
+                        $replacement = "Vypnut";
+                    }
+                break;
+                case "autologin_second_name":
+                    if ($app->getAutologinStatus() == "Zapnut") {
+                        $replacement = "Vypnut";
+                    } else {
+                        $replacement = "Zapnut";
+                    }
+                break;
+                case "user-email":
+                    $replacement = $app->getEMail();
+                break;
+                case "password":
+                    $pass = $app->getUserPassword();
+                    $replacement = Utils::createDots($pass);
+                break;
                 default:
+                    echo $var;
                     $replacement = "NoData found!";
                 break;
             }
