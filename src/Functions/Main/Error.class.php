@@ -57,7 +57,7 @@ class Error
         } else {
             $startFile = $dump[2]["file"];
             $startFileLine = $dump[2]["line"];
-            $this->catcherror[] = "{$startFile}({$startFileLine}) -> <b>{$file}({$line}):</b> <i>{$class}::{$function}:</i> " . $e;
+            $this->catcherror[] = "{$startFile}({$startFileLine}) -><br>    <b>{$file}({$line}):</b> <i>{$class}::{$function}:</i><br>       " . $e;
         }
         $this->catchtime[] = date("H:i:s");
     }
@@ -79,6 +79,14 @@ class Error
             echo $return;
             die();*/
         }
+    }
+
+    public function errorExist()
+    {
+        if (empty($this->catcherror)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -105,13 +113,13 @@ class Error
         if ($this->catcherror === null) {
             Utils::header("./");
         }
-        $return = "<h2 style=\"colo:red\">Found " . count($this->catcherror) . " errors!</h2>
+        $return = "<h2 style=\"color:red;\">Found " . count($this->catcherror) . " errors!</h2>
         <pre>";
         foreach ($this->catcherror as $id => $error) {
             $return .= "[" . $this->catchtime[$id] . "] " . $error . PHP_EOL;
         }
         $return .= "</pre>";
-        $return .= "<h2><a href=\"./\">Vrátit se na hlavní stránku</a></h2>";
+        $return .= "<h2><a href=\"./\">Back to home page</a></h2>";
         return $return;
     }
     
