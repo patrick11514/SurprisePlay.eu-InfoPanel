@@ -126,7 +126,7 @@ return [
                         ]
                     ]
                 ]
-            ]
+            ],          
         ],
         "admin_accounts" => [
             "zk-builder",

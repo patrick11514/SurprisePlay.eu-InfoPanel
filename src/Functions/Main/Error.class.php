@@ -111,7 +111,7 @@ class Error
     public function getErrorHTML()
     {
         if ($this->catcherror === null) {
-            Utils::header("./");
+            #Utils::header("./");
         }
         $return = "<h2 style=\"color:red;\">Found " . count($this->catcherror) . " errors!</h2>
         <pre>";

@@ -74,6 +74,34 @@ class PostChecks
                     ]
                 ];
             break;
+            case "settings":
+                return [
+                    "check" => [
+                        "autologin",
+                        "e-mail",
+                        "password"
+                    ],
+                    "db_requests" => [
+                        "use" => false,
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "checkSettings",
+                        "parameters" => [
+                            "autologin" => [
+                                "from" => "post"
+                            ],
+                            "e-mail" => [
+                                "from" => "post"
+                            ],
+                            "password" => [
+                                "from" => "post"
+                            ],
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

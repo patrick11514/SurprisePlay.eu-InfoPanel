@@ -24,7 +24,8 @@ class Core
      * @var array
      */
     private $avilable_requests = [
-        "login"
+        "login",
+        "settings"
     ];
     /**
      * Store method
@@ -116,11 +117,11 @@ class Core
 
         $token = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
         $return = $token->checkToken($this->post["CSRF_token"]);
-        if (!$return) {
+        /*if (!$return) {
             $this->error->catchError("CSRF token is invalid!", debug_backtrace());
             $this->errors[] = "Ověření na straně serveru neproblěhlo úspěšně!";
             return;
-        }
+        }*/
 
         $token->newToken();
 
@@ -137,6 +138,25 @@ class Core
         if (!empty($checkings["return_from_post"])) {
             foreach ($checkings["return_from_post"] as $to_sesssion) {
                 $_SESSION["Request"]["FromPost"][$to_sesssion] = Utils::createPackage($this->post[$to_sesssion]);
+            }
+        }
+
+        if (!empty($checkings["check_with"])) {
+            $data = $checkings["check_with"];
+            if ($data["method"] == "function") {
+                $array = [];
+                foreach ($data["parameters"] as $name => $parameter) {
+                    if ($parameter["from"] == "post") {
+                        $array[$name] = $this->post[$name];
+                    }
+                }
+                $app = \patrick115\Adminka\Main::Create($data["class"], [$array]);
+                $fce = $data["function"];
+                $rv = $app->$fce();
+            }
+
+            if (!$rv) {
+                $this->errors[] = "Ověření dat neproblěhlo úspěšně!";
             }
         }
 
@@ -191,6 +211,7 @@ class Core
         } else {
             $_SESSION["Request"]["Check"] = true;
         }
+
         if (isset($dbdata) && $dbdata = "fail") {
             $this->errors[] = "Nelze získat data z databáze.";
         }
