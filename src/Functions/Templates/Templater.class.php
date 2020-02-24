@@ -175,6 +175,7 @@ class Templater
             echo $prepared;
         } else {
             $this->error->catchError("Template $template not found!", debug_backtrace());
+            
             return;
         }
     }
@@ -188,6 +189,7 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
+        print_r($_SESSION);
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
