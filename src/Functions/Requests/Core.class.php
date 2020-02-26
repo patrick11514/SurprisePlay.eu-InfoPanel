@@ -156,7 +156,16 @@ class Core
             }
 
             if (!$rv) {
-                $this->errors[] = "Ověření dat neproblěhlo úspěšně!";
+                if (isset($data["custom_error"])) {
+                    $error = $data["custom_error"];
+                } else {
+                    $error = "Ověření dat neproblěhlo úspěšně!";
+                }
+                $this->errors[] = $error;
+            } else {
+                if (isset($data["success_message"])) {
+                    $_SESSION["Request"]["Messages"][] = $data["success_message"];
+                }
             }
         }
 
