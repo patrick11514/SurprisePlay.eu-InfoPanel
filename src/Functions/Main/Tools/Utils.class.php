@@ -62,7 +62,12 @@
     {
         switch ($hash_type) {
             case "sha256":
-                #$SHA$787792d56fbaf239$313c217fd847507d762fe97a93e7c9a4451e9a4a8330d3f2d50abe8b52bf32de
+                /**
+                 * 
+                 * SHA
+                 * 787792d56fbaf239
+                 * 313c217fd847507d762fe97a93e7c9a4451e9a4a8330d3f2d50abe8b52bf32de
+                 */
                 $ex = explode("\$", $hash);
                 if ($ex[3] == hash("sha256", hash("sha256", $password) . $ex[2])) {
                     return true;
@@ -75,9 +80,23 @@
         }
     }
 
+    public static function hashPassword($pass, $hash_type)
+    {
+        switch ($hash_type) {
+            case "sha256":
+                $salt = self::randomString(16);
+                $hash = "\$SHA\$" . $salt . "\$" . hash("sha256", hash("sha256", $pass) . $salt); 
+                return $hash;
+            break;
+            default:
+                return;
+            break;
+        }
+    }
+
     public static function newEmpty($data)
     {
-        if (empty($data) && $data !== false) {
+        if (empty($data) && $data !== false && $data !== "0" && $data !== 0) {
             return true;
         }
         return false;
