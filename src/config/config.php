@@ -193,7 +193,7 @@ return [
             "Hlavní Nabídka" => [
                 "role" => "category",
                 "permission" => "all",
-                "items"=>[
+                "items" =>[
                     "Info" => [
                         "permission" => "all",
                         "icon" => "fas fa-info",
@@ -207,7 +207,50 @@ return [
                         "page-name" => "settings"
                     ]
                 ]
-            ]
+            ],
+            "Administrace" => [
+                "role" => "category",
+                "permission" => "mids",
+                "items" => [
+                    "Povolení VPN" => [
+                        "permission" => "leaders",
+                        "icon" => "fa fa-globe-europe",
+                        "link" => "#",
+                        "page-name" => "#"
+                    ],
+                    "Odregistrování uživatele" => [
+                        "permission" => "leaders",
+                        "icon" => "fa fa-unlock",
+                        "link" => "#",
+                        "page-name" => "#"
+                    ],
+                    "Správa gemů" => [
+                        "permission" => "leaders",
+                        "icon" => "fa fa-gem",
+                        "link" => "#",
+                        "page-name" => "#"
+                    ],
+                    "To-Do list" => [
+                        "permission" => "leaders",
+                        "icon" => "fa fa-praying-hands",
+                        "link" => "#",
+                        "page-name" => "#"
+                    ],
+                ]
+                ],
+                "Nábory" => [
+                    "role" => "category",
+                    "permission" => "all",
+                    "items" => [
+                        "Nábor na helpera" => [
+                            "permission" => "all",
+                            "icon" => "fa fa-hands-helping",
+                            "link" => "#",
+                            "page-name" => "#"
+                        ]
+                    ]
+                ]
+
         ],
         "page_perms" => [
             "MainPage" => "all",
