@@ -161,8 +161,6 @@ class Database extends Error
             $command = "SELECT $list FROM `$table` WHERE `$haystack` = '$needle' $options";
         }
 
-        echo $command . PHP_EOL;
-
         try {
             $return = $this->conn->query($command);
         } catch (Exception $e) {
@@ -181,7 +179,6 @@ class Database extends Error
      */
     public function execute($sql, $return = false)
     {
-        echo $sql . PHP_EOL;
 
         $rv = $this->conn->query(\patrick115\Main\Tools\Utils::chars($this->removeChars($sql)));
 
