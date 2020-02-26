@@ -58,7 +58,7 @@ class Stats
     {
         $rv = $this->database->select(["Premium"], "main_autologin`.`premium", "LIMIT 1", "Name", $this->username);
         $premium = @$rv->fetch_object()->Premium;
-        if (empty($premium)) return "Error";
+        if (Utils::newEmpty($premium)) return "Error";
         if ($premium == "1") {
             return "Zapnut";
         } 
