@@ -6,7 +6,8 @@
     <div class="card">
         <div class="card-body login-card-body">
             <h2 style="text-align:center;">Přihlášení</h2>
-            <h4 style="text-align:center;color:red">%%ERRORS%%</h4>
+            <h6 style="text-align:center;color:red">%%ERRORS%%</h6>
+            <h6 style="text-align:center;color:green">%%messages%%</h6>
             <form action="./requests.php" method="post">
                 <input type="hidden" name="method" value="login" required>
                 <input type="hidden" name="source_page" value="?login" required>

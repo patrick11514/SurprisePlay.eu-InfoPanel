@@ -80,6 +80,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         %%ERRORS%%
+        %%messages%%
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -97,10 +98,20 @@
     <!-- /.content-wrapper -->
 
     <footer class="main-footer">
-        <div class="float-right d-none d-sm-block">
-            <b>Verze:</b> Beta 0.1.15
+        <div class="container" style="width:100%;max-width:100%;">
+            <div class="row">
+                <div class="col-sm" style="text-align:left">
+                    <b>Verze:</b> %%version%%
+                </div>
+                <div class="col-sm" style="text-align:center">
+                    %%own%%
+                </div>
+                <div class="col-sm" style="text-align:right">
+                    <strong>%%copyright%%</strong>
+                </div>
+            </div>
         </div>
-        <strong>%%copyright%%</strong>
+        
     </footer>
 
     <!-- Control Sidebar -->
