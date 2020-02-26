@@ -35,7 +35,9 @@ class Templater
                 "currency",
                 "player_info",
                 "copyright",
-                "navigation"
+                "navigation",
+                "version",
+                "copy"
             ],
             "page_name" => "Základní Informace"
         ],
@@ -63,7 +65,9 @@ class Templater
                 "autologin_first_name",
                 "autologin_second_name",
                 "user-email",
-                "password"
+                "password",
+                "version",
+                "copy"
             ],
             "page_name" => "Nastavení profilu"
         ],
@@ -98,6 +102,8 @@ class Templater
         "autologin_second_name" => "%%autologin_nd_name%%",
         "user-email" => "%%user-email%%",
         "password" => "%%password%%",
+        "version" => "%%version%%",
+        "copy" => "%%own%%"
     ];
     /**
      * Pages with custom repalcemenest
@@ -125,6 +131,8 @@ class Templater
     private $config;
 
     private $session;
+
+    private $copy;
 
     /**
      * construct class
@@ -154,7 +162,7 @@ class Templater
         }
 
         $this->aliases = \patrick115\Main\Config::init()->getConfig("Aliases");
-        
+        $this->copy = \patrick115\Adminka\Main::Create("\patrick115\cpy\Copy", []);
     }
 
     /**
@@ -189,7 +197,7 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
-        print_r($_SESSION);
+
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
@@ -215,7 +223,7 @@ class Templater
         } else {
             $title_domain = $this->config->getConfig("Aliases/domain");
         }
-        
+
         if (!empty(explode("?", $_SERVER["REQUEST_URI"])[1])) {
             $uri = explode("?", $_SERVER["REQUEST_URI"])[0];
         } else {
@@ -224,14 +232,26 @@ class Templater
 
         if ($session->isExist("Request/Errors")) {
             $errors = "<center>
-            <h2 style=\"color:red;padding-top:1%;\">";
+            <h4 style=\"color:red;padding-top:1%;\">";
             foreach ($session->getData("Request/Errors") as $error) {
                 $errors .= "<p>$error</p>";
             }
-            $errors .= "</h2></center>";
+            $errors .= "</h4></center>";
             unset($_SESSION["Request"]["Errors"]);
         } else {
             $errors = "";
+        }
+
+        if ($session->isExist("Request/Messages")) {
+            $messages = "<center>
+            <h4 style=\"color:green;padding-top:1%;\">";
+            foreach ($session->getData("Request/Messages") as $message) {
+                $messages .= "<p>$message</p>";
+            }
+            $messages .= "</h4></center>";
+            unset($_SESSION["Request"]["Messages"]);
+        } else {
+            $messages = "";
         }
 
         $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
@@ -250,13 +270,15 @@ class Templater
                 "%%title_domain%%",
                 "%%CSRF_Token%%",
                 "%%ERRORS%%",
+                "%%messages%%"
             ], 
             [
                 $_SERVER["HTTP_HOST"] . rtrim($uri, "/"),
                 $title,
                 $title_domain,
                 $CSRF->getToken(),
-                $errors
+                $errors,
+                $messages
             ], 
             $main);
         if (!empty($this->pageAliases[$sourceName]["session_data"])) {
@@ -387,6 +409,9 @@ class Templater
                         $replacement = "&copy; " . date("Y") . ", " . $tag;
                     }
                 break;
+                case "version":
+                    $replacement = constant("CURRENT_VERSION");
+                break;
                 case "logout":
                     Session::init()->destroy();
                     $replacement = "<meta http-equiv = \"refresh\" content = \"0; url = ./\" />";
@@ -433,6 +458,9 @@ class Templater
                 case "password":
                     $pass = $app->getUserPassword();
                     $replacement = Utils::createDots($pass);
+                break;
+                case "copy":
+                    $replacement = $this->copy->get();
                 break;
                 default:
                     echo $var;
