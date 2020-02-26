@@ -9,8 +9,6 @@ if (empty($_POST)) {
     die("Invalid Request!");
 }
 
-print_r($_POST);
-
 
 Main::Create("\patrick115\Adminka\Main", [__DIR__]);
 
@@ -18,9 +16,16 @@ $app = Main::Create("\patrick115\Requests\Core", [$_POST]);
 
 $app->check();
 
-print_r($app->getErrors());
+if (!empty(@constant("DELETE_SESSION")) && @constant("DELETE_SESSION") === true) {
+    session_destroy();
+    session_start();
+}
+if (!empty(@constant("MESSAGE"))) {
+    $_SESSION["Request"]["Messages"] = constant("MESSAGE");
+}
 
 if (empty($app->getErrors())) {
+    if (@constant("DELETE_SESSION") !== true)
     $_SESSION["Post"]["Success"] = true;
     \patrick115\Main\Tools\Utils::header("./" . $app->getPost()["source_page"]);
 } else {
