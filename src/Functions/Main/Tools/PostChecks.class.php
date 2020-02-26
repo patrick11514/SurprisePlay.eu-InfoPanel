@@ -88,6 +88,8 @@ class PostChecks
                         "method" => "function",
                         "class" => "\patrick115\Adminka\Players\Settings",
                         "function" => "checkSettings",
+                        "custom_error" => "Nastavení nebylo změněno!",
+                        "success_message" => "<span style=\"color:green\">Nastavení úspěšně změněno!</span>",
                         "parameters" => [
                             "autologin" => [
                                 "from" => "post"
