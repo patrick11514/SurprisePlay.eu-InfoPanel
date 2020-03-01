@@ -20,7 +20,9 @@ class Router
         "error" => "ErrorPage",
         "main" => "MainPage",
         "logout" => "Logout",
-        "settings" => "Settings"
+        "settings" => "Settings",
+        "vpn-allow" => "VPNAllow",
+        "unregister" => "Unregister",
     ];
 
     /**
