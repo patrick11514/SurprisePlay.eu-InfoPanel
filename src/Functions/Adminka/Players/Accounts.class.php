@@ -2,6 +2,7 @@
 
 namespace patrick115\Adminka\Players;
 
+use patrick115\Adminka\Logger;
 use patrick115\Main\Config;
 use patrick115\Main\Database;
 use patrick115\Main\Session;
@@ -21,12 +22,14 @@ class Accounts
     private $session;
 
     private $database;
+    private $logger;
 
     public function __construct()
     {
         $this->config   = Config::init();
         $this->session  = Session::init();
         $this->database = Database::init();
+        $this->logger = Logger::init();
     }
 
     /**
@@ -90,9 +93,6 @@ class Accounts
      */
     private function loginUser($username, $group, $length)
     {
-
-        echo $length;
-
         session_destroy();
         session_start();
         unset($_POST);
@@ -108,6 +108,8 @@ class Accounts
         $_SESSION["Account"]["User"]["Logged"]   = true;
         $_SESSION["Account"]["User"]["Username"] = $username;
         $_SESSION["Account"]["User"]["Group"]    = $group;
+
+        $this->logger->log("User $username logged in.", "login");
 
         $rv      = $this->database->execute("SELECT `id` FROM `main_authme`.`authme` WHERE `realname` = '{$username}'", true);
         $user_id = $rv->fetch_object()->id;
