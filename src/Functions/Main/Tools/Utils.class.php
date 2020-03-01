@@ -170,6 +170,33 @@
         return $rv->fetch_object()->id;
     }
 
+    public static function getUUIDByNick($nick)
+    {
+        $app = \patrick115\Main\Database::init();
+
+        $rv = $app->select(["uuid"], "main_perms`.`perms_players", "LIMIT 1", "username", $nick);
+
+        if ($app->num_rows($rv) == 0) {
+            return "00000000-0000-0000-0000-000000000000";
+        }
+        return $rv->fetch_object()->uuid;
+    }
+
+    public static function getNickByUUID($uuid)
+    {
+        $app = \patrick115\Main\Database::init();
+
+        $rv = $app->select(["username"], "main_perms`.`perms_players", "LIMIT 1", "uuid", $uuid);
+
+        if ($app->num_rows($rv) == 0) {
+            return "unknown";
+        }
+
+        $rv = $app->select(["realname"], "main_authme`.`authme", "LIMIT 1", "username", $rv->fetch_object()->username);
+
+        return $rv->fetch_object()->realname;
+    }
+
     public static function createDots(int $length)
     {
         $return = "";
@@ -204,4 +231,5 @@
         $return = pack($method, $path);
         return $return;
     }
- }
+    #SELECT `uuid` FROM `perms_user_permissions` WHERE `permission` = "antiproxy.proxy" LIMIT 2 OFFSET 1;
+}
