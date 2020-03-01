@@ -3,9 +3,7 @@
 namespace patrick115\Adminka\Players;
 
 use patrick115\Main\Database;
-use patrick115\Main\Error;
 use patrick115\Main\Config;
-use patrick115\Main\Session;
 
 class Rank
 {
@@ -61,6 +59,9 @@ class Rank
                 $groups_w_index[array_search($possible_group, $this->config->getConfig("Main/vip_levels"))] = $possible_group;
             }
             ksort($groups_w_index);
+            if (empty($groups_w_index)) {
+                return $this->config->getConfig("Main/group_names")["default"];
+            } 
             return $this->config->getConfig("Main/group_names")[reset($groups_w_index)];
         } else {
             return $this->config->getConfig("Main/group_names")[$_group];
