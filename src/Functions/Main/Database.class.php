@@ -87,6 +87,13 @@ class Database extends Error
                 $conn->query("CREATE TABLE `adminka`.`pass_storage` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `pass_length` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `pass_storage` ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
+            if (!@$conn->query("SELECT 1 FROM `logger`")) {
+                $conn->query("CREATE TABLE `logger` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` text NOT NULL, `userid` int(11) NOT NULL, `ip` text NOT NULL, `message` text NOT NULL, `sessionid` text NOT NULL, `timestamp` bigint(20) NOT NULL, `date` text NOT NULL, PRIMARY KEY (`id`), KEY `account_id` (`userid`), CONSTRAINT `account_id` FOREIGN KEY (`userid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+            if (!@$conn->query("SELECT 1 FROM `unregister-log`")) {
+                $conn->query("CREATE TABLE `adminka`.`unregister-log` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `admin` TEXT NOT NULL , `unregistered` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `unregister-log` ADD CONSTRAINT `user_db_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
 
             $this->conn      = $conn;
             self::$connected = true;
@@ -160,13 +167,7 @@ class Database extends Error
         } else {
             $command = "SELECT $list FROM `$table` WHERE `$haystack` = '$needle' $options";
         }
-
-        try {
-            $return = $this->conn->query($command);
-        } catch (Exception $e) {
-            $error = $e->getMessage();
-            $this->errors->catchError($error, debug_backtrace());
-        }
+        $return = $this->execute($command, true);
         return $return;
     }
 
@@ -226,7 +227,9 @@ class Database extends Error
         }
         $pars .= "'" . $params[(count($params) - 1)] . "'";
 
-        $command = "INSERT INTO $table ($vals) VALUES ($pars);";
+        $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
+
+        echo $command;
 
         $this->execute($command, false);
     }
@@ -354,5 +357,10 @@ class Database extends Error
         }
 
         return $count;
+    }
+
+    public function getQueries()
+    {
+        return $this->conn->query("SHOW SESSION STATUS LIKE 'Questions'")->fetch_object()->Value;
     }
 }
