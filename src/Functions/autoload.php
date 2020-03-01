@@ -4,9 +4,7 @@ use patrick115\Main\Error;
 
 use patrick115\Main\Session;
 
-ob_start();
-
-define("CURRENT_VERSION", "0.2.0");
+define("CURRENT_VERSION", "0.2.2");
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -29,7 +27,6 @@ spl_autoload_register(function ($class) {
     $path      = $first . implode("/", $class) . $extension;
 
     if (!file_exists($path)) {
-        echo $path;
         return false;
     }
     include_once $path;
