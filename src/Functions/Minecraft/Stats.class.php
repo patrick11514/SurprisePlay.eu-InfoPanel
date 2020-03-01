@@ -93,10 +93,15 @@ class Stats
         }
         $rv = $this->database->select(["uuid"], "main_perms`.`perms_players", "LIMIT 1", "username", strtolower($this->username));
         $uuid = @$rv->fetch_object()->uuid;
+
         if (empty($uuid)) return "Error";
         $rv = $this->database->execute("SELECT `expiry` FROM `main_perms`.`perms_user_permissions` WHERE `uuid` = '" . $uuid . "' AND `permission` = 'group." . strtolower($rank) . "';", true);
         $expiry = @$rv->fetch_object()->expiry;
-        if (empty($expiry)) return "Error";
+
+        if (Utils::newEmpty($expiry)) return "Error";
+        if ($expiry == 0) {
+            return "Nikdy";
+        }
         return \patrick115\Main\Tools\Utils::fixDate(
             $expiry
             ) . " (" . 
