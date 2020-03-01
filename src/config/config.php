@@ -13,7 +13,13 @@ return [
     ],
 
 
-
+    "API" => [
+        "permissions" => [
+            "get-user-list" => [
+                "group" => "leaders"
+            ]
+        ]
+    ],
 
 
     "Main" => [
@@ -215,23 +221,23 @@ return [
                     "Povolení VPN" => [
                         "permission" => "leaders",
                         "icon" => "fa fa-globe-europe",
-                        "link" => "#",
-                        "page-name" => "#"
+                        "link" => "?vpn-allow",
+                        "page-name" => "vpn-allow"
                     ],
                     "Odregistrování uživatele" => [
                         "permission" => "leaders",
                         "icon" => "fa fa-unlock",
-                        "link" => "#",
-                        "page-name" => "#"
+                        "link" => "?unregister",
+                        "page-name" => "unregister"
                     ],
                     "Správa gemů" => [
-                        "permission" => "leaders",
+                        "permission" => "full",
                         "icon" => "fa fa-gem",
                         "link" => "#",
                         "page-name" => "#"
                     ],
                     "To-Do list" => [
-                        "permission" => "leaders",
+                        "permission" => "full",
                         "icon" => "fa fa-praying-hands",
                         "link" => "#",
                         "page-name" => "#"
@@ -257,6 +263,8 @@ return [
             "Settings" => "all",
             "ErrorPage" => "all",
             "Logout" => "all",
+            "VPNAllow" => "leaders",
+            "Unregister" => "leaders",
         ],
         "group-perms" => [
             "full" => [
