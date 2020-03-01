@@ -1,1 +1,1 @@
-%%custom_form%%
+%%custom_form_settings%%
