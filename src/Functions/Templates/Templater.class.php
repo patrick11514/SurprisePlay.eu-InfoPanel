@@ -7,6 +7,7 @@ use patrick115\Main\Error;
 use patrick115\Main\Session;
 use patrick115\Main\Tools\Utils;
 use patrick115\Adminka\Main;
+use patrick115\Main\Database;
 
 class Templater
 {
@@ -69,7 +70,11 @@ class Templater
                 "version",
                 "copy"
             ],
-            "page_name" => "Nastavení profilu"
+            "page_name" => "Nastavení profilu",
+            "generate_form" => [
+                "name" => "settings",
+                "var_name" => "settings"
+            ]
         ],
         "ErrorPage" => [
             "title" => "Error",
@@ -79,6 +84,46 @@ class Templater
                 "copyright",
                 "error_data"
             ],
+        ],
+        "VPNAllow" => [
+            "title" => "Povolení VPN",
+            "name" => "vpnallow.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Povolení VPN",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "VPNAllow",
+                "var_name" => "VPN" 
+            ]
+        ],
+        "Unregister" => [
+            "title" => "Odregistrování",
+            "name" => "unregister.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Odregistrovat uživatele",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Unregister",
+                "var_name" => "Unregister" 
+            ]
         ]
     ];
 
@@ -110,7 +155,7 @@ class Templater
      * @var array
      */
     private $pages_with_custom_replacements = [
-        "MainPage", "Settings"
+        "MainPage", "Settings", "VPNAllow", "Unregister"
     ];
 
     /**
@@ -150,19 +195,24 @@ class Templater
                     $this->templatesDir = $dir;
                 } else {
                     $this->error->catchError("Directory $dir is not readable.", debug_backtrace());
-                    return;
+                    $this->errorPage();
                 }
             } else {
                 $this->error->catchError("$dir is not directory!", debug_backtrace());
-                return;
+                $this->errorPage();
             }
         } else {
             $this->error->catchError("Directory not exist!", debug_backtrace());
-            return;
+            $this->errorPage();
         }
 
         $this->aliases = \patrick115\Main\Config::init()->getConfig("Aliases");
         $this->copy = \patrick115\Adminka\Main::Create("\patrick115\cpy\Copy", []);
+    }
+
+    public function errorPage()
+    {
+        $this->Show("ErrorPage");
     }
 
     /**
@@ -176,6 +226,11 @@ class Templater
             $template = $this->pageAliases[$template]["name"];
         }
         if (file_exists($this->templatesDir . "/{$template}")) {
+            if (empty($this->pageAliases[$sourceTpl]["sourcefile"])) {
+                $this->error->catchError("Source file for template $template not found!", debug_backtrace());
+                $this->errorpage();
+                return;
+            }
             $prepared = $this->prepare($this->templatesDir . "/{$template}", $this->pageAliases[$sourceTpl]["sourcefile"], $sourceTpl);
             if (Error::init()->errorExist()) {
                 $prepared = $this->prepare($this->templatesDir . "/ErrorMain.tpl", "empty.tpl", "ErrorPage");
@@ -183,8 +238,7 @@ class Templater
             echo $prepared;
         } else {
             $this->error->catchError("Template $template not found!", debug_backtrace());
-            
-            return;
+            $this->errorPage();
         }
     }
 
@@ -197,7 +251,6 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
-
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
@@ -209,6 +262,7 @@ class Templater
                 if ($sourceName == "MainPage") {
                     return $this->noPermissionPage($sourceName, file_get_contents($this->templatesDir . "/" . $source));
                 } else {
+                    $_SESSION["Request"]["Errors"][] = "Nemáš oprávnění na zobrazení stránky!";
                     Utils::header("./");
                 }
             }
@@ -232,11 +286,11 @@ class Templater
 
         if ($session->isExist("Request/Errors")) {
             $errors = "<center>
-            <h4 style=\"color:red;padding-top:1%;\">";
+            <h3 style=\"color:red;padding-top:1%;\">";
             foreach ($session->getData("Request/Errors") as $error) {
                 $errors .= "<p>$error</p>";
             }
-            $errors .= "</h4></center>";
+            $errors .= "</h3></center>";
             unset($_SESSION["Request"]["Errors"]);
         } else {
             $errors = "";
@@ -244,11 +298,11 @@ class Templater
 
         if ($session->isExist("Request/Messages")) {
             $messages = "<center>
-            <h4 style=\"color:green;padding-top:1%;\">";
+            <h3 style=\"color:green;padding-top:1%;\">";
             foreach ($session->getData("Request/Messages") as $message) {
                 $messages .= "<p>$message</p>";
             }
-            $messages .= "</h4></center>";
+            $messages .= "</h3></center>";
             unset($_SESSION["Request"]["Messages"]);
         } else {
             $messages = "";
@@ -258,10 +312,20 @@ class Templater
         $CSRF->newToken();
 
         $main = str_replace("%%content%%", file_get_contents($template), file_get_contents($this->templatesDir . "/" . $source));
-        if ($sourceName == "Settings") {
+        if (!empty($this->pageAliases[$sourceName]["generate_form"])) {
             $forms = \patrick115\Adminka\Main::Create("\patrick115\Adminka\Generator", ["form"]);
             
-            $main = str_replace("%%custom_form%%", $forms->getForm("settings")->generate(), $main);
+            if (empty($this->pageAliases[$sourceName]["generate_form"]["var_name"])) {
+                $this->error->catchError("Var name for form not found!", debug_backtrace());
+                return;
+            }
+
+            if (empty($this->pageAliases[$sourceName]["generate_form"]["name"])) {
+                $this->error->catchError("Name for created form not found!", debug_backtrace());
+                return;
+            }
+
+            $main = str_replace("%%custom_form_{$this->pageAliases[$sourceName]["generate_form"]["var_name"]}%%", $forms->getForm($this->pageAliases[$sourceName]["generate_form"]["name"])->generate(), $main);
         }
         $main = str_replace(
             [
@@ -311,6 +375,14 @@ class Templater
         if (!empty($this->pageAliases[$sourceName]["special_vars"])) {
             $main = $this->replace_special_vars($main, $this->pageAliases[$sourceName]["special_vars"]);
         }
+
+        $main .= "
+            <!-- 
+                By: patrick115
+                Qithub: https://github.com/patrick11514
+                Queries: " . Database::init()->getQueries() . "
+            --!>
+        ";
 
         return $main;
     }

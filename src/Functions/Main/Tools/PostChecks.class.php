@@ -104,6 +104,50 @@ class PostChecks
                     ]
                 ];
             break;
+            case "vpn-allow":
+                return [
+                    "check" => [
+                        "allow-nick"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "allowVPN",
+                        "custom_error" => "Hráč neexistuje!",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "post",
+                                "alias" => "allow-nick"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
+            case "unregister":
+                return [
+                    "check" => [
+                        "unregister-nick"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "unregister",
+                        "custom_error" => "Hráč neexistuje",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "post",
+                                "alias" => "unregister-nick"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }
