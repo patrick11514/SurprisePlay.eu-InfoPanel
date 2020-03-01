@@ -25,7 +25,9 @@ class Core
      */
     private $avilable_requests = [
         "login",
-        "settings"
+        "settings",
+        "vpn-allow",
+        "unregister"
     ];
     /**
      * Store method
@@ -147,7 +149,11 @@ class Core
                 $array = [];
                 foreach ($data["parameters"] as $name => $parameter) {
                     if ($parameter["from"] == "post") {
-                        $array[$name] = $this->post[$name];
+                        if (!empty($parameter["alias"])) {
+                            $array[$name] = $this->post[$parameter["alias"]];
+                        } else {
+                            $array[$name] = $this->post[$name];
+                        }
                     }
                 }
                 $app = \patrick115\Adminka\Main::Create($data["class"], [$array]);
