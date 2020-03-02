@@ -153,7 +153,7 @@ class Generator
                                     <div class="list-group" id="nicks">
                                     </div>
                                 </div>
-                                <button type="submit" id="unregister-button" class="btn btn-primary btn-block">Povolit přístup</button>
+                                <button type="submit" id="unregister-button" class="btn btn-primary btn-block">Odregistrovat</button>
                             </form>
                         </div>
                     </div>

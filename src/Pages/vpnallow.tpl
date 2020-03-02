@@ -79,6 +79,7 @@ $(function() {
         function() {
             $("#allow-vpn-table").text();
             $("#allow-vpn-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
+            $("#vpn-page-buttons").text("");
         });
     });
 
@@ -91,6 +92,7 @@ $(function() {
         function() {
             $("#allow-vpn-table").text();
             $("#allow-vpn-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
+            $("#vpn-page-buttons").text("");
         });
     });
 

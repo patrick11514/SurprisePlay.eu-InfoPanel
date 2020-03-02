@@ -49,7 +49,7 @@ class API
     {
         $csrf = Main::Create("\patrick115\Requests\CSRF", []);
         if (!$csrf->checkToken($this->post["CSRF_TOKEN"])) {
-            die("Invalid token!");
+            return $this->throwError("Invalid key, refesh page.");
         }
         $method = $this->post["method"];
         if (Utils::newEmpty($this->post[$this->values[$method]])) {
@@ -102,7 +102,7 @@ class API
                 $end = ($value == 1) ? 6 : ((5 * $value) + 1);
 
                 $return = "";
-                $rv = $this->database->execute("SELECT `uuid` FROM `main_perms`.`perms_user_permissions` WHERE `permission` = 'antiproxy.proxy' LIMIT {$start}, {$end}", true);
+                $rv = $this->database->execute("SELECT `uuid` FROM `main_perms`.`perms_user_permissions` WHERE `permission` = 'antiproxy.proxy' ORDER BY `perms_user_permissions`.`id` DESC LIMIT {$start}, {$end} ", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
                 while ($row = $rv->fetch_assoc()) {
@@ -122,7 +122,7 @@ class API
                         <tr>
                             <td style=\"text-align:center\">{$i}</td>
                             <td style=\"text-align:center\">{$username}</td>
-                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem\">{$rank}</span></td>
+                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
                         </tr>";
                     }
                 }
@@ -163,7 +163,7 @@ class API
                 $end = ($value == 1) ? 6 : ((5 * $value) + 1);
 
                 $return = "";
-                $rv = $this->database->execute("SELECT `admin`, `unregistered`, `date` FROM `unregister-log` LIMIT {$start}, {$end}", true);
+                $rv = $this->database->execute("SELECT `admin`, `unregistered`, `date` FROM `unregister-log` ORDER BY `unregister-log`.`id` DESC LIMIT {$start}, {$end}", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
                 while ($row = $rv->fetch_assoc()) {
@@ -184,7 +184,7 @@ class API
                         <tr>
                             <td style=\"text-align:center\">{$i}</td>
                             <td style=\"text-align:center\">{$username}</td>
-                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem\">{$rank}</span></td>
+                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
                             <td style=\"text-align:center\">{$row["admin"]}</td>
                             <td style=\"text-align:center\">{$row["date"]}</td>
                         </tr>";

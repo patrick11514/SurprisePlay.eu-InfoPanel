@@ -78,6 +78,7 @@ $(function() {
         }, 
         function() {
             $("#allow-unregister-table").text();
+            $("#unregister-page-buttons").text("");
             $("#allow-unregister-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
         });
     });
@@ -90,6 +91,7 @@ $(function() {
         }, 
         function() {
             $("#allow-unregister-table").text();
+            $("#unregister-page-buttons").text("");
             $("#allow-unregister-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
         });
     });

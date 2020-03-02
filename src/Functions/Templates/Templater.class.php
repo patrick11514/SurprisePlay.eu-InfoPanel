@@ -251,6 +251,7 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
+        var_dump($_SESSION);
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         

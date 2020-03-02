@@ -40,6 +40,7 @@ class PostChecks
                     ],
                     "db_requests" => [
                         "use" => true,
+                        "custom_error" => "Jméno neexistuje!",
                         "databases" => [
                             "main_authme" => [
                                 "authme" => [

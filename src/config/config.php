@@ -177,7 +177,7 @@ return [
             4 => "heroic"
         ],
         "group_colors" => [
-            "default" => "#C2C7D0",
+            "default" => "#7b7f85",
             "heroic" => "#55FF55",
             "legend" => "#55FFFF",
             "sponzor" => "#FFFF55",

@@ -228,7 +228,12 @@ class Core
         }
 
         if (isset($dbdata) && $dbdata = "fail") {
-            $this->errors[] = "Nelze získat data z databáze.";
+            if (!empty($checkings["db_requests"]["custom_error"])) {
+                $this->errors[] = $checkings["db_requests"]["custom_error"];
+            } else {
+                $this->errors[] = "Nelze získat data z databáze.";
+            }
+            
         }
     }
 

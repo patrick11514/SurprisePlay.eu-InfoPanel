@@ -91,7 +91,7 @@ class Settings
         $status = $stats->getAntiVPNStatus();
 
         if ($status == "Povolen") {
-            define("MESSAGE", ["<span style=\"color:red\">Tento hráč již má VPN!</span>"]);
+            define("MESSAGE", ["<span style=\"color:red\">Tento hráč již má povolený přístup s VPN!</span>"]);
             return true;
         }
 
