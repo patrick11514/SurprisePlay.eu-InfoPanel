@@ -59,8 +59,9 @@ class Rank
         }
 
         $admin_permission = $_SESSION["Account"]["Admin_Account"];
+
         if ($admin_permission != $current_admin_permission) {
-            $_SESSION["Account"]["Admin_Account"] = $admin_permission;
+            $_SESSION["Account"]["Admin_Account"] = $current_admin_permission;
         }
         return $current_rank;
     }
