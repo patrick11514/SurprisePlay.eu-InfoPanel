@@ -44,24 +44,29 @@ class Rank
     public function getRank()
     {
         $current_rank = $this->getCurrentRank();
-        $current_rank_raw = Utils::ConvertRankToRaw($current_rank);
         $session = Session::init();
-        $session_rank = $session->getData("Account/User/Group");
-        
-        if ($session_rank != $current_rank_raw) {
-            $_SESSION["Account"]["User"]["Group"] = $current_rank_raw;
-        }
-        
-        if (in_array($current_rank_raw, $this->config->getConfig("Main/admin_accounts"))) {
-            $current_admin_permission = true;
-        } else {
-            $current_admin_permission = false;
-        }
+        if ($this->username == $session->getData("Account/User/Username")) {
+            $current_rank_raw = Utils::ConvertRankToRaw($current_rank);
+            
+            $session_rank = $session->getData("Account/User/Group");
+            
+            if ($session_rank != $current_rank_raw) {
+                $_SESSION["Account"]["User"]["Group"] = $current_rank_raw;
+            }
 
-        $admin_permission = $_SESSION["Account"]["Admin_Account"];
+            if (in_array($current_rank_raw, $this->config->getConfig("Main/admin_accounts"))) {
+                $current_admin_permission = true;
+            } else {
+                $current_admin_permission = false;
+            }
+            $admin_permission = $_SESSION["Account"]["Admin_Account"];
 
-        if ($admin_permission != $current_admin_permission) {
-            $_SESSION["Account"]["Admin_Account"] = $current_admin_permission;
+            if ($admin_permission != $current_admin_permission) {
+                session_destroy();
+                session_start();
+                $_SESSION["Request"]["Messages"] = ["Z bezpečnostních důvodů se přihlaš znova"];
+                Utils::header("./");
+            }
         }
         return $current_rank;
     }
