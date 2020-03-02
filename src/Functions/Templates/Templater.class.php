@@ -256,7 +256,6 @@ class Templater
                 $prepared = $this->prepare($this->templatesDir . "/ErrorMain.tpl", "empty.tpl", "ErrorPage");
             }
             echo $prepared;
-            session_write_close();
         } else {
             $this->error->catchError("Template $template not found!", debug_backtrace());
             $this->errorPage();
@@ -556,7 +555,6 @@ class Templater
                     $replacement = $this->copy->get();
                 break;
                 default:
-                    echo $var;
                     $replacement = "NoData found!";
                 break;
             }

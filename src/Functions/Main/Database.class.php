@@ -234,8 +234,6 @@ class Database extends Error
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
 
-        echo $command;
-
         $this->execute($command, false);
     }
 
