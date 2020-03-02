@@ -4,6 +4,8 @@ namespace patrick115\Adminka\Players;
 
 use patrick115\Main\Database;
 use patrick115\Main\Config;
+use patrick115\Main\Session;
+use patrick115\Main\Tools\Utils;
 
 class Rank
 {
@@ -41,6 +43,30 @@ class Rank
      */
     public function getRank()
     {
+        $current_rank = $this->getCurrentRank();
+        $current_rank_raw = Utils::ConvertRankToRaw($current_rank);
+        $session = Session::init();
+        $session_rank = $session->getData("Account/User/Group");
+        
+        if ($session_rank != $current_rank_raw) {
+            $_SESSION["Account"]["User"]["Group"] = $current_rank_raw;
+        }
+        
+        if (in_array($current_rank_raw, $this->config->getConfig("Main/admin_accounts"))) {
+            $current_admin_permission = true;
+        } else {
+            $current_admin_permission = false;
+        }
+
+        $admin_permission = $_SESSION["Account"]["Admin_Account"];
+        if ($admin_permission != $current_admin_permission) {
+            $_SESSION["Account"]["Admin_Account"] = $admin_permission;
+        }
+        return $current_rank;
+    }
+
+    private function getCurrentRank()
+    {
         $rv = $this->database->select(["primary_group"], "main_perms`.`perms_players", "LIMIT 1", "username", strtolower($this->username));
         $_group = $rv->fetch_object()->primary_group;
         if ($_group == "default") {
@@ -67,4 +93,5 @@ class Rank
             return $this->config->getConfig("Main/group_names")[$_group];
         }
     }
+
 }
