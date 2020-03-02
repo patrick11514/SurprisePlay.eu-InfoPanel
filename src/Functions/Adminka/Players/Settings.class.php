@@ -127,6 +127,62 @@ class Settings
         return true;
     }
 
+    public function gems()
+    {
+        $admin = $this->session->getData("Account/User/Username");
+        $player = $this->data["gems-nick"];
+        $amount = $this->data["gem-count"];
+        $method = $this->data["gem-action"];
+
+        $methods = ["add", "remove"];
+
+        if (!in_array($method, $methods)) {
+            define("MESSAGE", ["<span style=\"color:red\">Neplatná metoda!</span>"]);
+            return true;
+        }
+
+        $rv = $this->database->select(["value"], "main_kredity`.`supercredits", "LIMIT 1", "name", strtolower($player));
+        $credits = $rv->fetch_object()->value;
+
+        if ($method == "remove") {
+            if ($amount > $credits) {
+                define("MESSAGE", ["<span style=\"color:red\">Hráč má pouze {$credits} kreditů, proto nelze odebrat {$amount} kreditů</span>"]);
+                return true;
+            }
+            $new_gems = $credits - $amount;
+        } else {
+            $new_gems = $credits + $amount;
+        }
+
+        $this->database->update("main_kredity`.`supercredits", "name", strtolower($player), ["value"], [$new_gems]);
+
+        $this->database->insert("gems-log", [
+            "id", 
+            "user_id", 
+            "admin", 
+            "nick", 
+            "amount", 
+            "method", 
+            "timestamp", 
+            "date"
+        ],
+        [
+            "",
+            Utils::getClientID($admin),
+            $admin,
+            $player,
+            $amount,
+            $method,
+            time(),
+            date("H:i:s d.m.Y")
+        ]);
+        
+        $message = ($method == "remove") ? "Úspěšně odebráno {$amount} kreditů hráči {$player}!" : "Úspěšně přidáno {$amount} kreditů hráči {$player}!";
+
+        define("MESSAGE", [$message]);
+        return true;
+    }
+
     public function checkSettings()
     {
         $username = $this->session->getData("Account/User/Username");
@@ -150,8 +206,8 @@ class Settings
                 define("DELETE_SESSION", true);
                 define("MESSAGE", $message);
             } else {
-                $_SESSION["Request"]["Errors"][] = "Heslo nesmí obsahovat speciální znaky";
-                return false;
+                define("MESSAGE", ["<span style=\"color:red\">Heslo nesmí obsahovat speciální znaky</span>"]);
+                return true;
             }
         }
 
@@ -182,8 +238,8 @@ class Settings
         if ($this->data["e-mail"] != $user_data->getEMail()) {
             if (filter_var($this->data["e-mail"], FILTER_VALIDATE_EMAIL)) {
                 if (substr_count(explode("@", $this->data["e-mail"])[1], ".") > 1) {
-                    $_SESSION["Request"]["Errors"][] = "E-mail je neplatný!";
-                    return false;
+                    define("MESSAGE", ["<span style=\"color:red\">E-mail je neplatný!</span>"]);
+                    return true;
                 }
                 $is_changed = true;
                 $aid = Utils::getAuthmeIDByName($username);

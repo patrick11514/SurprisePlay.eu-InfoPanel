@@ -15,18 +15,26 @@ class API
     private $posts = [
         "get-user-list",
         "get-allowVPN-list",
-        "get-Unregistred-list"
+        "get-Unregistred-list",
+        "get-gemsLog"
     ];
     private $values = [
         "get-user-list" => "findningnick",
         "get-allowVPN-list" => "page",
-        "get-Unregistred-list" => "page"
+        "get-Unregistred-list" => "page",
+        "get-gemsLog" => "page"
     ];
 
     private $post;
 
     public function __construct($post)
     {
+        $admin_account = $_SESSION["Account"]["Admin_Account"];
+
+        if (!$admin_account) {
+            die($this->throwError("No permissions to use API!"));
+        }
+
         if (empty($post["method"])) {
             die($this->throwError("No method posted!"));
         }
@@ -189,6 +197,79 @@ class API
                             <td style=\"text-align:center\">{$row["date"]}</td>
                         </tr>";
                     }
+                }
+
+                if (empty($return)) {
+                    return $this->throwError("Neplatná stránka");
+                }
+
+                if ($value == 1 && $a > 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "enabled";
+                } else if ($value == 1 && $a <= 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "disabled";
+                } else if ($value > 1 && $a > 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "enabled";
+                } else if ($value > 1 && $a <= 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                } else {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                }
+
+                $array = [
+                    "success" => true,
+                    "message" => $return,
+                    "currentpage" => $value,
+                    "prev" => $status_prev_button,
+                    "next" => $status_next_button,
+                ];
+                $return = json_encode($array);
+            break;
+            case "get-gemsLog":
+                if ($value < 0 || $value == 0) {
+                    return $this->throwError("Neplatná Stránka!");
+                }
+
+                $start = ($value == 1) ? 0 : (5 * ($value - 1));
+                $end = ($value == 1) ? 6 : ((5 * $value) + 1);
+
+                $return = "";
+                $rv = $this->database->execute("SELECT `admin`, `nick`, `date`, `amount`, `method` FROM `gems-log` ORDER BY `gems-log`.`id` DESC LIMIT {$start}, {$end}", true);
+                $i = ($value == 1) ? 0 : ($value - 1) * 5;
+                $a = 0;
+                while ($row = $rv->fetch_assoc()) {
+                    $i++;
+                    $a++;
+                    if (5 >= $a) {
+
+                        $username = $row["nick"];
+
+                        $rank = new Rank($username);
+
+                        $rank = $rank->getRank();
+                        $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
+
+                        $method = ($row["method"] == "add") ? "<span class=\"badge\" style=\"color:green;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">Přidáno</span>" : "<span class=\"badge\" style=\"color:red;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">Odebráno</span>";
+
+                        $return .= "
+                        <tr>
+                            <td style=\"text-align:center\">{$i}</td>
+                            <td style=\"text-align:center\">{$username}</td>
+                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center\">{$row["admin"]}</td>
+                            <td style=\"text-align:center\">{$row["amount"]}</td>
+                            <td style=\"text-align:center\">{$method}</td>
+                            <td style=\"text-align:center\">{$row["date"]}</td>
+                        </tr>";
+                    }
+                }
+
+                if (empty($return) && $value == 1) {
+                    return $this->throwError("Žádná data nenalezena");
                 }
 
                 if (empty($return)) {

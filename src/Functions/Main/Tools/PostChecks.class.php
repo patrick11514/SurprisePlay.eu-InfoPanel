@@ -149,6 +149,35 @@ class PostChecks
                     ]
                 ];
             break;
+            case "gems":
+                return [
+                    "check" => [
+                        "gems-nick",
+                        "gem-count",
+                        "gem-action"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "gems",
+                        "custom_error" => "Hráč neexistuje",
+                        "parameters" => [
+                            "gems-nick" => [
+                                "from" => "post",
+                            ],
+                            "gem-count" => [
+                                "from" => "post",
+                            ],
+                            "gem-action" => [
+                                "from" => "post",
+                            ],
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

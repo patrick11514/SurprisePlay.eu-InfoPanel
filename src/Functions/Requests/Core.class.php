@@ -27,7 +27,8 @@ class Core
         "login",
         "settings",
         "vpn-allow",
-        "unregister"
+        "unregister",
+        "gems"
     ];
     /**
      * Store method

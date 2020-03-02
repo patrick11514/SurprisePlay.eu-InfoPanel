@@ -233,8 +233,8 @@ return [
                     "Správa gemů" => [
                         "permission" => "full",
                         "icon" => "fa fa-gem",
-                        "link" => "#",
-                        "page-name" => "#"
+                        "link" => "?gems",
+                        "page-name" => "gems"
                     ],
                     "To-Do list" => [
                         "permission" => "full",
@@ -243,19 +243,19 @@ return [
                         "page-name" => "#"
                     ],
                 ]
-                ],
-                "Nábory" => [
-                    "role" => "category",
-                    "permission" => "all",
-                    "items" => [
-                        "Nábor na helpera" => [
-                            "permission" => "all",
-                            "icon" => "fa fa-hands-helping",
-                            "link" => "#",
-                            "page-name" => "#"
-                        ]
+            ],
+            "Nábory" => [
+                "role" => "category",
+                "permission" => "all",
+                "items" => [
+                    "Nábor na helpera" => [
+                        "permission" => "all",
+                        "icon" => "fa fa-hands-helping",
+                        "link" => "#",
+                        "page-name" => "#"
                     ]
                 ]
+            ]
 
         ],
         "page_perms" => [
@@ -265,6 +265,7 @@ return [
             "Logout" => "all",
             "VPNAllow" => "leaders",
             "Unregister" => "leaders",
+            "Gems" => "full"
         ],
         "group-perms" => [
             "full" => [

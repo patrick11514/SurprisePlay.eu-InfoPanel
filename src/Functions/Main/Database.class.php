@@ -94,7 +94,12 @@ class Database extends Error
                 $conn->query("CREATE TABLE `adminka`.`unregister-log` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `admin` TEXT NOT NULL , `unregistered` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `unregister-log` ADD CONSTRAINT `user_db_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
-
+            if (!@$conn->query("SELECT 1 FROM `gems-log`")) {
+                $conn->query("CREATE TABLE `adminka`.`gems-log` ( `id` INT NOT NULL , `user_id` INT NOT NULL , `admin` TEXT NOT NULL , `nick` TEXT NOT NULL , `amount` INT NOT NULL , `method` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `gems-log` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
+                $conn->query("ALTER TABLE `gems-log` ADD CONSTRAINT `user_main_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+                ");
+            }
             $this->conn      = $conn;
             self::$connected = true;
             return $conn;

@@ -23,6 +23,7 @@ class Router
         "settings" => "Settings",
         "vpn-allow" => "VPNAllow",
         "unregister" => "Unregister",
+        "gems" => "Gems"
     ];
 
     /**
@@ -58,6 +59,7 @@ class Router
     {
         $this->getFromServer_Data();
         if (empty($this->aliases[$this->server_data])) {
+            $_SESSION["Request"]["Errors"][] = "Neplatná stránka!";
             Utils::header("./?main");
         } else {
             $showPage = $this->aliases[$this->server_data];

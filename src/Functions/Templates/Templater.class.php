@@ -124,6 +124,26 @@ class Templater
                 "name" => "Unregister",
                 "var_name" => "Unregister" 
             ]
+        ],
+        "Gems" => [
+            "title" => "Správa gemů",
+            "name" => "gems.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Správa gemů",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Gems",
+                "var_name" => "gems" 
+            ]
         ]
     ];
 
@@ -155,7 +175,7 @@ class Templater
      * @var array
      */
     private $pages_with_custom_replacements = [
-        "MainPage", "Settings", "VPNAllow", "Unregister"
+        "MainPage", "Settings", "VPNAllow", "Unregister", "Gems"
     ];
 
     /**
@@ -236,6 +256,7 @@ class Templater
                 $prepared = $this->prepare($this->templatesDir . "/ErrorMain.tpl", "empty.tpl", "ErrorPage");
             }
             echo $prepared;
+            session_write_close();
         } else {
             $this->error->catchError("Template $template not found!", debug_backtrace());
             $this->errorPage();
@@ -251,7 +272,6 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
-        var_dump($_SESSION);
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
