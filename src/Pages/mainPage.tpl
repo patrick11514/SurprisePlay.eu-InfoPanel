@@ -39,7 +39,7 @@
         </div>
     </div>
 </section>
-<section class="content" style="margin-top:5%;">
+<section class="content">
     <div class="container">
         <div class="box box-widget widget-user-2">
             <div class="widget-user-header bg-blue">
