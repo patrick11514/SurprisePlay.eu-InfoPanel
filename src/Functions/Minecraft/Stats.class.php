@@ -172,7 +172,7 @@ class Stats
                     $rv = $this->database->execute($prepare_command, true);
                     $get = $info["source"]["select"];
                     $_data = @$rv->fetch_object()->$get;
-                    if (empty($_data)) $_data = "Error";
+                    if (Utils::newNull($_data)) $_data = "Error";
                 break;
             }
             $return .= "<tr>
