@@ -19,14 +19,24 @@ class Settings
     private $data = [];
 
     private $settings_datas = [
-        "autologin",
-        "e-mail",
-        "password"
+        "settings" => [
+            "autologin",
+            "e-mail",
+            "password"
+        ],
+        "unregister" => [
+            "username"
+        ],
+        "gems" => [
+            "gems-nick",
+            "gem-count",
+            "gem-action",
+        ],
     ];
 
     public function __construct($data)
     {
-        foreach ($this->settings_datas as $datas) {
+        foreach ($this->settings_datas["method"] as $datas) {
             if (empty($data[$datas])) {
                 define("MESSAGE", ["Can't find $datas in got data."]);
                 return true;

@@ -13,19 +13,22 @@ class Todo
     private $config;
 
     private $todo_data = [
-        "for", "tags", "message"
+        "todo" => [
+            "for", "tags", "message"
+        ],
+        "remove-todo" => [
+            "id"
+        ]
     ];
 
     private $data;
 
     public function __construct($data)
     {
-        if ($data["method"] != "remove-todo") {
-            foreach ($this->todo_data as $datas) {
-                if (empty($data[$datas])) {
-                    define("MESSAGE", ["<span style=\"color:red\">Can't find $datas in got data.</span>"]);
-                    return true;
-                }
+        foreach ($this->todo_data["method"] as $datas) {
+            if (empty($data[$datas])) {
+                define("MESSAGE", ["<span style=\"color:red\">Can't find $datas in got data.</span>"]);
+                return true;
             }
         }
         foreach ($data as $name => $dat) {

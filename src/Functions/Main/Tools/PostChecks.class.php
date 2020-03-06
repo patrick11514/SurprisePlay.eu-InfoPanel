@@ -101,6 +101,9 @@ class PostChecks
                             "password" => [
                                 "from" => "post"
                             ],
+                            "method" => [
+                                "from" => "post"
+                            ]
                         ]
                     ]
                 ];
@@ -122,6 +125,9 @@ class PostChecks
                             "username" => [
                                 "from" => "post",
                                 "alias" => "allow-nick"
+                            ],
+                            "method" => [
+                                "from" => "post"
                             ]
                         ]
                     ]
@@ -144,6 +150,9 @@ class PostChecks
                             "username" => [
                                 "from" => "post",
                                 "alias" => "unregister-nick"
+                            ],
+                            "method" => [
+                                "from" => "method"
                             ]
                         ]
                     ]
@@ -174,6 +183,9 @@ class PostChecks
                             "gem-action" => [
                                 "from" => "post",
                             ],
+                            "method" => [
+                                "from" => "post"
+                            ]
                         ]
                     ]
                 ];
@@ -200,6 +212,9 @@ class PostChecks
                                 "from" => "post"
                             ],
                             "message" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
                                 "from" => "post"
                             ]
                         ]
