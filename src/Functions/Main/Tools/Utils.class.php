@@ -17,6 +17,13 @@
      
     public static function chars($string)
     {
+        if (is_array($string)) {
+            $array = [];
+            foreach ($string as $id => $value) {
+                $array[$id] = htmlspecialchars($value);
+            }
+            return $array;
+        }
         return htmlspecialchars($string);
     }
 
@@ -156,18 +163,33 @@
         if ($app->num_rows($rv) > 0) {
             return $rv->fetch_object()->id;
         } else {
-            \patrick115\Main\Error::init()->catchError("Your record in global database not found, please contact Administrators!", debug_backtrace());
-            return;
+            \patrick115\Main\Error::init()->catchError("Your record in authme database not found, please contact Administrators!", debug_backtrace());
+            return "%NULL%";
         }
     }
 
     public static function getClientID($username)
     {
         $a_id = self::getAuthmeIDByName($username);
+        if ($a_id == "%NULL%") {
+            \patrick115\Main\Error::init()->catchError("Your record in authme database not found, please contact Administrators!", debug_backtrace());
+            return null;
+        }
         $app = \patrick115\Main\Database::init();
         $rv = $app->
             select(["id"], "accounts", "LIMIT 1", "authme_id", $a_id);
-        return $rv->fetch_object()->id;
+        if ($app->num_rows($rv) > 0) {
+            return $rv->fetch_object()->id;
+        } else {
+            \patrick115\Main\Error::init()->catchError("Your record in global database not found, please contact Administrators!", debug_backtrace());
+            return;
+        }
+    }
+
+    public static function isJson($string)
+    {
+        @json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
     }
 
     public static function getUUIDByNick($nick)
@@ -189,12 +211,16 @@
         $rv = $app->select(["username"], "main_perms`.`perms_players", "LIMIT 1", "uuid", $uuid);
 
         if ($app->num_rows($rv) == 0) {
-            return "unknown";
+            return "%NULL%";
         }
-
         $rv = $app->select(["realname"], "main_authme`.`authme", "LIMIT 1", "username", $rv->fetch_object()->username);
 
-        return $rv->fetch_object()->realname;
+        if ($app->num_rows($rv) > 0) {
+            return $rv->fetch_object()->realname;
+        } else {
+            \patrick115\Main\Error::init()->catchError("Your record in authme database not found, please contact Administrators!", debug_backtrace());
+            return;
+        }
     }
 
     public static function createDots(int $length)
@@ -227,8 +253,14 @@
     public static function getPackage($data)
     {
         $method = "H*";
+        if (empty($data[1])) {
+            return null;
+        }
         $path = $data[1];
         $return = pack($method, $path);
+        if (empty($return)) {
+            return null;
+        }
         return $return;
     }
     #SELECT `uuid` FROM `perms_user_permissions` WHERE `permission` = "antiproxy.proxy" LIMIT 2 OFFSET 1;
