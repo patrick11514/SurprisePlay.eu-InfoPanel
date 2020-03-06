@@ -292,7 +292,7 @@ class Generator
                                     <tr>
                                         <th style="width: 10px" style="text-align:center">#</th>
                                         <th style="text-align:center">Jméno</th>
-                                        <th style="text-align:center">Úkol</th>
+                                        <th style="text-align:center;max-width:60%;width:60%;">Úkol</th>
                                         <th style="text-align:center">Tagy</th>
                                         <th style="text-align:center">Zadal</th>
                                         <th style="text-align:center">Datum zadání</th>
