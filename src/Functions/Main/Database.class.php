@@ -88,7 +88,7 @@ class Database extends Error
                 $conn->query("ALTER TABLE `pass_storage` ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `logger`")) {
-                $conn->query("CREATE TABLE `logger` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` text NOT NULL, `userid` int(11) NOT NULL, `ip` text NOT NULL, `message` text NOT NULL, `sessionid` text NOT NULL, `timestamp` bigint(20) NOT NULL, `date` text NOT NULL, PRIMARY KEY (`id`), KEY `account_id` (`userid`), CONSTRAINT `account_id` FOREIGN KEY (`userid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $conn->query("CREATE TABLE `logger` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` text NOT NULL, `userid` int(11) NOT NULL, `ip` text NOT NULL, `message` text NOT NULL, `sessionid` text NOT NULL, `timestamp` bigint(20) NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY (`id`), KEY `account_id` (`userid`), CONSTRAINT `account_id` FOREIGN KEY (`userid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             }
             if (!@$conn->query("SELECT 1 FROM `unregister-log`")) {
                 $conn->query("CREATE TABLE `adminka`.`unregister-log` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `admin` TEXT NOT NULL , `unregistered` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
@@ -99,6 +99,11 @@ class Database extends Error
                 $conn->query("ALTER TABLE `gems-log` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
                 $conn->query("ALTER TABLE `gems-log` ADD CONSTRAINT `user_main_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
                 ");
+            }
+            if (!@$conn->query("SELECT 1 FROM `todo-list`")) {
+                $conn->query("CREATE TABLE `adminka`.`todo-list` ( `id` INT(11) NOT NULL AUTO_INCREMENT, `creator_id` INT NOT NULL , `creator` TEXT NOT NULL , `for_id` INT NOT NULL , `for` TEXT NOT NULL , `message` TEXT NOT NULL , `tags` TEXT NOT NULL , `date` TEXT NOT NULL , `timestamp` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `for_id` FOREIGN KEY (`for_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `creator_id` FOREIGN KEY (`creator_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             $this->conn      = $conn;
             self::$connected = true;
@@ -172,7 +177,9 @@ class Database extends Error
         } else {
             $command = "SELECT $list FROM `$table` WHERE `$haystack` = '$needle' $options";
         }
+
         $return = $this->execute($command, true);
+
         return $return;
     }
 
@@ -186,7 +193,7 @@ class Database extends Error
     public function execute($sql, $return = false)
     {
 
-        $rv = $this->conn->query(\patrick115\Main\Tools\Utils::chars($this->removeChars($sql)));
+        $rv = $this->conn->query($this->removeChars($sql));
 
         if (!empty($this->conn->error)) {
             $this->errors->catchError($this->conn->error, debug_backtrace());
@@ -228,7 +235,11 @@ class Database extends Error
 
         $pars = "";
         for ($i = 0; $i < (count($params) - 1); $i++) {
-            $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[$i]) . "', ";
+            if (\patrick115\Main\Tools\Utils::isJson($params[$i])) {
+                $pars .= "'" . $params[$i] . "', ";
+            } else {
+                $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[$i]) . "', ";
+            }
         }
         $pars .= "'" . $params[(count($params) - 1)] . "'";
 
