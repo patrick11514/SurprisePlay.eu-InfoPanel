@@ -133,9 +133,9 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center\">{$i}</td>
-                            <td style=\"text-align:center\">{$username}</td>
-                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
                         </tr>";
                     }
                 }
@@ -195,11 +195,11 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center\">{$i}</td>
-                            <td style=\"text-align:center\">{$username}</td>
-                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center\">{$row["admin"]}</td>
-                            <td style=\"text-align:center\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["admin"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -262,13 +262,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center\">{$i}</td>
-                            <td style=\"text-align:center\">{$username}</td>
-                            <td style=\"text-align:center\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center\">{$row["admin"]}</td>
-                            <td style=\"text-align:center\">{$row["amount"]}</td>
-                            <td style=\"text-align:center\">{$method}</td>
-                            <td style=\"text-align:center\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["admin"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["amount"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$method}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -347,13 +347,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center\">{$i}</td>
-                            <td style=\"text-align:center\">{$row["for"]}</td>
-                            <td style=\"text-align:center\">{$row["message"]}</td>
-                            <td style=\"text-align:center\">{$tag_string}</td>
-                            <td style=\"text-align:center\">{$row["creator"]}</td>
-                            <td style=\"text-align:center\">{$row["date"]}</td>
-                            <td style=\"text-align:center\">
+                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["for"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["message"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$tag_string}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["creator"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: break-word;\">
                                 <form method=\"post\" action=\"./requests.php\">
                                     <input type=\"hidden\" name=\"method\" value=\"remove-todo\" required>
                                     <input type=\"hidden\" name=\"source_page\" value=\"?todo\" required>
