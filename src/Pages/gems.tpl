@@ -5,16 +5,26 @@ $(function() {
 
     ajax({"page": "1"}, "get-gemsLog",  
     function(json) {
+        loadPage();
         gemsList(json);
     },
     function() {
+        loadPage();
         $("#allow-gems-table").text();
+        $("#gems-page-buttons").text("");
         $("#allow-gems-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
     });
 
     button_text = "Přidat {X} gemů.";
 
     var gem_count = 0;
+
+    function loadPage()
+    {
+        $(".loading").css("visibility", "");
+        $(".loading").removeClass("loading");
+        $("#loader").remove();
+    }
 
     $("#gem-action").change(function() {
         if ($("#gem-action").val() == "add") {

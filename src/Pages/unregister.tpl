@@ -5,15 +5,26 @@ $(function() {
 
     ajax({"page": "1"}, "get-Unregistred-list",  
     function(json) {
+        loadPage();
         logList(json);
     },
     function() {
+        loadPage();
         $("#allow-unregister-table").text();
+        $("#unregister-page-buttons").text("");
         $("#allow-unregister-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
     });
 
+    function loadPage()
+    {
+        $(".loading").css("visibility", "");
+        $(".loading").removeClass("loading");
+        $("#loader").remove();
+    }
+
     function logList(json)
     {
+        loadPage();
         if (json.success) {
             $("#unregister-allow-user-list").html(json.message);
             $("#unregister-page-id").text(json.currentpage);

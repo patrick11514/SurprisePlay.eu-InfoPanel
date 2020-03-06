@@ -5,12 +5,22 @@ $(function() {
 
     ajax({"page": "1"}, "get-allowVPN-list",  
     function(json) {
+        loadPage();
         vpnList(json);
     },
     function() {
+        loadPage();
         $("#allow-vpn-table").text();
         $("#allow-vpn-table").html("<h2 style=\"color:red;text-align:center;\">Nelze kontaktovat API!</h2>");
+        $("#vpn-page-buttons").text("");
     });
+
+    function loadPage()
+    {
+        $(".loading").css("visibility", "");
+        $(".loading").removeClass("loading");
+        $("#loader").remove();
+    }
 
     function vpnList(json)
     {
