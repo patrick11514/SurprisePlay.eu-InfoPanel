@@ -16,13 +16,16 @@ class API
         "get-user-list",
         "get-allowVPN-list",
         "get-Unregistred-list",
-        "get-gemsLog"
+        "get-gemsLog",
+        "get-todoList",
+        "get-TodoUsers"
     ];
     private $values = [
         "get-user-list" => "findningnick",
         "get-allowVPN-list" => "page",
         "get-Unregistred-list" => "page",
-        "get-gemsLog" => "page"
+        "get-gemsLog" => "page",
+        "get-todoList" => "page"
     ];
 
     private $post;
@@ -60,10 +63,12 @@ class API
             return $this->throwError("Invalid key, refesh page.");
         }
         $method = $this->post["method"];
-        if (Utils::newEmpty($this->post[$this->values[$method]])) {
-            return $this->throwError("Value is empty!");
+        if (!empty($this->values[$method])) {
+            if (Utils::newEmpty($this->post[$this->values[$method]])) {
+                return $this->throwError("Value is empty!");
+            }
         }
-        return $this->getData($method, $this->post[$this->values[$method]]);
+        return $this->getData($method, isset($this->values[$method]) ? $this->post[$this->values[$method]] : null);
     }
 
     private function throwError($message) 
@@ -301,6 +306,148 @@ class API
                     "next" => $status_next_button,
                 ];
                 $return = json_encode($array);
+            break;
+            case "get-todoList":
+                if ($value < 0 || $value == 0) {
+                    return $this->throwError("Neplatná Stránka!");
+                }
+
+                $start = ($value == 1) ? 0 : (10 * ($value - 1));
+                $end = ($value == 1) ? 11 : ((10 * $value) + 1);
+
+                $return = "";
+                $rv = $this->database->execute("SELECT `id`, `creator`, `for`, `message`, `tags`, `date` FROM `todo-list` ORDER BY `todo-list`.`id` DESC LIMIT {$start}, {$end}", true);
+                $i = ($value == 1) ? 0 : ($value - 1) * 10;
+                $a = 0;
+
+                $token = \patrick115\Main\Session::init()->getData("Security/CRF/Token");
+
+                while ($row = $rv->fetch_assoc()) {
+                    $i++;
+                    $a++;
+                    if (10 >= $a) {
+
+                        $tags = json_decode($row["tags"], 1)["tags"];
+                        $tagy = $this->config->getConfig("Main/todo-tags");
+
+                        $tag_string = "";
+
+                        foreach ($tags as $tag) {
+                            if (!empty($tagy[$tag])) {
+                                if (empty($tagy[$tag]["name"]) || empty($tagy[$tag]["color"])) {
+                                    return $this->throwError("Tag settings is invalid!");
+                                }
+                                $tag_string .= "<span class=\"badge\" style=\"color:{$tagy[$tag]["color"]};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$tagy[$tag]["name"]}</span>";
+                            } else {
+                                $tag_string .= "<span class=\"badge\" style=\"color:#AAAAAA;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$tag}</span>";
+                            }
+                        }
+
+                        $todo_id = Utils::createPackage("%%ID;" . $row["id"] . ";ID%%")[1];
+
+                        $return .= "
+                        <tr>
+                            <td style=\"text-align:center\">{$i}</td>
+                            <td style=\"text-align:center\">{$row["for"]}</td>
+                            <td style=\"text-align:center\">{$row["message"]}</td>
+                            <td style=\"text-align:center\">{$tag_string}</td>
+                            <td style=\"text-align:center\">{$row["creator"]}</td>
+                            <td style=\"text-align:center\">{$row["date"]}</td>
+                            <td style=\"text-align:center\">
+                                <form method=\"post\" action=\"./requests.php\">
+                                    <input type=\"hidden\" name=\"method\" value=\"remove-todo\" required>
+                                    <input type=\"hidden\" name=\"source_page\" value=\"?todo\" required>
+                                    <input type=\"hidden\" name=\"CSRF_token\" value=\"" .$token .  "\" required>
+                                    <input type=\"hidden\" name=\"id\" value=\"{$todo_id}\" required>
+                                    <button type=\"submit\" style=\"background:none;border:none;\"><i class=\"fas fa-trash\"></i></button></td>
+                                </form>
+                        </tr>";
+                    }
+                }
+
+                if (empty($return) && $value == 1) {
+                    return $this->throwError("Nejsou zadány žádné úkoly");
+                }
+#INSERT INTO `todo-list` (`id`, `creator_id`, `creator`, `for_id`, `for`, `message`, `tags`, `date`, `timestamp`) VALUES (NULL, '13', 'Ut5dere', '11', 'patrick115', 'Udělat infopanel', '{\"tags\":[\"important\", \"warning\"]}', '15:44:20 03.04.2020', '1583336660')
+                if (empty($return)) {
+                    return $this->throwError("Neplatná stránka");
+                }
+
+                if ($value == 1 && $a > 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "enabled";
+                } else if ($value == 1 && $a <= 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "disabled";
+                } else if ($value > 1 && $a > 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "enabled";
+                } else if ($value > 1 && $a <= 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                } else {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                }
+
+                $array = [
+                    "success" => true,
+                    "message" => $return,
+                    "currentpage" => $value,
+                    "prev" => $status_prev_button,
+                    "next" => $status_next_button,
+                ];
+                $return = json_encode($array);
+            break;
+            case "get-TodoUsers":
+                $perms = $this->config->getConfig("Main/group-perms");
+                $groups = [];
+                foreach ($perms as $group_name => $list)
+                {
+                    $groups[$group_name] = $list;
+                }
+                foreach ($groups as $group_name => $group)
+                {
+                    if (!empty($group["inherits"])) {
+                        foreach ($group["inherits"] as $inherit) {
+                            if (empty($groups[$inherit])) {
+                                $this->error->catchError("Can't find group $inherit!", debug_backtrace());
+                                continue;
+                            }
+                            foreach ($groups[$inherit] as $inherit_group)
+                            {
+                                $groups[$group_name][] = $inherit_group;
+                            }
+                        }
+                        unset($groups[$group_name]["inherits"]);
+                    }
+                }
+            
+                $group = $this->config->getConfig("Main/todo-list");
+
+                $users = [];
+
+                foreach ($groups[$group] as $group) {
+                    $rv = $this->database->select(["username"], "main_perms`.`perms_players", "", "primary_group", $group);
+                    if ($this->database->num_rows($rv) > 0) {
+                        while ($row = $rv->fetch_assoc()) {
+                            $rf = $this->database->select(["realname"], "main_authme`.`authme", "LIMIT 1", "username", $row["username"]);
+                            $users[] = $rf->fetch_object()->realname;
+                        }
+                    }
+                }
+
+                $return = "<option></option>";
+
+                foreach ($users as $user) {
+                    $return .= "<option value=\"$user\">$user</option>";
+                }
+
+                $return = [
+                    "success" => true,
+                    "message" => $return
+                ];
+                $return = json_encode($return);
             break;
         }
         return $return;

@@ -144,6 +144,27 @@ class Templater
                 "name" => "Gems",
                 "var_name" => "gems" 
             ]
+        ],
+        "TodoList" => [
+            "title" => "Todo List",
+            "name" => "todolist.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Todo List",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy",
+                "todo_tags"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Todo",
+                "var_name" => "todolist" 
+            ]
         ]
     ];
 
@@ -168,14 +189,15 @@ class Templater
         "user-email" => "%%user-email%%",
         "password" => "%%password%%",
         "version" => "%%version%%",
-        "copy" => "%%own%%"
+        "copy" => "%%own%%",
+        "todo_tags" => "%%TODO_TAGS%%"
     ];
     /**
      * Pages with custom repalcemenest
      * @var array
      */
     private $pages_with_custom_replacements = [
-        "MainPage", "Settings", "VPNAllow", "Unregister", "Gems"
+        "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList"
     ];
 
     /**
@@ -554,7 +576,17 @@ class Templater
                 case "copy":
                     $replacement = $this->copy->get();
                 break;
+                case "todo_tags":
+                    $tags = $this->config->getConfig("Main/todo-tags");
+
+                    $replacement = "";
+                    foreach ($tags as $tag_name => $tag_data) {
+                        $replacement .= "<option value=\"$tag_name\">{$tag_data["name"]}</option>";
+                    }
+                    
+                break;
                 default:
+                    
                     $replacement = "NoData found!";
                 break;
             }

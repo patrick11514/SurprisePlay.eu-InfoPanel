@@ -23,7 +23,8 @@ class Router
         "settings" => "Settings",
         "vpn-allow" => "VPNAllow",
         "unregister" => "Unregister",
-        "gems" => "Gems"
+        "gems" => "Gems",
+        "todo" => "TodoList"
     ];
 
     /**

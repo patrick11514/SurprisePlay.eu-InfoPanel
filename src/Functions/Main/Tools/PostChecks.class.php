@@ -178,6 +178,57 @@ class PostChecks
                     ]
                 ];
             break;
+            case "todo":
+                return [
+                    "check" => [
+                        "for",
+                        "tags",
+                        "message"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Todo",
+                        "function" => "addTodo",
+                        "parameters" => [
+                            "for" => [
+                                "from" => "post"
+                            ],
+                            "tags" => [
+                                "from" => "post"
+                            ],
+                            "message" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
+            case "remove-todo":
+                return [
+                    "check" => [
+                        "id",
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Todo",
+                        "function" => "removeTodo",
+                        "parameters" => [
+                            "id" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

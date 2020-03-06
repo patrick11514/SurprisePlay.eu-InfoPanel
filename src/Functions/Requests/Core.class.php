@@ -28,7 +28,9 @@ class Core
         "settings",
         "vpn-allow",
         "unregister",
-        "gems"
+        "gems",
+        "todo",
+        "remove-todo"
     ];
     /**
      * Store method
@@ -73,7 +75,6 @@ class Core
             return;
         }
         $this->method = $post_data["method"];
-        unset($post_data["method"]);
 
         foreach ($post_data as $key => $data) {
             $this->post[Utils::chars($key)] = Utils::chars($data);

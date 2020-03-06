@@ -45,7 +45,8 @@ class Generator
             "settings",
             "VPNAllow",
             "Unregister",
-            "Gems"
+            "Gems",
+            "Todo"
         ];
 
         if (!in_array($form_name, $stored_forms)) {
@@ -56,7 +57,7 @@ class Generator
             case "settings":
                 $this->genData = '
                 <section class="content">
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <form method="post" action="./requests.php" role="form">
                                 <input type="hidden" name="method" value="settings" required>
@@ -87,7 +88,7 @@ class Generator
             case "VPNAllow":
                 $this->genData = '
                 <section class="content">
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <form method="post" action="./requests.php" role="form">
                                 <input type="hidden" name="method"  value="vpn-allow" required>
@@ -103,10 +104,15 @@ class Generator
                             </form>
                         </div>
                     </div>
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <h4>Povolené přístupy s VPN</h4>
-                            <table id="allow-vpn-table" class="table table-bordered">
+                            <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <table id="allow-vpn-table" style="visibility:hidden;" class="loading table table-bordered">
                                 <thead>                  
                                     <tr>
                                         <th style="width: 10px" style="text-align:center">#</th>
@@ -117,7 +123,7 @@ class Generator
                                 <tbody id="vpn-allow-user-list">
                                 </tbody>
                             </table>
-                            <nav id="vpn-page-buttons" style="padding-top:10px;">
+                            <nav id="vpn-page-buttons" class="loading" style="padding-top:10px;visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-vpn-prev-page" class="page-item">
                                     <a id="vpn-prev-page" class="page-link" href="#">Přechozí</a>
@@ -142,7 +148,7 @@ class Generator
             case "Unregister":
                 $this->genData = '
                 <section class="content">
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <form method="post" action="./requests.php" role="form">
                                 <input type="hidden" name="method"  value="unregister" required>
@@ -158,10 +164,15 @@ class Generator
                             </form>
                         </div>
                     </div>
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <h4>Záznam odregistrovaných uživatelů</h4>
-                            <table id="allow-unregister-table" class="table table-bordered">
+                            <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <table id="allow-unregister-table" style="visibility:hidden;" class="loading table table-bordered">
                                 <thead>                  
                                     <tr>
                                         <th style="width: 10px" style="text-align:center">#</th>
@@ -174,7 +185,7 @@ class Generator
                                 <tbody id="unregister-allow-user-list">
                                 </tbody>
                             </table>
-                            <nav  id="unregister-page-buttons" style="padding-top:10px;">
+                            <nav  id="unregister-page-buttons" class="loading" style="padding-top:10px;visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-unregister-prev-page" class="page-item">
                                     <a id="unregister-prev-page" class="page-link" href="#">Přechozí</a>
@@ -196,7 +207,7 @@ class Generator
             case "Gems":
                 $this->genData = '
                 <section class="content">
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <form method="post" action="./requests.php" role="form">
                                 <input type="hidden" name="method" value="gems" required>
@@ -223,10 +234,15 @@ class Generator
                             </form>
                         </div>
                     </div>
-                    <div class="card" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
                         <div class="card-body">
                             <h4>Seznam transakcí gemů</h4>
-                            <table id="allow-gems-table" class="table table-bordered">
+                            <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <table id="allow-gems-table" style="visibility:hidden;" class="loading table table-bordered">
                                 <thead>                  
                                     <tr>
                                         <th style="width: 10px" style="text-align:center">#</th>
@@ -241,7 +257,7 @@ class Generator
                                 <tbody id="gems-allow-user-list">
                                 </tbody>
                             </table>
-                            <nav  id="gems-page-buttons" style="padding-top:10px;">
+                            <nav class="loading" id="gems-page-buttons" style="padding-top:10px;visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-gems-prev-page" class="page-item">
                                     <a id="gems-prev-page" class="page-link" href="#">Přechozí</a>
@@ -255,6 +271,85 @@ class Generator
                                 </li>
                               </ul>
                             </nav>
+                        </div>
+                    </div>
+                </section>
+                ';
+            break;
+            case "Todo":
+                $this->genData = '
+                <section class="content">
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                        <div class="card-body">
+                            <h3>Úkoly:</h3>
+                            <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <table data-request="get-todo" id="todo-table" style="visibility:hidden;" class="table table-bordered loading">
+                                <thead>                  
+                                    <tr>
+                                        <th style="width: 10px" style="text-align:center">#</th>
+                                        <th style="text-align:center">Jméno</th>
+                                        <th style="text-align:center">Úkol</th>
+                                        <th style="text-align:center">Tagy</th>
+                                        <th style="text-align:center">Zadal</th>
+                                        <th style="text-align:center">Datum zadání</th>
+                                        <th style="text-align:center">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todo-items">
+                                </tbody>
+                            </table>
+                            <nav data-ajax-var="todo" class="loading" id="todo-paginator" style="padding-top:10px;visibility:hidden;">
+                              <ul class="pagination justify-content-center mb-0">
+                                <li id="li-todo-prev-page" class="page-item">
+                                    <a id="todo-prev-page" class="page-link" href="#">Přechozí</a>
+                                </li>
+                                <li class="page-item active">
+                                    <span id="todo-page-id" data-page="" class="page-link">
+                                    </span>
+                                </li>
+                                <li id="li-todo-next-page" class="page-item">
+                                    <a id="todo-next-page" class="page-link" href="#">Další</a>
+                                </li>
+                              </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card card-outline card-primary" style="max-width:80%;width:80%;left:50%;transform: translate(-50%);">
+                        <div class="card-header">
+                            <h3>Vytvořit úkol</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="./requests.php" method="post" role="form">
+                                <input type="hidden" name="method" value="todo" required>
+                                <input type="hidden" name="source_page" value="?todo" required>
+                                <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
+                                <div class="form-group">
+                                    <label for="todo-nicks">Pro koho</label>
+                                    <div id="loader-nicks" class="d-flex justify-content-center" style="padding-top:5%;">
+                                        <div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                    </div>
+                                    <select id="todo-nicks" style="visibility:hidden;" name="for" class="loading-nicks form-control" required>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tags">Tagy (CTRL + CLICK)</label>
+                                    
+                                    <select name="tags[]" id="tags" class="form-control" multiple="multiple" required>
+                                        %%TODO_TAGS%%
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Zpráva</label>
+                                    <textarea id="message" name="message" class="form-control" required></textarea>
+                                </div>
+                                <button type="submit" id="todo-button" class="btn btn-primary btn-block">Přidat</button>
+                            </form>
                         </div>
                     </div>
                 </section>
