@@ -139,6 +139,7 @@ return [
             "zk-helper",
             "builder",
             "helper",
+            "e-helper",
             "hl-builder",
             "hl-helper",
             "technik",
@@ -157,6 +158,7 @@ return [
             "zk-helper" => "Zkušební Helper",
             "builder" => "Builder",
             "helper" => "Helper",
+            "e-helper" => "Elitní Helper",
             "hl-builder" => "Hlavní Builder",
             "hl-helper" => "Hlavní Helper",
             "technik" => "Technik",
@@ -187,6 +189,7 @@ return [
             "zk-helper" => "#AAAAAA",
             "builder" => "#AA00AA",
             "helper" => "#00AA00",
+            "e-helper" => "#00AAAA",
             "hl-builder" => "#AA00AA",
             "hl-helper" => "#00AA00",
             "technik" => "#FFFF55",
@@ -237,10 +240,10 @@ return [
                         "page-name" => "gems"
                     ],
                     "To-Do list" => [
-                        "permission" => "full",
+                        "permission" => "leaders",
                         "icon" => "fa fa-praying-hands",
-                        "link" => "#",
-                        "page-name" => "#"
+                        "link" => "?todo",
+                        "page-name" => "todo"
                     ],
                 ]
             ],
@@ -256,7 +259,6 @@ return [
                     ]
                 ]
             ]
-
         ],
         "page_perms" => [
             "MainPage" => "all",
@@ -265,7 +267,8 @@ return [
             "Logout" => "all",
             "VPNAllow" => "leaders",
             "Unregister" => "leaders",
-            "Gems" => "full"
+            "Gems" => "full",
+            "TodoList" => "leaders"
         ],
         "group-perms" => [
             "full" => [
@@ -279,7 +282,8 @@ return [
                     "full"
                 ],
                 "hl-builder",
-                "hl-helper"
+                "hl-helper",
+                "e-helper"
             ],
             "mids" => [
                 "inherits" => [
@@ -312,12 +316,24 @@ return [
                 "zk-helper",
                 "builder",
                 "helper",
+                "e-helper",
                 "hl-builder",
                 "hl-helper",
                 "technik",
                 "leader",
                 "vedeni",
                 "majitel",
+            ]
+        ],
+        "todo-list" => "leaders",
+        "todo-tags" => [
+            "important" => [
+                "name" => "Důležité",
+                "color" => "#AA0000"
+            ],
+            "warning" => [
+                "name" => "Varování",
+                "color" => "#FFAA00"
             ]
         ]
     ]
