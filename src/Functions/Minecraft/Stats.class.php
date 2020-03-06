@@ -14,6 +14,7 @@ class Stats
     private $database;
     private $config;
     private $session;
+    private $error;
 
     private $username;
 
@@ -23,7 +24,8 @@ class Stats
         $this->database = Database::init();
         $this->config = Config::init();
         $this->session = Session::init();
-        
+        $this->error = Error::init();
+                
         $this->username = $username;
     }
 
@@ -180,4 +182,5 @@ class Stats
         }
         return $return;
     }
+
 }
