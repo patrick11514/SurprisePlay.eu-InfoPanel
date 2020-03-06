@@ -28,7 +28,8 @@ class Settings
     {
         foreach ($this->settings_datas as $datas) {
             if (empty($data[$datas])) {
-                Error::init()->catchError("Can't find $datas in got data.", debug_backtrace());
+                define("MESSAGE", ["Can't find $datas in got data."]);
+                return true;
             }
         }
         foreach ($data as $name => $dat) {
@@ -146,7 +147,7 @@ class Settings
 
         if ($method == "remove") {
             if ($amount > $credits) {
-                define("MESSAGE", ["<span style=\"color:red\">Hráč má pouze {$credits} kreditů, proto nelze odebrat {$amount} kreditů</span>"]);
+                define("MESSAGE", ["<span style=\"color:red\">Hráč má pouze {$credits} gemů, proto nelze odebrat {$amount} gemů</span>"]);
                 return true;
             }
             $new_gems = $credits - $amount;
@@ -177,7 +178,7 @@ class Settings
             date("H:i:s d.m.Y")
         ]);
         
-        $message = ($method == "remove") ? "Úspěšně odebráno {$amount} kreditů hráči {$player}!" : "Úspěšně přidáno {$amount} kreditů hráči {$player}!";
+        $message = ($method == "remove") ? "Úspěšně odebráno {$amount} gemů hráči {$player}!" : "Úspěšně přidáno {$amount} gemů hráči {$player}!";
 
         define("MESSAGE", [$message]);
         return true;
