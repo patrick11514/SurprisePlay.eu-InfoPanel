@@ -373,16 +373,16 @@ class API
                     return $this->throwError("Neplatná stránka");
                 }
 
-                if ($value == 1 && $a > 5) {
+                if ($value == 1 && $a > 10) {
                     $status_prev_button = "disabled";
                     $status_next_button = "enabled";
-                } else if ($value == 1 && $a <= 5) {
+                } else if ($value == 1 && $a <= 10) {
                     $status_prev_button = "disabled";
                     $status_next_button = "disabled";
-                } else if ($value > 1 && $a > 5) {
+                } else if ($value > 1 && $a > 10) {
                     $status_prev_button = "enabled";
                     $status_next_button = "enabled";
-                } else if ($value > 1 && $a <= 5) {
+                } else if ($value > 1 && $a <= 10) {
                     $status_prev_button = "enabled";
                     $status_next_button = "disabled";
                 } else {
