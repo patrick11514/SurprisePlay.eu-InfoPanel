@@ -112,18 +112,20 @@ class Generator
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>
-                            <table id="allow-vpn-table" style="visibility:hidden;" class="loading table table-bordered">
-                                <thead>                  
-                                    <tr>
-                                        <th style="width: 10px" style="text-align:center">#</th>
-                                        <th style="text-align:center">Jméno</th>
-                                        <th style="text-align:center">Rank</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vpn-allow-user-list">
-                                </tbody>
-                            </table>
-                            <nav id="vpn-page-buttons" class="loading" style="padding-top:10px;visibility:hidden;">
+                            <div class="table-responsive">
+                                <table id="allow-vpn-table" style="visibility:hidden;" class="loading table table-bordered">
+                                    <thead>                  
+                                        <tr>
+                                            <th style="width: 10px" style="text-align:center">#</th>
+                                            <th style="text-align:center">Jméno</th>
+                                            <th style="text-align:center">Rank</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vpn-allow-user-list">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav id="vpn-page-buttons" class="loading" style="visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-vpn-prev-page" class="page-item">
                                     <a id="vpn-prev-page" class="page-link" href="#">Přechozí</a>
@@ -172,20 +174,22 @@ class Generator
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>
-                            <table id="allow-unregister-table" style="visibility:hidden;" class="loading table table-bordered">
-                                <thead>                  
-                                    <tr>
-                                        <th style="width: 10px" style="text-align:center">#</th>
-                                        <th style="text-align:center">Jméno</th>
-                                        <th style="text-align:center">Rank</th>
-                                        <th style="text-align:center">Odregistroval</th>
-                                        <th style="text-align:center">Kdy</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="unregister-allow-user-list">
-                                </tbody>
-                            </table>
-                            <nav  id="unregister-page-buttons" class="loading" style="padding-top:10px;visibility:hidden;">
+                            <div class="table-responsive">
+                                <table id="allow-unregister-table" style="visibility:hidden;" class="loading table table-bordered">
+                                    <thead>                  
+                                        <tr>
+                                            <th style="width: 10px" style="text-align:center">#</th>
+                                            <th style="text-align:center">Jméno</th>
+                                            <th style="text-align:center">Rank</th>
+                                            <th style="text-align:center">Odregistroval</th>
+                                            <th style="text-align:center">Kdy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="unregister-allow-user-list">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav  id="unregister-page-buttons" class="loading" style="visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-unregister-prev-page" class="page-item">
                                     <a id="unregister-prev-page" class="page-link" href="#">Přechozí</a>
@@ -242,22 +246,24 @@ class Generator
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>
-                            <table id="allow-gems-table" style="visibility:hidden;" class="loading table table-bordered">
-                                <thead>                  
-                                    <tr>
-                                        <th style="width: 10px" style="text-align:center">#</th>
-                                        <th style="text-align:center">Jméno</th>
-                                        <th style="text-align:center">Rank</th>
-                                        <th style="text-align:center">Admin</th>
-                                        <th style="text-align:center">Částka</th>
-                                        <th style="text-align:center">Metoda</th>
-                                        <th style="text-align:center">Kdy</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="gems-allow-user-list">
-                                </tbody>
-                            </table>
-                            <nav class="loading" id="gems-page-buttons" style="padding-top:10px;visibility:hidden;">
+                            <div class="table-responsive">
+                                <table id="allow-gems-table" style="visibility:hidden;" class="loading table table-bordered">
+                                    <thead>                  
+                                        <tr>
+                                            <th style="width: 10px" style="text-align:center">#</th>
+                                            <th style="text-align:center">Jméno</th>
+                                            <th style="text-align:center">Rank</th>
+                                            <th style="text-align:center">Admin</th>
+                                            <th style="text-align:center">Částka</th>
+                                            <th style="text-align:center">Metoda</th>
+                                            <th style="text-align:center">Kdy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="gems-allow-user-list">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav class="loading" id="gems-page-buttons" style="visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-gems-prev-page" class="page-item">
                                     <a id="gems-prev-page" class="page-link" href="#">Přechozí</a>
@@ -287,22 +293,24 @@ class Generator
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>
-                            <table data-request="get-todo" id="todo-table" style="visibility:hidden;" class="table table-bordered loading">
-                                <thead>                  
-                                    <tr>
-                                        <th style="width: 10px" style="text-align:center">#</th>
-                                        <th style="text-align:center">Jméno</th>
-                                        <th style="text-align:center;max-width:60%;width:60%;">Úkol</th>
-                                        <th style="text-align:center">Tagy</th>
-                                        <th style="text-align:center">Zadal</th>
-                                        <th style="text-align:center">Datum zadání</th>
-                                        <th style="text-align:center">#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="todo-items">
-                                </tbody>
-                            </table>
-                            <nav data-ajax-var="todo" class="loading" id="todo-paginator" style="padding-top:10px;visibility:hidden;">
+                            <div class="table-responsive">
+                                <table data-request="get-todo" id="todo-table" style="visibility:hidden;" class="table table-bordered loading">
+                                    <thead>                  
+                                        <tr>
+                                            <th style="width: 10px" style="text-align:center">#</th>
+                                            <th style="text-align:center">Jméno</th>
+                                            <th style="text-align:center;max-width:60%;width:60%;">Úkol</th>
+                                            <th style="text-align:center">Tagy</th>
+                                            <th style="text-align:center">Zadal</th>
+                                            <th style="text-align:center">Datum zadání</th>
+                                            <th style="text-align:center">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="todo-items">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav data-ajax-var="todo" class="loading" id="todo-paginator" style="visibility:hidden;">
                               <ul class="pagination justify-content-center mb-0">
                                 <li id="li-todo-prev-page" class="page-item">
                                     <a id="todo-prev-page" class="page-link" href="#">Přechozí</a>

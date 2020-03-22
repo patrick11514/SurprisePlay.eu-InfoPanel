@@ -62,9 +62,7 @@ class Accounts
                             \patrick115\Main\Tools\Utils::header("./?login");
                         } else {
                             
-                            $this->loginUser($this->session->getData("Request/Data/name"), $this->session->getData("Request/Data/primary_group"), \patrick115\Main\Tools\Utils::getPackage(
-                                $this->session->getdata("Request/FromPost/password")
-                            ));
+                            $this->loginUser($this->session->getData("Request/Data/name"), $this->session->getData("Request/Data/primary_group"));
                         }
                     }
                 }
@@ -91,7 +89,7 @@ class Accounts
      * @param string $group
      * @param string $lenght - passlength
      */
-    private function loginUser($username, $group, $length)
+    private function loginUser($username, $group)
     {
         session_destroy();
         session_start();
@@ -121,14 +119,7 @@ class Accounts
 
         $cid = $this->database->select(["id"], "accounts", "LIMIT 1", "authme_id", $user_id)->
             fetch_object()->id;
-        $rv = $this->database->select(["pass_length"], "pass_storage", "LIMIT 1", "user_id", $cid);
-        if ($this->database->num_rows($rv) == 0) {
-            $this->database->insert("pass_storage", ["id", "user_id", "pass_length"], ["", $cid, mb_strlen($length)]);
-        } else {
-            if (mb_strlen($length) != $rv->fetch_object()->pass_length) {
-                $this->database->update("pass_storage", "user_id", $cid, ["pass_length"], [mb_strlen($length)]);
-            }
-        }
+
 
         session_write_close();
 

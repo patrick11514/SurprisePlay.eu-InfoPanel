@@ -69,9 +69,6 @@ class PostChecks
                                 ]
                             ],
                         ],
-                    ],
-                    "return_from_post" => [
-                        "password"
                     ]
                 ];
             break;
