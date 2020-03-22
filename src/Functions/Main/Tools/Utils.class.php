@@ -20,11 +20,11 @@
         if (is_array($string)) {
             $array = [];
             foreach ($string as $id => $value) {
-                $array[$id] = htmlspecialchars($value);
+                $array[$id] = htmlspecialchars($value, ENT_QUOTES);
             }
             return $array;
         }
-        return htmlspecialchars($string);
+        return htmlspecialchars($string, ENT_QUOTES);
     }
 
     public static function header($page)
@@ -254,7 +254,7 @@
     {
         $method = "H*";
         if (empty($data[1])) {
-            return null;
+            $data = [1 => $data];
         }
         $path = $data[1];
         $return = pack($method, $path);

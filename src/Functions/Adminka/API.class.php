@@ -50,7 +50,7 @@ class API
         $newpost = [];
 
         foreach ($post as $name => $value) {
-            $newpost[Utils::chars($name)] = Utils::chars($this->database->removeChars($value));
+            $newpost[Utils::chars($name)] = Utils::chars($value);
         }
 
         $this->post = $newpost;
@@ -133,9 +133,9 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: normal;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
                         </tr>";
                     }
                 }
@@ -176,7 +176,7 @@ class API
                 $end = ($value == 1) ? 6 : ((5 * $value) + 1);
 
                 $return = "";
-                $rv = $this->database->execute("SELECT `admin`, `unregistered`, `date` FROM `unregister-log` ORDER BY `unregister-log`.`id` DESC LIMIT {$start}, {$end}", true);
+                $rv = $this->database->execute("SELECT `admin`, `unregistered`, `date`, `id` FROM `unregister-log` ORDER BY `unregister-log`.`id` DESC LIMIT {$start}, {$end}", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
                 while ($row = $rv->fetch_assoc()) {
@@ -195,11 +195,11 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["admin"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["id"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["admin"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -243,7 +243,7 @@ class API
                 $end = ($value == 1) ? 6 : ((5 * $value) + 1);
 
                 $return = "";
-                $rv = $this->database->execute("SELECT `admin`, `nick`, `date`, `amount`, `method` FROM `gems-log` ORDER BY `gems-log`.`id` DESC LIMIT {$start}, {$end}", true);
+                $rv = $this->database->execute("SELECT `admin`, `nick`, `date`, `amount`, `method`, `id` FROM `gems-log` ORDER BY `gems-log`.`id` DESC LIMIT {$start}, {$end}", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
                 while ($row = $rv->fetch_assoc()) {
@@ -262,13 +262,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: break-word;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["admin"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["amount"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$method}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["id"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
+                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["admin"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["amount"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$method}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -347,13 +347,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: break-word;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["for"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["message"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$tag_string}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["creator"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">{$row["date"]}</td>
-                            <td style=\"text-align:center;word-break: break-word;\">
+                            <td style=\"text-align:center;word-break: normal;\">{$i}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["for"]}</td>
+                            <td style=\"word-break: normal;\">{$row["message"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$tag_string}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["creator"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
+                            <td style=\"text-align:center;word-break: normal;\">
                                 <form method=\"post\" action=\"./requests.php\">
                                     <input type=\"hidden\" name=\"method\" value=\"remove-todo\" required>
                                     <input type=\"hidden\" name=\"source_page\" value=\"?todo\" required>

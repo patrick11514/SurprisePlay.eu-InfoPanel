@@ -18,6 +18,7 @@ use mysqli;
 use patrick115\Main\Config;
 use patrick115\Main\Error;
 use patrick115\Main\Singleton;
+use patrick115\Main\Tools\Utils;
 
 class Database extends Error
 {
@@ -83,10 +84,6 @@ class Database extends Error
                 $conn->query("ALTER TABLE `accounts` CHANGE `authme_id` `authme_id` MEDIUMINT(8) UNSIGNED NOT NULL;");
                 $conn->query("ALTER TABLE `accounts` ADD CONSTRAINT `authme_id` FOREIGN KEY (`authme_id`) REFERENCES `main_authme`.`authme`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
-            if (!@$conn->query("SELECT 1 FROM `pass_storage`")) {
-                $conn->query("CREATE TABLE `adminka`.`pass_storage` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `pass_length` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `pass_storage` ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-            }
             if (!@$conn->query("SELECT 1 FROM `logger`")) {
                 $conn->query("CREATE TABLE `logger` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` text NOT NULL, `userid` int(11) NOT NULL, `ip` text NOT NULL, `message` text NOT NULL, `sessionid` text NOT NULL, `timestamp` bigint(20) NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY (`id`), KEY `account_id` (`userid`), CONSTRAINT `account_id` FOREIGN KEY (`userid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             }
@@ -117,11 +114,11 @@ class Database extends Error
      * @param string $string String
      *
      */
-    public function removeChars($string)
+    /*public function removeChars($string)
     {
-        $this->conn->real_escape_string($string);
+        $string = $this->conn->real_escape_string($string);
         return $string;
-    }
+    }*/
 
     /**
      * Convert Error
@@ -165,7 +162,7 @@ class Database extends Error
         }
         $list = "";
         for ($i = 0; $i < count($params) - 1; $i++) {
-            $list .= "`" . $params[$i] . "`, ";
+            $list .= "`" . Utils::chars($params[$i]) . "`, ";
         }
         $list .= "`" . $params[count($params) - 1] . "`";
         if ($list === "`*`") {
@@ -175,7 +172,7 @@ class Database extends Error
         if ($haystack === null && $needle === null) {
             $command = "SELECT $list FROM `$table` $options";
         } else {
-            $command = "SELECT $list FROM `$table` WHERE `$haystack` = '$needle' $options";
+            $command = "SELECT $list FROM `$table` WHERE `" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "' $options";
         }
 
         $return = $this->execute($command, true);
@@ -192,8 +189,7 @@ class Database extends Error
      */
     public function execute($sql, $return = false)
     {
-
-        $rv = $this->conn->query($this->removeChars($sql));
+        $rv = $this->conn->query(/*$this->removeChars(*/$sql/*)*/);
 
         if (!empty($this->conn->error)) {
             $this->errors->catchError($this->conn->error, debug_backtrace());
@@ -231,7 +227,7 @@ class Database extends Error
         for ($i = 0; $i < (count($values) - 1); $i++) {
             $vals .= "`" . \patrick115\Main\Tools\Utils::chars($values[$i]) . "`, ";
         }
-        $vals .= "`{$values[(count($values) - 1)]}`";
+        $vals .= "`" . \patrick115\Main\Tools\Utils::chars($values[(count($values) - 1)]) . "`";
 
         $pars = "";
         for ($i = 0; $i < (count($params) - 1); $i++) {
@@ -241,7 +237,7 @@ class Database extends Error
                 $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[$i]) . "', ";
             }
         }
-        $pars .= "'" . $params[(count($params) - 1)] . "'";
+        $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[(count($params) - 1)]) . "'";
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
 
@@ -292,18 +288,18 @@ class Database extends Error
         $sets = "";
 
         for ($i = 0; $i < (count($names) - 1); $i++) {
-            $sets .= "`{$names[$i]}` = '{$vals[$i]}', ";
+            $sets .= "`" . Utils::chars($names[$i]) . "` = '" . Utils::chars($vals[$i]) . "', ";
         }
-        $sets .= "`{$names[(count($names) - 1)]}` = '{$vals[(count($vals) - 1)]}'";
+        $sets .= "`" . Utils::chars($names[(count($names) - 1)]) . "` = '" . Utils::chars($vals[(count($vals) - 1)]) . "'";
 
         if (is_array($haystack)) {
             $where = "";
             for ($i = 0; $i < (count($haystack) - 1); $i++) {
-                $where .= "`{$haystack[$i]}` = '{$needle[$i]}' AND ";
+                $where .= "`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "' AND ";
             }
-            $where .= "`{$haystack[(count($haystack) - 1)]}` = '{$needle[(count($needle) - 1)]}'";
+            $where .= "`" . Utils::chars($haystack[(count($haystack) - 1)]) . "` = '" . Utils::chars($needle[(count($needle) - 1)]) . "'";
         } else {
-            $where = "`$haystack` = '$needle'";
+            $where = "`" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "'";
         }
 
         $command = "UPDATE `$table` SET $sets WHERE $where";
@@ -341,9 +337,9 @@ class Database extends Error
 
         for ($i = 0; $i < count($haystack); $i++) {
             if (is_int($needle[$i])) {
-                $cond .= "`$table`.`{$haystack[$i]}` = {$needle[$i]}";
+                $cond .= "`$table`.`" . Utils::chars($haystack[$i]) . "` = " . Utils::chars($needle[$i]);
             } else {
-                $cond .= "`$table`.`{$haystack[$i]}` = '{$needle[$i]}'";
+                $cond .= "`$table`.`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "'";
             }
         }
 
