@@ -1,1 +1,61 @@
-#tu si to dej
+body {
+    background: url(https://surpriseplay.eu/assets/images/background.webp) no-repeat center center fixed; 
+  	-webkit-background-size: cover;
+  	-moz-background-size: cover;
+  	-o-background-size: cover;
+    background-size: cover;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+#content {
+    align-items: center;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    -ms-flex-pack: center;
+    justify-content: center;
+    
+}
+
+.card {
+    width: 460px;
+}
+
+@media (max-width: 1156px) {
+	.card {
+		width: 90%;
+	}
+}
+
+.title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 0px;
+}
+
+.description {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 0px;
+}
+
+.btn-light {
+	border: none;
+	border-radius: 2rem;
+	padding: 0.5rem 2rem;
+	background: #2999ED;
+    color: #fff;
+    width: 100%;
+}
+
+.btn-light:hover {
+	background: #178FE1;
+	color: #fff;
+}
+
+.btn-light:focus {
+	background: #178FE1!important;
+	color: #fff!important;
+}
