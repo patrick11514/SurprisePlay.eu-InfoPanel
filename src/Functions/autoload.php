@@ -1,10 +1,13 @@
 <?php
 
 use patrick115\Main\Error;
-
 use patrick115\Main\Session;
+use patrick115\Main\Config;
+use patrick115\Main\Tools\Constanter;
 
-define("CURRENT_VERSION", "0.2.2");
+define("CURRENT_VERSION", "0.2.8");
+
+define("PHP_VERSION", PHP_VERSION);
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -31,6 +34,38 @@ spl_autoload_register(function ($class) {
     }
     include_once $path;
 });
+
+$__DEBUG = Config::init()->getConfig("debug");
+
+if ($__DEBUG === true) {
+    define("DEBUG", TRUE);
+} else if ($__DEBUG === true) {
+    define("DEBUG", FALSE);
+} else {
+    define("DEBUG", NULL);
+}
+
+$_616e6f6e796d6f7573 = function($_646174616261736573, $_64625f696e7374616e6365, $_6572726f725f66756e6374696f6e) {
+    $error = [];
+    foreach ($_646174616261736573 as $_6461746162617365)
+    {
+        $_DEC = @\patrick115\Main\Tools\Utils::getPackage([1 => $_6461746162617365]);
+        if (@$_64625f696e7374616e6365->
+        execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" . $_DEC . "'", true)
+        ->fetch_object()->SCHEMA_NAME != $_DEC) {
+            $error[] = $_DEC;
+        }
+    }
+    if (!empty($error)) {
+        foreach ($error as $err) {
+            $_6572726f725f66756e6374696f6e->catchError(str_replace("{@var}", $err, \patrick115\Main\Tools\Utils::getPackage([1 => "4461746162617365207b407661727d20646f65736e27742065786973747321"])), debug_backtrace());
+        }
+    }
+
+
+};
+
+Constanter::init()->send("_616e6f6e796d6f7573", $_616e6f6e796d6f7573);
 
 Session::init()->create();
 

