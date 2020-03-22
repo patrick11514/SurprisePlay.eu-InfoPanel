@@ -49,8 +49,8 @@ class Error
     public function catchError($e, $dump)
     {   
         $file = $dump[0]["file"];
-        $class = $dump[0]["class"];
-        $function = $dump[0]["function"];
+        $class = isset($dump[0]["class"]) ? $dump[0]["class"] : "GLOBAL";
+        $function = ($dump[0]["function"] == "{closure}") ? "ANONYMOUS" : $dump[0]["function"];
         $line = $dump[0]["line"];
         if (empty($dump[2])) {
             $this->catcherror[] = "<b>{$file}({$line}):</b> <i>{$class}::{$function}:</i> " . $e;
