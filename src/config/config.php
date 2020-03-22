@@ -9,21 +9,22 @@ return [
         "database" => "adminka",
     ],
     "Aliases" => [
-        "domain" => null
+        "domain" => null //Změna domény v titlu stránky
     ],
 
 
     "API" => [
         "permissions" => [
             "get-user-list" => [
-                "group" => "leaders"
+                "group" => "leaders" //Jméno kategorie, co má práva získavat informace z API (status gemů, todo...)
             ]
         ]
     ],
 
+    "debug" => true,
 
-    "Main" => [
-        "player_info" => [
+    "Main" => [ 
+        "player_info" => [ //Informace o hráči na hlavní stránce
             "username" => [
                 "name" => "Jméno",
                 "source" => [
@@ -134,7 +135,7 @@ return [
                 ]
             ],          
         ],
-        "admin_accounts" => [
+        "admin_accounts" => [ //Které groupky mají admin účet v admince
             "zk-builder",
             "zk-helper",
             "builder",
@@ -147,7 +148,7 @@ return [
             "vedeni",
             "majitel"
         ],
-        "group_names" => [
+        "group_names" => [ //Jak se mají jména groupek zobrazovat
             "default" => "Hráč",
             "heroic" => "Heroic",
             "legend" => "Legend",
@@ -166,19 +167,19 @@ return [
             "vedeni" => "Vedení",
             "majitel" => "Majitel",
         ],
-        "vips" => [
+        "vips" => [ //seznam groupek, co jsou VIP
             "surprise",
             "sponzor",
             "legend",
             "heroic"
         ],
-        "vip_levels" =>[ //čím menśí číslo, tím vyšší level (1 = nejlepší vip) - Nejvyšší vip nemusí začínat číslem 1
+        "vip_levels" =>[ //čím menší číslo, tím vyšší level (1 = nejlepší vip) - Nejvyšší vip nemusí začínat číslem 1
             1 => "surprise",
             2 => "sponzor",
             3 => "legend",
             4 => "heroic"
         ],
-        "group_colors" => [
+        "group_colors" => [ //barvičky groupe
             "default" => "#7b7f85",
             "heroic" => "#55FF55",
             "legend" => "#55FFFF",
@@ -198,16 +199,16 @@ return [
             "majitel" => "#AA0000",
         ],
 
-        "navigation" => [
-            "Hlavní Nabídka" => [
-                "role" => "category",
-                "permission" => "all",
-                "items" =>[
-                    "Info" => [
-                        "permission" => "all",
-                        "icon" => "fas fa-info",
-                        "link" => "?main",
-                        "page-name" => "main"
+        "navigation" => [ //Navigace
+            "Hlavní Nabídka" => [ //kategorie
+                "role" => "category", //role, že to je kategorie
+                "permission" => "all", //kdo má přístup k této celé kategorii
+                "items" =>[ //itemy v kategorii
+                    "Info" => [ //Název itemu
+                        "permission" => "all", //Kdo má přístup k itemu
+                        "icon" => "fas fa-info", //ikonka
+                        "link" => "?main", //stránka
+                        "page-name" => "main" //název stránky
                     ],
                     "Nastavení účtu" => [
                         "permission" => "all",
@@ -250,17 +251,18 @@ return [
             "Nábory" => [
                 "role" => "category",
                 "permission" => "all",
+                "visible" => false, #true = zobrazit kategorii náborů; false = nezobrazovat; Toto nastavení lze přidat i do každé položky v items, i do jiných kategorií
                 "items" => [
                     "Nábor na helpera" => [
                         "permission" => "all",
                         "icon" => "fa fa-hands-helping",
                         "link" => "#",
-                        "page-name" => "#"
+                        "page-name" => "#",
                     ]
                 ]
             ]
         ],
-        "page_perms" => [
+        "page_perms" => [ //permisse, na určité stránky (Ne navigace)
             "MainPage" => "all",
             "Settings" => "all",
             "ErrorPage" => "all",
@@ -270,7 +272,7 @@ return [
             "Gems" => "full",
             "TodoList" => "leaders"
         ],
-        "group-perms" => [
+        "group-perms" => [ //jména skupin s permissema
             "full" => [
                 "majitel",
                 "vedeni",
@@ -325,11 +327,11 @@ return [
                 "majitel",
             ]
         ],
-        "todo-list" => "leaders",
-        "todo-tags" => [
-            "important" => [
-                "name" => "Důležité",
-                "color" => "#AA0000"
+        "todo-list" => "leaders", //Lidi, kteří budou na výběr při zadávání úkolu
+        "todo-tags" => [ //tagy v todo listu
+            "important" => [//Libovolné jméno tagu
+                "name" => "Důležité", //Jméno tagu, které se bude zobrazovat
+                "color" => "#AA0000" //Barva tagu
             ],
             "warning" => [
                 "name" => "Varování",

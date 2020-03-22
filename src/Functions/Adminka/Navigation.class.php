@@ -6,6 +6,7 @@ use patrick115\Main\Config;
 use patrick115\Main\Error;
 use patrick115\Adminka\Main;
 use patrick115\Main\Session;
+use patrick115\Main\Tools\Utils;
 
 class Navigation
 {
@@ -56,6 +57,9 @@ class Navigation
             if (!$app->getUser($username)->havePermission()->inGroup($nav_category_data["permission"])) {
                 continue;
             }
+            if (!@Utils::newEmpty($nav_category_data["visible"]) && $nav_category_data["visible"] === false) {
+                continue;
+            }
             $nav_contains_any_items = true;
             $nav_final .= "<li class=\"nav-header\" style=\"text-align:center;background-color:#25292e\">{$nav_category_name}</li>";
             foreach ($nav_category_data["items"] as $nav_item_name => $nav_item_data) 
@@ -64,7 +68,7 @@ class Navigation
                     $this->error->catchError("No permission for $nav_item_name in $nav_category_name not found!", debug_backtrace());
                     continue;
                 }
-                if (empty($nav_item_data["icon"]) && !\patrick115\Main\Tools\Utils::newEmpty($nav_item_data["icon"])) {
+                if (empty($nav_item_data["icon"]) && \patrick115\Main\Tools\Utils::newEmpty($nav_item_data["icon"])) {
                     $this->error->catchError("No icon for $nav_item_name in $nav_category_name not found!", debug_backtrace());
                     continue;
                 }
@@ -91,6 +95,9 @@ class Navigation
                         }
                         if (empty($list_item_data["link"])) {
                             $this->error->catchError("No link for $list_item_data in $nav_item_name not found!", debug_backtrace());
+                            continue;
+                        }
+                        if (!@Utils::newEmpty($list_item_data["visible"]) && $list_item_data["visible"] === false) {
                             continue;
                         }
                         if (!$app->getUser($username)->havePermission()->inGroup($list_item_data["permission"])) {

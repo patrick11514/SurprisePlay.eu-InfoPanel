@@ -419,11 +419,11 @@ class Templater
         }
 
         $main .= "
-            <!-- 
+            <p style=\"visibility:hidden;z-index:-9999;left:-9999px;top:-9999px;width:0px;height:0px;margin:0;padding:0;display:none;\">
                 By: patrick115
                 Qithub: https://github.com/patrick11514
                 Queries: " . Database::init()->getQueries() . "
-            --!>
+            </p>
         ";
 
         return $main;
@@ -570,8 +570,7 @@ class Templater
                     $replacement = $app->getEMail();
                 break;
                 case "password":
-                    $pass = $app->getUserPassword();
-                    $replacement = Utils::createDots($pass);
+                    $replacement = Utils::createDots(6);
                 break;
                 case "copy":
                     $replacement = $this->copy->get();
