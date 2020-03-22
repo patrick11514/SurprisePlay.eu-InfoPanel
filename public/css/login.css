@@ -29,6 +29,12 @@ body {
 	}
 }
 
+@media (max-width: 576px) {
+    #content {
+        min-height: 510px;
+    }
+}
+
 .title {
     text-align: center;
     font-size: 28px;
