@@ -336,7 +336,11 @@ return [
             "warning" => [
                 "name" => "Varování",
                 "color" => "#FFAA00"
-            ]
+            ],
+            "ahoj" => [
+                "name" => "Jsem kokot",
+                "color" => "#fc4497"
+            ] 
         ]
     ]
 ];
