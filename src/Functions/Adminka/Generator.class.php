@@ -67,21 +67,15 @@ class Generator
                             <p>%%page_name%%</p>
                             <ul class="nav navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                                    <a class="nav-link" href="./?logout"><i class="fas fa-sign-in-alt"></i></a>
                                 </li>
                             </ul>
                         </div>
                     </nav>
 
                     <div id="container" class="container-fluid">
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%ERRORS%%
-                        </div>
-                        <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%messages%%
-                        </div>
+                        %%ERRORS%%
+                        %%messages%%
                         <div class="card">
                             <div class="card-body">
                                 <p>Autologin</p>
@@ -125,21 +119,15 @@ class Generator
                             <p>%%page_name%%</p>
                             <ul class="nav navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                                    <a class="nav-link" href="./?logout"><i class="fas fa-sign-in-alt"></i></a>
                                 </li>
                             </ul>
                         </div>
                     </nav>
 
                     <div id="container" class="container-fluid">
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%ERRORS%%
-                        </div>
-                        <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%messages%%
-                        </div>
+                        %%ERRORS%%
+                        %%messages%%
                         <div class="card">
                             <div class="card-body">
                             <p>Povolení VPN</p>
@@ -160,7 +148,7 @@ class Generator
                         <div class="card">
                             <div class="card-body">
                                 <p>Povolené přístupy s VPN</p>
-                                <hr>
+                                <br>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -212,21 +200,15 @@ class Generator
                             <p>%%page_name%%</p>
                             <ul class="nav navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                                    <a class="nav-link" href="./?logout"><i class="fas fa-sign-in-alt"></i></a>
                                 </li>
                             </ul>
                         </div>
                     </nav>
 
                     <div id="container" class="container-fluid">
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%ERRORS%%
-                        </div>
-                        <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%messages%%
-                        </div>
+                        %%ERRORS%%
+                        %%messages%%
                         <div class="card">
                             <div class="card-body">
                                 <p>Odregistrování hráče</p>
@@ -245,12 +227,12 @@ class Generator
                                     <button type="submit" id="unregister-button"
                                         class="btn btn-light">Odregistrovat</button>
                                 </form>
-                            </div>
+                            </hr>
                         </div>
                         <div class="card">
                             <div class="card-body">
                                 <p>Záznam odregistrovaných uživatelů</p>
-                                <hr>
+                                <br>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -312,14 +294,8 @@ class Generator
                     </nav>
     
                     <div id="container" class="container-fluid">
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%ERRORS%%
-                        </div>
-                        <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%messages%%
-                        </div>
+                        %%ERRORS%%
+                        %%messages%%
                         <div class="card">
                             <div class="card-body">
                                 <p>Správa gemů</p>
@@ -355,7 +331,7 @@ class Generator
                         <div class="card">
                             <div class="card-body">
                                 <p>Seznam transakcí gemů</p>
-                                <hr>
+                                <br>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -419,18 +395,12 @@ class Generator
                     </nav>
 
                     <div id="container" class="container-fluid">
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%ERRORS%%
-                        </div>
-                        <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            %%messages%%
-                        </div>
+                        %%ERRORS%%
+                        %%messages%%
                         <div class="card">
                             <div class="card-body">
                                 <p>Úkoly:</p>
-                                <hr>
+                                <br>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>

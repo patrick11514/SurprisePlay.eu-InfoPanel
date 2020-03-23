@@ -36,7 +36,7 @@ class Settings
 
     public function __construct($data)
     {
-        foreach ($this->settings_datas["method"] as $datas) {
+        foreach ($this->settings_datas[$data["method"]] as $datas) {
             if (empty($data[$datas])) {
                 define("MESSAGE", ["Can't find $datas in got data."]);
                 return true;
@@ -102,7 +102,7 @@ class Settings
         $status = $stats->getAntiVPNStatus();
 
         if ($status == "Povolen") {
-            define("MESSAGE", ["<span style=\"color:red\">Tento hráč již má povolený přístup s VPN!</span>"]);
+            define("ERROR", ["Tento hráč již má povolený přístup s VPN!"]);
             return true;
         }
 
@@ -148,7 +148,7 @@ class Settings
         $methods = ["add", "remove"];
 
         if (!in_array($method, $methods)) {
-            define("MESSAGE", ["<span style=\"color:red\">Neplatná metoda!</span>"]);
+            define("ERROR", ["Neplatná metoda!"]);
             return true;
         }
 
@@ -157,7 +157,7 @@ class Settings
 
         if ($method == "remove") {
             if ($amount > $credits) {
-                define("MESSAGE", ["<span style=\"color:red\">Hráč má pouze {$credits} gemů, proto nelze odebrat {$amount} gemů</span>"]);
+                define("ERROR", ["Hráč má pouze {$credits} gemů, proto nelze odebrat {$amount} gemů"]);
                 return true;
             }
             $new_gems = $credits - $amount;
@@ -203,8 +203,8 @@ class Settings
         $message = [];
 
         $is_changed = false;
-
-        if ($this->data["password"] != Utils::createDots($user_data->getUserPassword())) {
+        
+        if (!empty(trim($this->data["password"], "*"))) {
             $is_changed = true;
             if (strpos($this->data["password"], "*") === false) {
                 $hash = Utils::hashPassword($this->data["password"], "sha256");
@@ -217,8 +217,8 @@ class Settings
                 define("DELETE_SESSION", true);
                 define("MESSAGE", $message);
             } else {
-                define("MESSAGE", ["<span style=\"color:red\">Heslo nesmí obsahovat speciální znaky</span>"]);
-                return true;
+                define("ERROR", ["Heslo nesmí obsahovat speciální znaky"]);
+                return false;
             }
         }
 
@@ -249,7 +249,7 @@ class Settings
         if ($this->data["e-mail"] != $user_data->getEMail()) {
             if (filter_var($this->data["e-mail"], FILTER_VALIDATE_EMAIL)) {
                 if (substr_count(explode("@", $this->data["e-mail"])[1], ".") > 1) {
-                    define("MESSAGE", ["<span style=\"color:red\">E-mail je neplatný!</span>"]);
+                    define("ERROR", ["E-mail je neplatný!"]);
                     return true;
                 }
                 $is_changed = true;

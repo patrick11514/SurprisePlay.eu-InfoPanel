@@ -133,9 +133,9 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: normal;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td>{$i}</td>
+                            <td>{$username}</td>
+                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
                         </tr>";
                     }
                 }
@@ -195,11 +195,11 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["id"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["admin"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
+                            <td>{$row["id"]}</td>
+                            <td>{$username}</td>
+                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td>{$row["admin"]}</td>
+                            <td>{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -262,13 +262,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["id"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$username}</td>
-                            <td style=\"text-align:center;word-break: normal;\"><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["admin"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["amount"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$method}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
+                            <td>{$row["id"]}</td>
+                            <td>{$username}</td>
+                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td>{$row["admin"]}</td>
+                            <td>{$row["amount"]}</td>
+                            <td>{$method}</td>
+                            <td>{$row["date"]}</td>
                         </tr>";
                     }
                 }
@@ -347,13 +347,13 @@ class API
 
                         $return .= "
                         <tr>
-                            <td style=\"text-align:center;word-break: normal;\">{$i}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["for"]}</td>
+                            <td>{$i}</td>
+                            <td>{$row["for"]}</td>
                             <td style=\"word-break: normal;\">{$row["message"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$tag_string}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["creator"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">{$row["date"]}</td>
-                            <td style=\"text-align:center;word-break: normal;\">
+                            <td>{$tag_string}</td>
+                            <td>{$row["creator"]}</td>
+                            <td>{$row["date"]}</td>
+                            <td>
                                 <form method=\"post\" action=\"./requests.php\">
                                     <input type=\"hidden\" name=\"method\" value=\"remove-todo\" required>
                                     <input type=\"hidden\" name=\"source_page\" value=\"?todo\" required>

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//%%domain%%/public/css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <script src="//%%domain%%/public/js/jquery.min.js"></script>
 </head>
 <body>
     <div class="wrapper">
@@ -32,8 +33,6 @@
         %%content%%
 
     </div>
-
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="//%%domain%%/public/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {

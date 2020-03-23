@@ -327,24 +327,31 @@ class Templater
         }
 
         if ($session->isExist("Request/Errors")) {
-            $errors = "<center>
-            <h3 style=\"color:red;padding-top:1%;\">";
+            $errors = "";
             foreach ($session->getData("Request/Errors") as $error) {
-                $errors .= "<p>$error</p>";
+                $errors .= "<div class=\"alert alert-danger alert-dismissible\">
+                <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button>";
+            
+                $errors .= "$error";
+
+                $errors .= "</div>";
             }
-            $errors .= "</h3></center>";
+            
             unset($_SESSION["Request"]["Errors"]);
         } else {
             $errors = "";
         }
 
         if ($session->isExist("Request/Messages")) {
-            $messages = "<center>
-            <h3 style=\"color:green;padding-top:1%;\">";
+            $messages = "";
             foreach ($session->getData("Request/Messages") as $message) {
-                $messages .= "<p>$message</p>";
+                $messages .= "<div class=\"alert alert-success alert-dismissible\">
+                <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button>";
+            
+                $messages .= "$message";
+            
+                $messages .= "</div>";
             }
-            $messages .= "</h3></center>";
             unset($_SESSION["Request"]["Messages"]);
         } else {
             $messages = "";

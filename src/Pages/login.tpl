@@ -3,8 +3,8 @@
             <div class="card-body">
                 <p class="title"><b>SurprisePlay</b>.eu</p>
                 <p class="description">Přihlášení</p>
-                <h6>%%ERRORS%% - SweetAlert</h6>
-                <h6>%%messages%% - SweetAlert</h6>
+                %%ERRORS%%
+                %%messages%%
                 <form action="./requests.php" method="post">
                     <input type="hidden" name="method" value="login" required>
                     <input type="hidden" name="source_page" value="?login" required>

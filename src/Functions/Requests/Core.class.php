@@ -121,11 +121,12 @@ class Core
 
         $token = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
         $return = $token->checkToken($this->post["CSRF_token"]);
-        /*if (!$return) {
+        
+        if (!$return) {
             $this->error->catchError("CSRF token is invalid!", debug_backtrace());
             $this->errors[] = "Ověření na straně serveru neproblěhlo úspěšně!";
             return;
-        }*/
+        }
 
         $token->newToken();
 
@@ -165,11 +166,21 @@ class Core
 
             if (!$rv) {
                 if (isset($data["custom_error"])) {
-                    $error = $data["custom_error"];
+                    if (!empty(constant("ERROR"))) {
+                        $error = constant("ERROR");
+                    } else {
+                        $error = $data["custom_error"];
+                    }
                 } else {
                     $error = "Ověření dat neproblěhlo úspěšně!";
                 }
-                $this->errors[] = $error;
+                if (is_array($error)) {
+                    foreach ($error as $er) {
+                        $this->errors[] = $er;
+                    }
+                } else {
+                    $this->errors[] = $error;
+                }
             } else {
                 if (isset($data["success_message"])) {
                     $_SESSION["Request"]["Messages"][] = $data["success_message"];

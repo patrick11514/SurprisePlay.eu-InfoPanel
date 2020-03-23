@@ -9,21 +9,16 @@
             <p>%%page_name%%</p>
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                    <a class="nav-link" href="./?logout"><i class="fas fa-sign-in-alt"></i></a>
                 </li>
             </ul>
         </div>
     </nav>
 
     <div id="container" class="container-fluid">
-        <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%ERRORS%%
-        </div>
-        <div class="alert alert-success alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%messages%%
-        </div>
+        %%ERRORS%%
+        %%messages%%
+        
         <div class="row">
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box blue">
