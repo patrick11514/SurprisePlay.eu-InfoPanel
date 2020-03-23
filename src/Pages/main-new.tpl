@@ -25,7 +25,7 @@
                     <p>%%username%%</p>
                     <p class="rank">%%rank%%</p>
                 </div>
-
+                %%NAVIGATION%%
             </ul>
         </nav>
 
