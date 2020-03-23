@@ -1,57 +1,77 @@
-<section class="content">
-    <div class="row">
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box bg-info" style="color:#fff !important; text-shadow: 0 1px 10px rgba(0,0,0,.6);">
-                <span class="info-box-icon"><i class="fas fa-users"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Registrováno uživatelů</span>
-                    <span class="info-box-number">%%registered_users%%</span>
-                </div>
-            </div>
+<div id="content">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" id="sidebarCollapse" href="#"><i class="fas fa-align-left"></i></a>
+                </li>
+            </ul>
+            <p>%%page_name%%</p>
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box bg-danger" style="color:#fff !important; text-shadow: 0 1px 10px rgba(0,0,0,.6);">
-                <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+    </nav>
 
-                <div class="info-box-content">
-                    <span class="info-box-text">Zabanováno uživatelů</span>
-                    <span class="info-box-number">%%banned_users%%</span> 
+    <div id="container" class="container-fluid">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            %%ERRORS%%
+        </div>
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            %%messages%%
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box blue">
+                    <span class="info-box-icon"><i class="fas fa-users"></i></span>
+                    <div class="info-box-content">
+                        <span class="text">Registrováno uživatelů</span>
+                        <span class="number">%%registered_users%%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box red">
+                    <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                    <div class="info-box-content">
+                        <span class="text">Zabanováno uživatelů</span>
+                        <span class="number">%%banned_users%%</span> 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box green">
+                    <span class="info-box-icon"><i class="fas fa-vote-yea"></i></span>
+                    <div class="info-box-content">
+                        <span class="text">Hlasů pro server</span>
+                        <span class="number">%%votes%%</span>  
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box yellow">
+                    <span class="info-box-icon"><i class="fas fa-coins"></i></span>  
+                    <div class="info-box-content">
+                        <span class="text">Oběh peněz na serveru</span>
+                        <span class="number">%%currency%%</span> 
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box bg-success" style="color:#fff !important; text-shadow: 0 1px 10px rgba(0,0,0,.6);">
-                <span class="info-box-icon"><i class="fas fa-vote-yea"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Hlasů pro server</span>
-                    <span class="info-box-number">%%votes%%</span>  
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box bg-warning" style="color:#fff !important; text-shadow: 0 1px 10px rgba(0,0,0,.6);">
-                <span class="info-box-icon"><i class="fas fa-coins"></i></span>  
-                <div class="info-box-content">
-                    <span class="info-box-text">Oběh peněz na serveru</span>
-                    <span class="info-box-number">%%currency%%</span> 
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="content">
-    <div class="container">
-        <div class="box box-widget widget-user-2">
-            <div class="widget-user-header bg-blue">
-                <h1 class="widget-user-username" style="text-align: center;margin-left:0;"><b>Základní informace o Vás ze serveru.</b></h1>
-            </div>
-            <div class="box-footer no-padding">
+        <div class="card">
+            <div class="card-body">
+                <p>Základní informace o Vás ze serveru</p>
+                <hr>
                 <table class="table table-condensed" style="background-color:white;">
-                  <tbody>
-                    %%player_info%%
-                  </tbody>
+                    <tbody>
+                        %%player_info%%
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
-</section>
+</div>

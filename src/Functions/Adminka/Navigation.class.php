@@ -31,8 +31,7 @@ class Navigation
 
     public function createNav()
     {
-        $nav_final = "<nav class=\"mt-2\">
-                        <ul class=\"nav nav-pills nav-sidebar flex-column\" data-widget=\"treeview\" role=\"menu\" data-accordion=\"false\">";
+        $nav_final = "";
 
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
 
@@ -61,7 +60,7 @@ class Navigation
                 continue;
             }
             $nav_contains_any_items = true;
-            $nav_final .= "<li class=\"nav-header\" style=\"text-align:center;background-color:#25292e\">{$nav_category_name}</li>";
+            $nav_final .= "<div class=\"section\"><p>{$nav_category_name}</p></div>";
             foreach ($nav_category_data["items"] as $nav_item_name => $nav_item_data) 
             {
                 if (empty($nav_item_data["permission"])) {
@@ -103,10 +102,10 @@ class Navigation
                         if (!$app->getUser($username)->havePermission()->inGroup($list_item_data["permission"])) {
                             continue;
                         }
-                        $nav_final .= "<li class=\"nav-item\">
-                                        <a href=\"{$list_item_data["link"]}\" class=\"nav-link\">
-                                            <i class=\"{$list_item_data["icon"]} nav-icon\"></i>
-                                            <p>{$list_item_name}</p>¨
+                        $nav_final .= "<li>
+                                        <a href=\"{$list_item_data["link"]}\">
+                                            <i class=\"{$list_item_data["icon"]}\"></i>
+                                            {$list_item_name}
                                         </a>
                                         </li>";
                                             
@@ -120,16 +119,16 @@ class Navigation
                     if (!$app->getUser($username)->havePermission()->inGroup($nav_item_data["permission"])) {
                         continue;
                     }
-                    $nav_final .= "<li class=\"nav-item\">
-                                        <a href=\"{$nav_item_data["link"]}\" class=\"nav-link\">
-                                            <i class=\"{$nav_item_data["icon"]} nav-icon\"></i>
-                                            <p>{$nav_item_name}</p>
+                    $nav_final .= "<li>
+                                        <a href=\"{$nav_item_data["link"]}\">
+                                            <i class=\"{$nav_item_data["icon"]} \"></i>
+                                            {$nav_item_name}
                                         </a>
                                         </li>";
                 }
             }
         }
-        $nav_final .= "</ul></nav>";
+        $nav_final .= "";
         if ($nav_contains_any_items === false) {
             $nav_final = "<nav class=\"mt-2\">
                             <ul class=\"nav nav-pills nav-sidebar flex-column\" data-widget=\"treeview\" role=\"menu\" data-accordion=\"false\">
