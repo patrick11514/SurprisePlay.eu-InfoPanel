@@ -12,6 +12,6 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
 </head>
 <body>
-
+  %%content%%
 </body>
 </html>
