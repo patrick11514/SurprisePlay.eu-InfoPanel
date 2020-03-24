@@ -24,7 +24,7 @@
                 <div class="user">
                     <img src="%%skin_URL%%" class="avatar">
                     <p>%%username%%</p>
-                    <p class="rank">%%rank%%</p>
+                    <p class="rank" style="color:%%RANK_COLOR%%;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);">%%rank%%</p>
                 </div>
                 %%NAVIGATION%%
             </ul>
