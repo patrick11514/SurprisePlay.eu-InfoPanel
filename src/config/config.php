@@ -215,6 +215,12 @@ return [
                         "icon" => "fas fa-cog",
                         "link" => "?settings",
                         "page-name" => "settings"
+                    ],
+                    "Napsat Tiket" => [
+                        "permission" => "all",
+                        "icon" => "fas fa-pencil-alt",
+                        "link" => "?ticket-write",
+                        "page-name" => "ticket-write"
                     ]
                 ]
             ],
@@ -248,6 +254,36 @@ return [
                     ],
                 ]
             ],
+            "Podpora" => [
+                "role" => "category",
+                "permission" => "mids",
+                "items" => [
+                    "Vedení" => [
+                        "permission" => "full",
+                        "icon" => "fas fa-circle",
+                        "link" => "?tickets-user",
+                        "page-name" => "tickets-user"
+                    ],
+                    "Hlavní Helper" => [
+                        "permission" => "hl_helper",
+                        "icon" => "fas fa-circle",
+                        "link" => "?tickets-user",
+                        "page-name" => "tickets-user"
+                    ],
+                    "Hlavní Builder" => [
+                        "permission" => "hl_builder",
+                        "icon" => "fas fa-circle",
+                        "link" => "?tickets-user",
+                        "page-name" => "tickets-user"
+                    ],
+                    "Helper" => [
+                        "permission" => "helpers",
+                        "icon" => "fas fa-circle",
+                        "link" => "?tickets-user",
+                        "page-name" => "tickets-user"
+                    ]
+                ]
+            ],
             "Nábory" => [
                 "role" => "category",
                 "permission" => "all",
@@ -279,6 +315,18 @@ return [
                 "technik",
                 "leader"
             ],
+            "hl_builder" => [
+                "inherits" => [
+                    "full"
+                ],
+                "hl-builder"
+            ],
+            "hl_helper" => [
+                "inherits" => [
+                    "full"
+                ],
+                "hl-helper"
+            ],
             "leaders" => [
                 "inherits" => [
                     "full"
@@ -286,6 +334,13 @@ return [
                 "hl-builder",
                 "hl-helper",
                 "e-helper"
+            ],
+            "helpers" => [
+                "inherits" => [
+                    "hl_helper"
+                ],
+                "helper",
+                "zk-helper"
             ],
             "mids" => [
                 "inherits" => [
@@ -336,11 +391,7 @@ return [
             "warning" => [
                 "name" => "Varování",
                 "color" => "#FFAA00"
-            ],
-            "ahoj" => [
-                "name" => "Jsem kokot",
-                "color" => "#fc4497"
-            ] 
+            ]
         ]
     ]
 ];
