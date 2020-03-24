@@ -30,6 +30,4 @@
             </div>
         </div>
     </section>
-
-    <script src="//%domain%/public/plugins/jquery/jquery.min.js"></script>
-    <script src="//%domain%/public/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="//%domain%/public/js/bootstrap.bundle.min.js"></script>
