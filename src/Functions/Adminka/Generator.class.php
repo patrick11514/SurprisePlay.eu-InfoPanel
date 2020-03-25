@@ -78,7 +78,8 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p class="title">Autologin</p>
+                                <p>Autologin</p>
+                                <hr>
                                 <form method="post" action="./requests.php" role="form">
                                     <input type="hidden" name="method" value="settings" required>
                                     <input type="hidden" name="source_page" value="?settings" required>
