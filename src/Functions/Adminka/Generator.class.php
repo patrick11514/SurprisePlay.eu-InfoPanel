@@ -78,8 +78,7 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p>Autologin</p>
-                                <hr>
+                                <p class="title">Autologin</p>
                                 <form method="post" action="./requests.php" role="form">
                                     <input type="hidden" name="method" value="settings" required>
                                     <input type="hidden" name="source_page" value="?settings" required>
@@ -147,8 +146,7 @@ class Generator
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <p>Povolené přístupy s VPN</p>
-                                <br>
+                                <p class="title">Povolené přístupy s VPN</p>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -158,7 +156,7 @@ class Generator
                                     <table id="allow-vpn-table" style="visibility:hidden;" class="loading table table-striped">
                                         <thead>                  
                                             <tr>
-                                                <th style="width: 10px">#</th>
+                                                <th>#</th>
                                                 <th>Jméno</th>
                                                 <th>Rank</th>
                                             </tr>
@@ -231,8 +229,7 @@ class Generator
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <p>Záznam odregistrovaných uživatelů</p>
-                                <br>
+                                <p class="title">Záznam odregistrovaných uživatelů</p>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -243,7 +240,7 @@ class Generator
                                         class="loading table table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10px">#</th>
+                                                <th>#</th>
                                                 <th>Jméno</th>
                                                 <th>Rank</th>
                                                 <th>Odregistroval</th>
@@ -330,8 +327,7 @@ class Generator
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <p>Seznam transakcí gemů</p>
-                                <br>
+                                <p class="title">Seznam transakcí gemů</p>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -342,7 +338,7 @@ class Generator
                                         class="loading table table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10px">#</th>
+                                                <th>#</th>
                                                 <th>Jméno</th>
                                                 <th>Rank</th>
                                                 <th>Admin</th>
@@ -399,8 +395,7 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p>Úkoly:</p>
-                                <br>
+                                <p class="title">Úkoly:</p>
                                 <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
@@ -411,7 +406,7 @@ class Generator
                                         class="table table-striped loading">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10px">#</th>
+                                                <th>#</th>
                                                 <th>Jméno</th>
                                                 <th>Úkol</th>
                                                 <th>Tagy</th>
