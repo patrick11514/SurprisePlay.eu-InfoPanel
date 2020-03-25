@@ -78,13 +78,14 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p>Autologin</p>
+                                <p>Natavení tvého účtu</p>
                                 <hr>
                                 <form method="post" action="./requests.php" role="form">
                                     <input type="hidden" name="method" value="settings" required>
                                     <input type="hidden" name="source_page" value="?settings" required>
                                     <input type="hidden" name="CSRF_token" value="%%CSRF_Token%%" required>
                                     <div class="form-group">
+                                        <label for="email">Autologin</label>
                                         <select name="autologin" class="form-control">
                                             <option value="%%autologin_st%%">%%autologin_st_name%%</option>
                                             <option value="%%autologin_nd%%">%%autologin_nd_name%%</option>
