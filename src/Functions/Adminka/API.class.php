@@ -320,7 +320,7 @@ class API
                 $i = ($value == 1) ? 0 : ($value - 1) * 10;
                 $a = 0;
 
-                $token = \patrick115\Main\Session::init()->getData("Security/CRF/Token");
+                $token = \patrick115\Main\Session::init()->getData("Security/CRF/token");
 
                 while ($row = $rv->fetch_assoc()) {
                     $i++;
