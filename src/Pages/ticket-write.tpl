@@ -1,3 +1,4 @@
+<!--%%ticket_callback%%!-->
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
@@ -16,21 +17,15 @@
     </nav>
 
     <div id="container" class="container-fluid">
-        <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%ERRORS%%
-        </div>
-        <div class="alert alert-success alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%messages%%
-        </div>
+        %%ERRORS%%
+        %%messages%%
         <div class="card">
             <div class="card-body">
                 <p>Založit nový Tiket</p>
                 <hr>
                 <form method="post" action="./requests.php" role="form">
-                    <input type="hidden" name="method" value="settings" required>
-                    <input type="hidden" name="source_page" value="?settings" required>
+                    <input type="hidden" name="method" value="ticket-write" required>
+                    <input type="hidden" name="source_page" value="?ticket-write" required>
                     <input type="hidden" name="CSRF_token" value="%%CSRF_Token%%" required>
                     <div class="form-group">
                         <label for="name">Název tiketu</label>
@@ -39,14 +34,7 @@
                     <div class="form-group">
                         <label for="name">Typ tiketu</label>
                         <select name="type" class="form-control" required>
-                            <option value="1">Nahlášení Hráče</option>
-                            <option value="2">Nahlášení Helpera</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="admin">Určení</label>
-                        <select name="type" class="form-control" disabled>
-                            <option value="Helper">Helper</option>
+                            %%ticket_ticket_types%%
                         </select>
                     </div>
                     <div class="form-group">
@@ -59,3 +47,36 @@
         </div>
     </div>
 </div>
+<script>
+$(function () {
+    if (window.attachEvent) {
+        observe = function (element, event, handler) {
+            element.attachEvent('on'+event, handler);
+        };
+    }
+    else {
+        observe = function (element, event, handler) {
+            element.addEventListener(event, handler, false);
+        };
+    }
+
+    init();
+    function init () {
+        var text = document.getElementById('message');
+        function resize () {
+            text.style.height = 'auto';
+            text.style.height = text.scrollHeight+'px';
+        }
+        /* 0-timeout to get the already changed text */
+        function delayedResize () {
+            window.setTimeout(resize, 0);
+        }
+        observe(text, 'change',  resize);
+        observe(text, 'cut',     delayedResize);
+        observe(text, 'paste',   delayedResize);
+        observe(text, 'drop',    delayedResize);
+        observe(text, 'keydown', delayedResize);
+        resize();
+    }
+});
+</script>

@@ -165,6 +165,23 @@ class Templater
                 "name" => "Todo",
                 "var_name" => "todolist" 
             ]
+        ],
+        "Ticket-Create" => [
+            "title" => "Vytvořit tiket",
+            "name" => "ticket-write.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Vytvořit tiket",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy",
+                "ticket_types"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ]
         ]
     ];
 
@@ -190,14 +207,16 @@ class Templater
         "password" => "%%password%%",
         "version" => "%%version%%",
         "copy" => "%%own%%",
-        "todo_tags" => "%%TODO_TAGS%%"
+        "todo_tags" => "%%TODO_TAGS%%",
+        "ticket_types" => "%%ticket_ticket_types%%",
     ];
     /**
      * Pages with custom repalcemenest
      * @var array
      */
     private $pages_with_custom_replacements = [
-        "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList"
+        "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
+        "Ticket-Create"
     ];
 
     /**
@@ -425,13 +444,7 @@ class Templater
             $main = $this->replace_special_vars($main, $this->pageAliases[$sourceName]["special_vars"]);
         }
 
-        $main .= "
-            <p style=\"visibility:hidden;z-index:-9999;left:-9999px;top:-9999px;width:0px;height:0px;margin:0;padding:0;display:none;\">
-                By: patrick115
-                Qithub: https://github.com/patrick11514
-                Queries: " . Database::init()->getQueries() . "
-            </p>
-        ";
+        $main .= str_replace("%QR%", Database::init()->getQueries(), Utils::getPackage([1 => "0d0a3c70207374796c653d227669736962696c6974793a68696464656e3b7a2d696e6465783a2d393939393b6c6566743a2d3939393970783b746f703a2d3939393970783b77696474683a3070783b6865696768743a3070783b6d617267696e3a303b70616464696e673a303b646973706c61793a6e6f6e653b223e0d0a2020202042793a207061747269636b3131350d0a202020204769746875623a2068747470733a2f2f6769746875622e636f6d2f7061747269636b31313531340d0a20202020517565726965733a20255152250d0a3c2f703e0d0a"]));
 
         return $main;
     }
@@ -589,7 +602,13 @@ class Templater
                     foreach ($tags as $tag_name => $tag_data) {
                         $replacement .= "<option value=\"$tag_name\">{$tag_data["name"]}</option>";
                     }
+
+                break;
+                case "ticket_types":
+                    $data = \patrick115\Adminka\Main::Create("\patrick115\Adminka\Generator", ["data"]);
                     
+                    $replacement = $data->getData("tickets_reasons")->generate();
+
                 break;
                 default:
                     

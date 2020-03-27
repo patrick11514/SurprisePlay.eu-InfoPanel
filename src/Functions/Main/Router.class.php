@@ -24,7 +24,8 @@ class Router
         "vpn-allow" => "VPNAllow",
         "unregister" => "Unregister",
         "gems" => "Gems",
-        "todo" => "TodoList"
+        "todo" => "TodoList",
+        "ticket-write" => "Ticket-Create"
     ];
 
     /**

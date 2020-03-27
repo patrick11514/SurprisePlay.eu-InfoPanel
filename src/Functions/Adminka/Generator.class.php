@@ -4,6 +4,10 @@ namespace patrick115\Adminka;
 
 use patrick115\Main\Error;
 use patrick115\Adminka\Main;
+use patrick115\Main\Session;
+use patrick115\Main\Tools\Utils;
+
+use patrick115\Adminka\Tickets;
 
 class Generator
 {
@@ -15,6 +19,7 @@ class Generator
 
     private $aviliable_methods = [
         "form",
+        "data",
         "table"
     ];
 
@@ -34,6 +39,48 @@ class Generator
         return $this->genData;
     }
 
+
+    public function getData($data_name)
+    {
+        if ($this->method != "data") {
+            $this->error->catchError("Can't use getData, when method is not data.", debug_backtrace());
+            return;
+        }
+        $stored_data = [
+            "tickets_reasons"
+        ];
+
+        if (!in_array($data_name, $stored_data)) {
+            $this->error->catchError("Stored data $data_name not found!", debug_backtrace());
+        }
+
+        switch ($data_name) {
+            case "tickets_reasons":
+                $username = Session::init()->getData("Account/User/Username");
+                $tickets = new Tickets($username);
+
+                $reasons = $tickets->getReasons();
+                $groups = $tickets->getGroups();
+
+                $ret = "";
+
+                foreach ($groups as $group_id => $group_name) {
+                    $ret .= "<option></option>
+                    <optgroup label=\"{$group_name}\">";
+
+                    foreach ($reasons[$group_id] as $reason) {
+                        $ret .= "<option value=\"" . Utils::createPackage("%%TICKET_ID;" . $reason["displayname"] . ";TICKET_ID%%")[1] . "\">{$reason["displayname"]}</option>";
+                    }
+
+                    $ret .= "</optgroup>";
+                }
+
+                $this->genData = $ret;
+            break; 
+
+        }
+        return Main::Create("\patrick115\Adminka\Generator", ["data"]);
+    }
 
     public function getForm($form_name)
     {

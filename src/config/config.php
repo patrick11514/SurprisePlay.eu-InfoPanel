@@ -299,14 +299,19 @@ return [
             ]
         ],
         "page_perms" => [ //permisse, na určité stránky (Ne navigace)
+            //logout
+            "Logout" => "all",
+            //hlavní stránky
             "MainPage" => "all",
             "Settings" => "all",
             "ErrorPage" => "all",
-            "Logout" => "all",
+            //admin stránky
             "VPNAllow" => "leaders",
             "Unregister" => "leaders",
             "Gems" => "full",
-            "TodoList" => "leaders"
+            "TodoList" => "leaders",
+            //tickety
+            "Ticket-Create" => "all",
         ],
         "group-perms" => [ //jména skupin s permissema
             "full" => [
@@ -392,6 +397,91 @@ return [
                 "name" => "Varování",
                 "color" => "#FFAA00"
             ]
+        ],
+        "ticket-categories" => [
+            "leader" => [
+                "name" => "Vedení"
+            ],
+            "hl.helper" => [
+                "name" => "Hlavní Helper"
+            ],
+            "hl.builder" => [
+                "name" => "Hlavní Builder"
+            ],
+            "helper" => [
+                "name" => "Helper"
+            ]
+        ],
+        "ticket-reasons" => [
+
+            //Leader, Vedení Majitel
+            "Žádost o YT" => [
+                "displayname" => "Žádost o youtubera",
+                "for" => "leader",
+                "enabled" => true
+            ],
+            "Povolení VPN" => [
+                "displayname" => "Povolení VPN",
+                "for" => "leader",
+                "enabled" => true
+            ],
+            "Spolupráce" => [
+                "displayname" => "Spolupráce",
+                "for" => "leader",
+                "enabled" => true
+            ],
+            "Nahlášení Bugu" => [
+                "displayname" => "Nahlášení bugu",
+                "for" => "leader",
+                "enabled" => true
+            ],
+            "Problém s gemy" => [
+                "displayname" => "Nahlášení bugu",
+                "for" => "leader",
+                "enabled" => true
+            ],
+
+            //Hl.Helper
+            "Stížnosti na HT" => [
+                "displayname" => "Stížnost na Helper Team",
+                "for" => "hl.helper",
+                "enabled" => true
+            ],
+            "Unban na TS" => [
+                "displayname" => "Unban na TeamSpeaku",
+                "for" => "hl.helper",
+                "enabled" => true
+            ],
+
+            //Hl.Builder
+            "Stížnosti na BT" => [
+                "displayname" => "Stížnost na Builder Team",
+                "for" => "hl.builder",
+                "enabled" => true
+            ],
+
+            //Helper
+            "Žádost o unban" => [
+                "displayname" => "Žádost o unban",
+                "for" => "helper",
+                "enabled" => true
+            ],
+            "Žádost o unmute" => [
+                "displayname" => "Žádost o unmute",
+                "for" => "helper",
+                "enabled" => true
+            ],  
+            "Nahlášení hackera" => [
+                "displayname" => "Nahlášení hackera",
+                "for" => "helper",
+                "enabled" => true
+            ],
+            "Nahlášení hráče" => [
+                "displayname" => "Nahlášení hráče (Reklama, Spam, Nevhodný nick...)",
+                "for" => "helper",
+                "enabled" => true
+            ],
+            
         ]
     ]
 ];
