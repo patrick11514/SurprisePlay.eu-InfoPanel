@@ -13,13 +13,13 @@
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="//%%domain%%/public/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="//%%domain%%/public/css/style.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
 <body class="hold-transition lockscreen">
 <!-- Automatic element centering -->
-<div class="lockscreen-wrapper" style="max-width:80%;width:80%;">
+<div id="container" class="container-fluid" style="max-width: 80%;width:80%;">
     <div class="card">
         <div class="card-body">
             %%error_data%%
