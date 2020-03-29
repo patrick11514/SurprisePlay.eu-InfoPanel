@@ -176,7 +176,8 @@ class Templater
                 "copyright",
                 "version",
                 "copy",
-                "ticket_types"
+                "ticket_types",
+                "ticket_callback"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
@@ -190,25 +191,37 @@ class Templater
      * @var array
      */
     private $special_vars = [
+        //main page
         "registered_users" => "%%registered_users%%",
         "banned_users" => "%%banned_users%%",
         "votes" => "%%votes%%",
         "currency" => "%%currency%%",
         "player_info" => "%%player_info%%",
+
+        //main template
         "copyright" => "%%copyright%%",
-        "logout" => "%%logout%%",
         "navigation" => "%%NAVIGATION%%",
         "error_data" => "%%error_data%%",
+        "version" => "%%version%%",
+        "copy" => "%%own%%",
+
+        //logout
+        "logout" => "%%logout%%",
+
+        //settings
         "autologin_first_value" => "%%autologin_st%%",
         "autologin_second_value" => "%%autologin_nd%%",
         "autologin_first_name" => "%%autologin_st_name%%",
         "autologin_second_name" => "%%autologin_nd_name%%",
         "user-email" => "%%user-email%%",
         "password" => "%%password%%",
-        "version" => "%%version%%",
-        "copy" => "%%own%%",
+
+        //todo
         "todo_tags" => "%%TODO_TAGS%%",
+
+        //tickets
         "ticket_types" => "%%ticket_ticket_types%%",
+        "ticket_callback" => "%%ticket_callback%%"
     ];
     /**
      * Pages with custom repalcemenest
@@ -312,6 +325,7 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
+        print_r($_SESSION);
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
@@ -609,6 +623,16 @@ class Templater
                     
                     $replacement = $data->getData("tickets_reasons")->generate();
 
+                break;
+                case "ticket_callback":
+                    $array = [
+                        "method" => "callback",
+                        "username" => Session::init()->getData("Account/User/Username"),
+                        "callback" => "redirect"
+                    ];
+                    $ticket = new \patrick115\Adminka\Tickets($array);
+
+                    $replacement = $ticket->ticketCallback();
                 break;
                 default:
                     

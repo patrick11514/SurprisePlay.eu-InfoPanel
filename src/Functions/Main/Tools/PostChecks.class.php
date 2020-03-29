@@ -241,6 +241,42 @@ class PostChecks
                     ]
                 ];
             break;
+            case "ticket-write":
+                return [
+                    "check" => [
+                        "name",
+                        "type",
+                        "message"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "writeTicket",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "name" => [
+                                "from" => "post"
+                            ],
+                            "type" => [
+                                "from" => "post"
+                            ],
+                            "message" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "createTicket"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

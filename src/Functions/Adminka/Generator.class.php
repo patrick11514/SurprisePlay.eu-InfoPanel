@@ -57,19 +57,23 @@ class Generator
         switch ($data_name) {
             case "tickets_reasons":
                 $username = Session::init()->getData("Account/User/Username");
-                $tickets = new Tickets($username);
+
+                $arr = [
+                    "method" => "getData",
+                    "username" => $username
+                ];
+                $tickets = new Tickets($arr);
 
                 $reasons = $tickets->getReasons();
                 $groups = $tickets->getGroups();
 
                 $ret = "";
-
+                $ret .= "<option></option>";
                 foreach ($groups as $group_id => $group_name) {
-                    $ret .= "<option></option>
-                    <optgroup label=\"{$group_name}\">";
+                    $ret .= "<optgroup label=\"{$group_name}\">";
 
                     foreach ($reasons[$group_id] as $reason) {
-                        $ret .= "<option value=\"" . Utils::createPackage("%%TICKET_ID;" . $reason["displayname"] . ";TICKET_ID%%")[1] . "\">{$reason["displayname"]}</option>";
+                        $ret .= "<option value=\"" . Utils::createPackage("%%TICKET_ID;" . $reason . ";TICKET_ID%%")[1] . "\">{$reason}</option>";
                     }
 
                     $ret .= "</optgroup>";

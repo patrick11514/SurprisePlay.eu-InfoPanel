@@ -5,6 +5,7 @@ namespace patrick115\Requests;
 use patrick115\Main\Error;
 use patrick115\Main\Tools\Utils;
 use patrick115\Main\Database;
+use patrick115\Main\Session;
 
 class Core
 {
@@ -30,7 +31,8 @@ class Core
         "unregister",
         "gems",
         "todo",
-        "remove-todo"
+        "remove-todo",
+        "ticket-write"
     ];
     /**
      * Store method
@@ -70,8 +72,8 @@ class Core
         $post_data["method"] = Utils::chars($post_data["method"]);
 
         if (!in_array($post_data["method"], $this->avilable_requests)) {
-            $this->error->catchError("Invalid method {$post_data["method"]}. Available method: " . implode(", ", $this->avilable_requests), debug_backtrace());
-            $this->errors[] = "Invalid method {$post_data["method"]}. Available method: " . implode(", ", $this->avilable_requests);
+            $this->error->catchError("Invalid method {$post_data["method"]}." , debug_backtrace());
+            $this->errors[] = "Invalid method {$post_data["method"]}.";
             return;
         }
         $this->method = $post_data["method"];
@@ -151,12 +153,28 @@ class Core
             if ($data["method"] == "function") {
                 $array = [];
                 foreach ($data["parameters"] as $name => $parameter) {
-                    if ($parameter["from"] == "post") {
-                        if (!empty($parameter["alias"])) {
-                            $array[$name] = $this->post[$parameter["alias"]];
-                        } else {
-                            $array[$name] = $this->post[$name];
-                        }
+                    switch ($parameter["from"]) {
+                        case "post":
+                            if (!empty($parameter["alias"])) {
+                                $array[$name] = $this->post[$parameter["alias"]];
+                            } else {
+                                $array[$name] = $this->post[$name];
+                            }
+                        break;
+                        case "session":
+                            if (empty($parameter["path"])) {
+                                $this->errors[] = "Undefined path for {$name}!";
+                                continue 2;
+                            }
+                            $array[$name] = Session::init()->getData($parameter["path"]);
+                        break;
+                        case "text":
+                            if (empty($parameter["text"])) {
+                                $this->errors[] = "Text for {$name} is empty!";
+                                continue 2;
+                            }
+                            $array[$name] = $parameter["text"];
+                        break;
                     }
                 }
                 $app = \patrick115\Adminka\Main::Create($data["class"], [$array]);
