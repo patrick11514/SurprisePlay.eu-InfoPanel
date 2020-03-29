@@ -1,4 +1,4 @@
-<!--%%ticket_callback%%!-->
+%%ticket_callback%%
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
@@ -10,7 +10,7 @@
             <p>%%page_name%%</p>
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                    <a class="nav-link" href="?logout"><i class="fas fa-sign-in-alt"></i></a>
                 </li>
             </ul>
         </div>
@@ -67,7 +67,6 @@ $(function () {
             text.style.height = 'auto';
             text.style.height = text.scrollHeight+'px';
         }
-        /* 0-timeout to get the already changed text */
         function delayedResize () {
             window.setTimeout(resize, 0);
         }
