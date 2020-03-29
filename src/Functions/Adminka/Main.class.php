@@ -142,6 +142,7 @@ class Main implements \patrick115\Interfaces\Main
         $_2xf8h = \patrick115\Main\Error::init();
         $_4gx86 = [
             "61646d696e6b61",
+            "61646d696e6b615f7469636b657473",
             "6d61696e5f616e746976706e",
             "6d61696e5f617574686d65",
             "6d61696e5f6175746f6c6f67696e",
