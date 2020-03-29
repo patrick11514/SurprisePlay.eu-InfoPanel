@@ -25,10 +25,10 @@ class Todo
 
     public function __construct($data)
     {
-        foreach ($this->todo_data["method"] as $datas) {
+        foreach ($this->todo_data[$data["method"]] as $datas) {
             if (empty($data[$datas])) {
-                define("MESSAGE", ["<span style=\"color:red\">Can't find $datas in got data.</span>"]);
-                return true;
+                define("ERROR", ["Can't find $datas in got data."]);
+                return false;
             }
         }
         foreach ($data as $name => $dat) {

@@ -38,8 +38,8 @@ class Settings
     {
         foreach ($this->settings_datas[$data["method"]] as $datas) {
             if (empty($data[$datas])) {
-                define("MESSAGE", ["Can't find $datas in got data."]);
-                return true;
+                define("ERROR", ["Can't find $datas in got data."]);
+                return false;
             }
         }
         foreach ($data as $name => $dat) {
