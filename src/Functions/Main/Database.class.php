@@ -102,6 +102,18 @@ class Database extends Error
                 $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `for_id` FOREIGN KEY (`for_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
                 $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `creator_id` FOREIGN KEY (`creator_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
+            if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_list`")) {
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_list` ( `id` INT NOT NULL , `author` INT NOT NULL , `title` TEXT NOT NULL , `for` TEXT NOT NULL , `reason` TEXT NOT NULL , `waiting_for` INT NOT NULL ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD `create_timestamp` TEXT NOT NULL AFTER `waiting_for`;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD CONSTRAINT `author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
+            if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_messages`")) {
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_messages` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `author` INT NOT NULL , `params` TEXT NOT NULL , `message` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `msg_author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+            }
             $this->conn      = $conn;
             self::$connected = true;
             return $conn;
@@ -172,7 +184,12 @@ class Database extends Error
         if ($haystack === null && $needle === null) {
             $command = "SELECT $list FROM `$table` $options";
         } else {
-            $command = "SELECT $list FROM `$table` WHERE `" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "' $options";
+            if (\patrick115\Main\Tools\Utils::isJson($needle)) {
+                $needle = $needle;
+            } else {
+                $needle = Utils::chars($needle);
+            }
+            $command = "SELECT $list FROM `$table` WHERE `" . Utils::chars($haystack) . "` = '{$needle}' $options";
         }
 
         $return = $this->execute($command, true);
@@ -230,17 +247,17 @@ class Database extends Error
         $vals .= "`" . \patrick115\Main\Tools\Utils::chars($values[(count($values) - 1)]) . "`";
 
         $pars = "";
-        for ($i = 0; $i < (count($params) - 1); $i++) {
+        for ($i = 0; $i < (count($params)); $i++) {
             if (\patrick115\Main\Tools\Utils::isJson($params[$i])) {
                 $pars .= "'" . $params[$i] . "', ";
             } else {
                 $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[$i]) . "', ";
             }
         }
-        $pars .= "'" . \patrick115\Main\Tools\Utils::chars($params[(count($params) - 1)]) . "'";
+        $pars = rtrim($pars, ", ");
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
-
+        
         $this->execute($command, false);
     }
 
@@ -287,10 +304,15 @@ class Database extends Error
 
         $sets = "";
 
-        for ($i = 0; $i < (count($names) - 1); $i++) {
-            $sets .= "`" . Utils::chars($names[$i]) . "` = '" . Utils::chars($vals[$i]) . "', ";
+        for ($i = 0; $i < (count($names)); $i++) {
+            if (\patrick115\Main\Tools\Utils::isJson($vals[$i])) {
+                $sets .= "`" . Utils::chars($names[$i]) . "` = '{$vals[$i]}', ";
+            } else {
+                $sets .= "`" . Utils::chars($names[$i]) . "` = '" . Utils::chars($vals[$i]) . "', ";
+            }
+            
         }
-        $sets .= "`" . Utils::chars($names[(count($names) - 1)]) . "` = '" . Utils::chars($vals[(count($vals) - 1)]) . "'";
+        $sets = rtrim($sets, ", ");
 
         if (is_array($haystack)) {
             $where = "";
