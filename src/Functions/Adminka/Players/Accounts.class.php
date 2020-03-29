@@ -112,13 +112,33 @@ class Accounts
         $rv      = $this->database->execute("SELECT `id` FROM `main_authme`.`authme` WHERE `realname` = '{$username}'", true);
         $user_id = $rv->fetch_object()->id;
 
-        $rv = $this->database->execute("SELECT `id` FROM `accounts` WHERE `authme_id` = " . $user_id, true);
+        $rv = $this->database->execute("SELECT `last-ip` AS `lastip`, `ip-list` AS `iplist` FROM `accounts` WHERE `authme_id` = " . $user_id, true);
         if ($this->database->num_rows($rv) == 0) {
-            $this->database->insert("accounts", ["id", "authme_id", "e-mail", "last-ip", "ip-list"], ["", $user_id, "", Utils::getUserIP(), "{}"]);
+            $ips = [
+                Utils::getUserIP()
+            ];
+            $this->database->insert("accounts", ["id", "authme_id", "e-mail", "last-ip", "ip-list"], ["", $user_id, "", Utils::getUserIP(), json_encode($ips)]);
+        } else {
+            while ($row = $rv->fetch_assoc()) {
+                $iplist = json_decode($row["iplist"], 1);
+                $lastip = $row["lastip"];
+            }
+
+            $cid = $this->database->select(["id"], "accounts", "LIMIT 1", "authme_id", $user_id)->
+            fetch_object()->id;
+
+            if ($lastip != Utils::getUserIP()) {
+                $this->database->update("accounts", "id", $cid, ["last-ip"], [Utils::getUserIP()]);
+            }
+
+            if (!in_array(Utils::getUserIP(), $iplist)) {
+                $iplist[] = Utils::getUserIP();
+                $iplist = json_encode($iplist);
+                $this->database->update("accounts", "id", $cid, ["ip-list"], [$iplist]);
+            }
         }
 
-        $cid = $this->database->select(["id"], "accounts", "LIMIT 1", "authme_id", $user_id)->
-            fetch_object()->id;
+        
 
 
         session_write_close();
