@@ -476,3 +476,7 @@ a:focus {
     color: #fff;
     background: #f39c12;
 }
+
+.table {
+    max-width: 100%
+}
