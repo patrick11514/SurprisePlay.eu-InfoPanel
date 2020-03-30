@@ -477,6 +477,11 @@ a:focus {
     background: #f39c12;
 }
 
+.badge-green {
+    color: #fff;
+    background: #28A745;
+}
+
 .table {
     max-width: 100%
 }
