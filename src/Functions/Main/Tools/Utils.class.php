@@ -167,6 +167,26 @@
             return "%NULL%";
         }
     }
+    
+    public static function getUserByClientId($cid) 
+    {
+        $db = \patrick115\Main\Database::init();
+        $rv = $db->select(["authme_id"], "accounts", "LIMIT 1", "id", $cid);
+
+        if (!$rv || $db->num_rows($rv) == 0) {
+            return NULL;
+        }
+        $authme_id = $rv->fetch_object()->authme_id;
+
+        $rv = $db->select(["realname"], "main_authme`.`authme", "LIMIT 1", "id", $authme_id);
+        
+        if (!$rv || $db->num_rows($rv) == 0) {
+            return NULL;
+        }
+
+        return $rv->fetch_object()->realname;
+
+    }
 
     public static function getClientID($username)
     {
@@ -202,6 +222,16 @@
             return "00000000-0000-0000-0000-000000000000";
         }
         return $rv->fetch_object()->uuid;
+    }
+
+    public static function getOriginalUUIDByNick($nick)
+    {
+        $fg = file_get_contents("https://api.mojang.com/users/profiles/minecraft/{$nick}");
+        if (empty($fg)) {
+            return "X-Steve";
+        }
+        $json = json_decode($fg, 1);
+        return $json["id"];
     }
 
     public static function getNickByUUID($uuid)
