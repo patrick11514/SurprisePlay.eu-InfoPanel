@@ -22,7 +22,7 @@ class Main implements \patrick115\Interfaces\Main
      * Stored Apps
      * @var array
      */
-    private static $app = [];
+    public static $app = [];
     /**
      * Stored App params
      * @var array
