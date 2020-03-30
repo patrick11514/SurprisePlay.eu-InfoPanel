@@ -77,7 +77,8 @@ class PostChecks
                     "check" => [
                         "autologin",
                         "e-mail",
-                        "password"
+                        "password",
+                        "skin"
                     ],
                     "db_requests" => [
                         "use" => false,
@@ -99,6 +100,9 @@ class PostChecks
                                 "from" => "post"
                             ],
                             "method" => [
+                                "from" => "post"
+                            ],
+                            "skin" => [
                                 "from" => "post"
                             ]
                         ]
