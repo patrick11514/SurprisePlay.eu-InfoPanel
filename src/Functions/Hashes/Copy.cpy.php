@@ -8,7 +8,7 @@ class Copy {
 
     public function __construct()
     {
-        $this->copy = "&copy;" . date("Y") . " <a href=\"//github.com/patrick11514\">patrick115</a>";
+        $this->copy = "&copy;" . date("Y") . " <a href=\"//patrikmin.tech\">patrick115</a>";
     }
 
     public function get()
