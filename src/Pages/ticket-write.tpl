@@ -1,4 +1,4 @@
-%%ticket_callback%%
+%%ticket_callback_redirect%%
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
