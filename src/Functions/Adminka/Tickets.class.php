@@ -7,6 +7,7 @@ use patrick115\Main\Error;
 use patrick115\Main\Database;
 use patrick115\Main\Session;
 use patrick115\Main\Tools\Utils;
+use patrick115\Adminka\Main;
 
 class Tickets 
 {
@@ -169,6 +170,13 @@ class Tickets
         return true;
     }
 
+    private function get_current_ticket_id()
+    {
+        $router = Main::getApp("\patrick115\Main\Router");
+        $id = $router->getURIData("id", false);
+        return $id;
+    }
+
     public function ticketCallback()
     {
         switch ($this->vars["callback"]) {
@@ -178,11 +186,131 @@ class Tickets
                     return null;
                 }
                 $id = $sess->getData("Tickets/redirect_ticket_id");
-                #unset($_SESSION["Tickets"]["redirect_ticket_id"]);
-                return $id;
-                #Utils::header("./?ticket-open&id=" . $id);
+                unset($_SESSION["Tickets"]["redirect_ticket_id"]);
+                Utils::header("./?ticket-view&id=" . $id);
+            break;
+            case "check_ticket":
+                $router = Main::getApp("\patrick115\Main\Router");
+                $id = $router->getURIData("id", false);
+
+                if (Utils::newEmpty($id) || !is_numeric($id) || $id < 1) {
+                    $_SESSION["Request"]["Errors"] = ["Neplatné id tiketu!"];
+                    Utils::header("./?main");
+                }
+
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    $_SESSION["Request"]["Errors"] = ["Tiket s id {$id} nenalezen!"];
+                    Utils::header("./?main");
+                }
+            break;
+            case "player_list":
+                echo "bagr";
+                $sess = Session::init();
+                $username = $sess->getData("Account/User/Username");
+                $user_id = Utils::getClientID($username);
+                $rv = $this->database->select(["id", "title", "reason", "create_timestamp", "waiting_for"], "adminka_tickets`.`tickets_list", "", "author", $user_id);
+
+                if ($this->database->num_rows($rv) > 0) {
+
+                    $return = "<table class=\"table table-striped\">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Název</th>
+                                    <th>Typ</th>
+                                    <th>Stav</th>
+                                    <th>Datum založení</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+                    while ($row = $rv->fetch_assoc()) {
+                        $return .= "<tr>
+                        <td>{$row["id"]}</td>
+                        <td>{$row["title"]}</td>
+                        <td>{$row["reason"]}</td>
+                        <td>";
+                        switch ($row["waiting_for"]) {
+                            case self::TICKET_CLOSE:
+                                $return .= "<span class=\"badge badge-danger\">Uzavřen</span>";
+                            break;
+                            case self::TICKET_WAITING_FOR_ADMIN:
+                                $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
+                            break;
+                            case self::TICKET_WAITING_FOR_USER:
+                                $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
+                            break;
+                        }
+                        $return .= "</td>
+                        <td>" . date("H:i:s d.m.Y", $row["create_timestamp"]) . "</td>
+                        <td><a href=\"?ticket-view&id={$row["id"]}\"><button type=\"button\" class=\"btn btn-small\">Otevřít</button>
+                        </tr>";
+
+                    }
+                    $return .= "</tbody>
+                    </table>";
+                } else {
+                    $return = "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
+                    Žádné tikety nenalezeny!
+                    </div>";
+                }
+                return $return;
+            break;
+            case "chat":
+                $id = $this->get_current_ticket_id();
+
+                $rv = $this->database->select(["author", "params", "message", "date"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC", "ticket_id", $id);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    return "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
+                    Někde nastala chyba
+                    </div>";
+                }
+                $return = "";
+                while ($row = $rv->fetch_assoc()) {
+                    $data = json_decode($row["params"] , 1);
+
+                    $username = Utils::getUserByClientId($row["author"]);
+
+                    $rank = Main::Create("\patrick115\Adminka\Players\Rank", [$username]);
+                    $player_rank = $rank->getRank();
+                    $rank_color = \patrick115\Main\Config::init()->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($player_rank)];
+                    
+                    $skin = Main::Create("\patrick115\Minecraft\Skins", [$username]);
+                    $skin = $skin->getSkin();
+
+                    if ($data["admin"] === false) {
+                        $return .= "<div class=\"direct-chat-msg\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-left\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            " . str_replace("\r\n", "<br>", $row["message"]) ."
+                        </div>
+                    </div>";
+                    } else {
+                        $return .= "<div class=\"direct-chat-msg right\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-right\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            " . str_replace("\r\n", "<br>", $row["message"]) ."
+                        </div>
+                    </div>";
+                    }
+                }
+                return $return;
+            break;
+            default:
+                return "No process found";
             break;
         }
+        return "";
     }
 
     private function loadConfig($type)
