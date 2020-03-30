@@ -2,6 +2,7 @@
 
 namespace patrick115\Adminka\Players;
 
+use Exception;
 use patrick115\Adminka\Logger;
 use patrick115\Adminka\Main;
 use patrick115\Main\Error;
@@ -204,6 +205,8 @@ class Settings
 
         $is_changed = false;
         
+        //PASSWORD
+
         if (!empty(trim($this->data["password"], "*"))) {
             $is_changed = true;
             if (strpos($this->data["password"], "*") === false) {
@@ -222,6 +225,8 @@ class Settings
             }
         }
 
+        //AUTOLOGIN
+
         switch ($user_data->getAutologinStatus()) {
             case "Zapnut":
                 $curr_autologin = "allow";
@@ -230,7 +235,6 @@ class Settings
                 $curr_autologin = "disallow";
             break;
         }
-
         if ($this->data["autologin"] != $curr_autologin) {
             $is_changed = true;
             switch ($this->data["autologin"]) {
@@ -246,6 +250,8 @@ class Settings
             
         }
 
+        //E-MAIL
+
         if ($this->data["e-mail"] != $user_data->getEMail()) {
             if (filter_var($this->data["e-mail"], FILTER_VALIDATE_EMAIL)) {
                 if (substr_count(explode("@", $this->data["e-mail"])[1], ".") > 1) {
@@ -258,6 +264,14 @@ class Settings
                 $this->database->update("accounts", "authme_id", $aid, ["e-mail"], [$this->data["e-mail"]]);
                 $this->database->update("main_authme`.`authme", "realname", $username, ["email"], [$this->data["e-mail"]]);
             }               
+        }
+
+        //RESET-SKINU
+
+        if ($this->data["skin"] != "none") {
+            $username = $this->session->getData("Account/User/Username");
+            unlink(Main::getWorkDirectory() . "src/cache/{$username}");
+            $is_changed = true;
         }
 
         if ($is_changed === false) return false;
