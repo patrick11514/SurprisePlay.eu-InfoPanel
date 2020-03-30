@@ -158,11 +158,7 @@
                             </div>
                             !-->
                         </div>
-                        <div class="form-group">
-                            <label for="message">Zpráva</label>
-                            <textarea type="text" class="form-control" id="message" name="message" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-light">Odeslat zprávu</button>
+                        %%ticket_callback_send_message%%
                     </div>
                 </div>
             </div>

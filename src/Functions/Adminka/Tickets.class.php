@@ -239,7 +239,7 @@ class Tickets
                                 $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
                             break;
                             case self::TICKET_WAITING_FOR_USER:
-                                $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
+                                $return .= "<span class=\"badge badge-green\">Čeká na odpověď Hráče</span>";
                             break;
                         }
                         $return .= "</td>
@@ -260,7 +260,37 @@ class Tickets
             case "chat":
                 $id = $this->get_current_ticket_id();
 
-                $rv = $this->database->select(["author", "params", "message", "date"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC", "ticket_id", $id);
+                $alerts = [];
+
+                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "", "ticket_id", $id);
+
+                while ($row = $rv->fetch_assoc()) {
+
+                    switch ($row["type"]) {
+                        case "change":
+                            $string = "<div class=\"alert alert-warning text-chat\">
+                            {$row["message"]}
+                        </div>";
+                        break;
+                        case "open":
+                            $string = "<div class=\"alert alert-success text-chat\">
+                            {$row["message"]}
+                        </div>";
+                        break;
+                        case "close":
+                            $string = "<div class=\"alert alert-danger text-chat\">
+                            {$row["message"]}
+                        </div>";
+                        break;
+                    }
+
+                    $alerts[$row["after_message"]] = $string;
+
+                }
+
+
+
+                $rv = $this->database->select(["id", "author", "params", "message", "date"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC", "ticket_id", $id);
 
                 if (!$rv || $this->database->num_rows($rv) == 0) {
                     return "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
@@ -269,6 +299,11 @@ class Tickets
                 }
                 $return = "";
                 while ($row = $rv->fetch_assoc()) {
+
+                    if (!empty($alerts[$row["id"]])) {
+                        $return .= $alerts[$row["id"]];
+                    }
+
                     $data = json_decode($row["params"] , 1);
 
                     $username = Utils::getUserByClientId($row["author"]);
@@ -305,6 +340,24 @@ class Tickets
                     }
                 }
                 return $return;
+            break;
+            case "send_message":
+                $id = $this->get_current_ticket_id();
+                $rv = $this->database->select(["waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                
+                if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
+                    return "<div class=\"alert alert-danger text-chat\">
+                    Tiket je uzavřen, nelze do něj odepisovat!
+                    </div>";
+                } else {
+                    return "<form method=\"post\" action=\"./requests.php\">
+                    <div class=\"form-group\">
+                        <label for=\"message\">Zpráva</label>
+                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" required></textarea>
+                    </div>
+                    <button type=\"submit\" class=\"btn btn-light\">Odeslat zprávu</button>
+                </form>";
+                }
             break;
             default:
                 return "No process found";

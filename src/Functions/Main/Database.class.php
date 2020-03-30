@@ -119,8 +119,13 @@ class Database extends Error
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_banned_users`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_banned_users` ( `id` INT NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL , `banner` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-                $conn->query("ALTER TABLE `tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
+            if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_alerts`")) {
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_alerts` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `type` TEXT NOT NULL , `message` TEXT NOT NULL , `after_message` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_alerts` ADD CONSTRAINT `for_ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_alerts` ADD CONSTRAINT `message_id` FOREIGN KEY (`after_message`) REFERENCES `tickets_messages`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
 
             $this->conn      = $conn;

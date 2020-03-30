@@ -211,7 +211,8 @@ class Templater
                     "type" => [
                         "check_ticket",
                         "chat",
-                        "player_info"
+                        "player_info",
+                        "send_message"
                     ]
                 ]
             ]
