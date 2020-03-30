@@ -136,8 +136,8 @@ class Generator
                                     <input type="hidden" name="source_page" value="?settings" required>
                                     <input type="hidden" name="CSRF_token" value="%%CSRF_Token%%" required>
                                     <div class="form-group">
-                                        <label for="email">Autologin</label>
-                                        <select name="autologin" class="form-control">
+                                        <label for="autologin">Autologin</label>
+                                        <select name="autologin" id="autologin" class="form-control">
                                             <option value="%%autologin_st%%">%%autologin_st_name%%</option>
                                             <option value="%%autologin_nd%%">%%autologin_nd_name%%</option>
                                         </select>
@@ -149,6 +149,13 @@ class Generator
                                     <div class="form-group">
                                         <label for="password">Heslo</label>
                                         <input type="text" class="form-control" id="password" value="%%password%%" name="password" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="skin">Reset Skinu <span style="color:red;font-size:small;">(Pouze, pokud nemáš na webu svůj nový skin)</label>
+                                        <select name="skin" id="skin" class="form-control">
+                                            <option value="none"></option>
+                                            <option value="reset">Resetovat</option>
+                                        </select>
                                     </div>
                                     <button type="submit" class="btn btn-light">Uložit</button>
                                 </form>
