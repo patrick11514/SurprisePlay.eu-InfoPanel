@@ -1,3 +1,4 @@
+%%ticket_callback_check_ticket%%
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
@@ -25,7 +26,8 @@
                         <p>Zprávy v tiketu</p>
                         <hr>
                         <div id="text-chat">
-                            <div class="alert alert-success text-chat">
+                            %%ticket_callback_chat%%
+                            <!--<div class="alert alert-success text-chat">
                                 Ticket byl znovu otevřen!
                             </div>
                             <div class="direct-chat-msg right">
@@ -154,6 +156,7 @@
                                     Čau Skajpede
                                 </div>
                             </div>
+                            !-->
                         </div>
                         <div class="form-group">
                             <label for="message">Zpráva</label>
@@ -169,7 +172,8 @@
                         <p class="title">Informace o hráči</p>
                         <table class="table table-condensed" style="background-color:white;">
                             <tbody>
-                                <tr>
+                                %%ticket_callback_player_info%%
+                                <!--<tr>
                                     <td>IP:</td>
                                     <td>82.82.95.75 <img src="https://upload.patrikmin.tech/screenshot/cz_CS" class="flag"></td>
                                 </tr>
@@ -200,7 +204,7 @@
                                 <tr>
                                     <td>Gemy:</td>
                                     <td>25</td>
-                                </tr>
+                                </tr>!-->
                             </tbody>
                         </table>
                     </div>

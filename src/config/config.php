@@ -221,6 +221,12 @@ return [
                         "icon" => "fas fa-pencil-alt",
                         "link" => "?ticket-write",
                         "page-name" => "ticket-write"
+                    ],
+                    "Seznam tiketů" => [
+                        "permission" => "all",
+                        "icon" => "fas fa-clipboard-list",
+                        "link" => "?ticket-list",
+                        "page-name" => "ticket-list"
                     ]
                 ]
             ],
@@ -312,6 +318,8 @@ return [
             "TodoList" => "leaders",
             //tickety
             "Ticket-Create" => "all",
+            "Ticket-View" => "all",
+            "Ticket-List" => "all",
         ],
         "group-perms" => [ //jména skupin s permissema
             "full" => [

@@ -176,12 +176,66 @@ class Templater
                 "copyright",
                 "version",
                 "copy",
-                "ticket_types",
-                "ticket_callback"
+                "ticket_types"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
                 "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "type" => "redirect"
+                ]
+            ]
+        ],
+        "Ticket-View" => [
+            "title" => "Zobrazit tiket",
+            "name" => "ticket-view.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Zobrazit tiket",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "multi" => true,
+                    "type" => [
+                        "check_ticket",
+                        "chat",
+                        "player_info"
+                    ]
+                ]
+            ]
+        ],
+        "Ticket-List" => [
+            "title" => "Seznám tiketů",
+            "name" => "ticket-list.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Seznam tiketů",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "type" => "player_list"
+                ]
             ]
         ]
     ];
@@ -221,7 +275,6 @@ class Templater
 
         //tickets
         "ticket_types" => "%%ticket_ticket_types%%",
-        "ticket_callback" => "%%ticket_callback%%"
     ];
     /**
      * Pages with custom repalcemenest
@@ -229,7 +282,7 @@ class Templater
      */
     private $pages_with_custom_replacements = [
         "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
-        "Ticket-Create"
+        "Ticket-Create", "Ticket-View", "Ticket-List",
     ];
 
     /**
@@ -409,6 +462,43 @@ class Templater
 
             $main = str_replace("%%custom_form_{$this->pageAliases[$sourceName]["generate_form"]["var_name"]}%%", $forms->getForm($this->pageAliases[$sourceName]["generate_form"]["name"])->generate(), $main);
         }
+
+        if (!empty($this->pageAliases[$sourceName]["tickets"])) {
+            if ($this->pageAliases[$sourceName]["tickets"]["callback"]["enabled"] === true) {
+                if (!empty($this->pageAliases[$sourceName]["tickets"]["callback"]["multi"]) && $this->pageAliases[$sourceName]["tickets"]["callback"]["multi"] === true) {
+                    $username = $this->session->getData("Account/User/Username");
+
+                    foreach ($this->pageAliases[$sourceName]["tickets"]["callback"]["type"] as $type) {
+                        $array = [
+                            "method" => "callback",
+                            "username" => $username,
+                            "callback" => $type
+                        ];
+                        $ticket = new \patrick115\Adminka\Tickets($array);
+
+                        $replace = $ticket->ticketCallback();
+
+                        $main = str_replace("%%ticket_callback_{$type}%%", $replace, $main);
+                    }
+                } else {
+                    $type = $this->pageAliases[$sourceName]["tickets"]["callback"]["type"];
+
+                    $username = $this->session->getData("Account/User/Username");
+
+                    $array = [
+                        "method" => "callback",
+                        "username" => $username,
+                        "callback" => $type
+                    ];
+                    $ticket = new \patrick115\Adminka\Tickets($array);
+
+                    $replace = $ticket->ticketCallback();
+
+                    $main = str_replace("%%ticket_callback_{$type}%%", $replace, $main);
+                }
+            }
+        }
+
         $main = str_replace(
             [
                 "%%domain%%",
@@ -623,16 +713,6 @@ class Templater
                     
                     $replacement = $data->getData("tickets_reasons")->generate();
 
-                break;
-                case "ticket_callback":
-                    $array = [
-                        "method" => "callback",
-                        "username" => Session::init()->getData("Account/User/Username"),
-                        "callback" => "redirect"
-                    ];
-                    $ticket = new \patrick115\Adminka\Tickets($array);
-
-                    $replacement = $ticket->ticketCallback();
                 break;
                 default:
                     

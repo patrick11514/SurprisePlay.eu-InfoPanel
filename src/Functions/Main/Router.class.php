@@ -3,6 +3,7 @@
 namespace patrick115\Main;
 
 use patrick115\Main\Tools\Utils;
+use patrick115\Main\Error;
 
 class Router
 {
@@ -11,6 +12,8 @@ class Router
      * @var string
      */
     private $server_data;
+
+    private $error;
     /**
      * Aliases
      * @var array
@@ -25,7 +28,9 @@ class Router
         "unregister" => "Unregister",
         "gems" => "Gems",
         "todo" => "TodoList",
-        "ticket-write" => "Ticket-Create"
+        "ticket-write" => "Ticket-Create",
+        "ticket-view" => "Ticket-View",
+        "ticket-list" => "Ticket-List"
     ];
 
     /**
@@ -35,6 +40,7 @@ class Router
     public function __construct($server_data)
     {
         $this->server_data = $server_data;
+        $this->error = Error::init();
     }
 
     /**
@@ -104,5 +110,16 @@ class Router
     {
         $this->getFromServer_Data();
         return $this->server_data;
+    }
+
+    public function getURIData($data, $error = true) 
+    {
+        if (empty($_GET[$data])) {
+            if ($error === true) {
+                $this->error->catchError("Can't find $data value in uri!", debug_backtrace());
+            }
+            return;
+        }
+        return Utils::chars($_GET[$data]);
     }
 }
