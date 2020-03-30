@@ -79,6 +79,7 @@ class Database extends Error
                 $this->errors->catchError($this->errorConvert($conn->connect_error), debug_backtrace());
             }
 
+            //Default
             if (!@$conn->query("SELECT 1 FROM `accounts`")) {
                 $conn->query("CREATE TABLE `adminka`.`accounts` ( `id` INT NOT NULL AUTO_INCREMENT , `authme_id` MEDIUMINT(8) NOT NULL , `e-mail` TEXT NULL DEFAULT NULL , `last-ip` TEXT NOT NULL , `ip-list` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `accounts` CHANGE `authme_id` `authme_id` MEDIUMINT(8) UNSIGNED NOT NULL;");
@@ -94,26 +95,34 @@ class Database extends Error
             if (!@$conn->query("SELECT 1 FROM `gems-log`")) {
                 $conn->query("CREATE TABLE `adminka`.`gems-log` ( `id` INT NOT NULL , `user_id` INT NOT NULL , `admin` TEXT NOT NULL , `nick` TEXT NOT NULL , `amount` INT NOT NULL , `method` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL ) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `gems-log` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
-                $conn->query("ALTER TABLE `gems-log` ADD CONSTRAINT `user_main_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-                ");
+                $conn->query("ALTER TABLE `gems-log` ADD CONSTRAINT `user_main_id` FOREIGN KEY (`user_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `todo-list`")) {
                 $conn->query("CREATE TABLE `adminka`.`todo-list` ( `id` INT(11) NOT NULL AUTO_INCREMENT, `creator_id` INT NOT NULL , `creator` TEXT NOT NULL , `for_id` INT NOT NULL , `for` TEXT NOT NULL , `message` TEXT NOT NULL , `tags` TEXT NOT NULL , `date` TEXT NOT NULL , `timestamp` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `for_id` FOREIGN KEY (`for_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
                 $conn->query("ALTER TABLE `todo-list` ADD CONSTRAINT `creator_id` FOREIGN KEY (`creator_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
+            if (!@$conn->query("SELECT 1 FROM `sys_log`")) {
+                $conn->query("CREATE TABLE `adminka`.`sys_log` ( `id` INT NOT NULL , `type` TEXT NOT NULL , `message` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `sys_log` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
+            }
+
+            //Tickets
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_list`")) {
-                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_list` ( `id` INT NOT NULL , `author` INT NOT NULL , `title` TEXT NOT NULL , `for` TEXT NOT NULL , `reason` TEXT NOT NULL , `waiting_for` INT NOT NULL ) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD `create_timestamp` TEXT NOT NULL AFTER `waiting_for`;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD CONSTRAINT `author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_list` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `author` INT NOT NULL , `title` TEXT NOT NULL , `for` TEXT NOT NULL , `reason` TEXT NOT NULL , `waiting_for` INT NOT NULL , `create_timestamp` TEXT NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD CONSTRAINT `adminka_tickets`.`author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_messages`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_messages` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `author` INT NOT NULL , `params` TEXT NOT NULL , `message` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `msg_author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `adminka_tickets`.`msg_author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `adminka_tickets`.`ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
+            if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_banned_users`")) {
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_banned_users` ( `id` INT NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL , `banner` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
+
             $this->conn      = $conn;
             self::$connected = true;
             return $conn;
@@ -257,7 +266,7 @@ class Database extends Error
         $pars = rtrim($pars, ", ");
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
-        
+        echo $command;
         $this->execute($command, false);
     }
 
