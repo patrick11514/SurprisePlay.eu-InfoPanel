@@ -75,6 +75,7 @@ class Navigation
                     if (!$app->getUser($username)->havePermission()->inGroup($nav_item_data["permission"])) {
                         continue;
                     }
+
                     $nav_final .= "<li class=\"nav-item has-treeview\">  
                                     <a href=\"#\" class=\"nav-link \">
                                         <i class=\"{$nav_item_data["icon"]} right\"></i>
@@ -102,9 +103,16 @@ class Navigation
                         if (!$app->getUser($username)->havePermission()->inGroup($list_item_data["permission"])) {
                             continue;
                         }
+
+                        if (!empty($list_item_data["icon-color"])) {
+                            $color = $list_item_data["icon-color"];
+                        } else {
+                            $color = "FFF";
+                        }
+
                         $nav_final .= "<li>
                                         <a href=\"{$list_item_data["link"]}\">
-                                            <i class=\"{$list_item_data["icon"]}\"></i>
+                                            <i class=\"{$list_item_data["icon"]}\" style=\"color:#{$color};\"></i>
                                             {$list_item_name}
                                         </a>
                                         </li>";
@@ -119,9 +127,16 @@ class Navigation
                     if (!$app->getUser($username)->havePermission()->inGroup($nav_item_data["permission"])) {
                         continue;
                     }
+
+                    if (!empty($nav_item_data["icon-color"])) {
+                        $color = $nav_item_data["icon-color"];
+                    } else {
+                        $color = "FFF";
+                    }
+
                     $nav_final .= "<li>
                                         <a href=\"{$nav_item_data["link"]}\">
-                                            <i class=\"{$nav_item_data["icon"]} \"></i>
+                                            <i class=\"{$nav_item_data["icon"]}\" style=\"color:#{$color};\"></i>
                                             {$nav_item_name}
                                         </a>
                                         </li>";

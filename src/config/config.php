@@ -190,9 +190,9 @@ return [
             "zk-helper" => "#AAAAAA",
             "builder" => "#AA00AA",
             "helper" => "#00AA00",
-            "e-helper" => "#00AAAA",
-            "hl-builder" => "#AA00AA",
-            "hl-helper" => "#00AA00",
+            "e-helper" => "#55FFFF",
+            "hl-builder" => "#FF55FF",
+            "hl-helper" => "#FFAA00",
             "technik" => "#FFFF55",
             "leader" => "#FF5555",
             "vedeni" => "#FF5555",
@@ -268,25 +268,29 @@ return [
                         "permission" => "full",
                         "icon" => "fas fa-circle",
                         "link" => "?tickets-user",
-                        "page-name" => "tickets-user"
+                        "page-name" => "tickets-user",
+                        "icon-color" => "FF5555",
                     ],
                     "Hlavní Helper" => [
                         "permission" => "hl_helper",
                         "icon" => "fas fa-circle",
                         "link" => "?tickets-user",
-                        "page-name" => "tickets-user"
+                        "page-name" => "tickets-user",
+                        "icon-color" => "FFAA00",
                     ],
                     "Hlavní Builder" => [
                         "permission" => "hl_builder",
                         "icon" => "fas fa-circle",
                         "link" => "?tickets-user",
-                        "page-name" => "tickets-user"
+                        "page-name" => "tickets-user",
+                        "icon-color" => "FF55FF"
                     ],
                     "Helper" => [
                         "permission" => "helpers",
                         "icon" => "fas fa-circle",
                         "link" => "?tickets-user",
-                        "page-name" => "tickets-user"
+                        "page-name" => "tickets-user",
+                        "icon-color" => "00AA00"
                     ]
                 ]
             ],
