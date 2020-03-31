@@ -212,7 +212,7 @@ class Templater
                         "check_ticket",
                         "chat",
                         "player_info",
-                        "send_message"
+                        "send_message_check"
                     ]
                 ]
             ]
@@ -379,7 +379,6 @@ class Templater
      */
     private function prepare($template, $source, $sourceName)
     {
-        print_r($_SESSION);
         $app = Main::Create("\patrick115\Adminka\Permissions", []);
         $session = Session::init();
         
