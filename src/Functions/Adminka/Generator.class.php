@@ -189,20 +189,21 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                            <p>Povolení VPN</p>
-                            <hr>
-                            <form method="post" action="./requests.php" role="form">
-                                <input type="hidden" name="method"  value="vpn-allow" required>
-                                <input type="hidden" name="source_page" value="?vpn-allow" required>
-                                <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
-                                <div class="form-group">
-                                    <label for="allow-nick">Zadej nick, pro který chceš povolot připojení s VPN</label>
-                                    <input type="text" name="allow-nick" id="allow-nick" class="form-control" placeholder="Zadej nick" required>
-                                    <div class="list-group" id="nicks">
+                                <p>Povolení VPN</p>
+                                <hr>
+                                <form method="post" action="./requests.php" role="form">
+                                    <input type="hidden" name="method"  value="vpn-allow" required>
+                                    <input type="hidden" name="source_page" value="?vpn-allow" required>
+                                    <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
+                                    <div class="form-group">
+                                        <label for="allow-nick">Zadej nick, pro který chceš povolot připojení s VPN</label>
+                                        <input type="text" name="allow-nick" id="allow-nick" class="form-control" placeholder="Zadej nick" required>
+                                        <div class="list-group" id="nicks">
+                                        </div>
                                     </div>
-                                </div>
-                                <button type="submit" id="vpn-button" class="btn btn-light">Povolit přístup</button>
-                            </form>
+                                    <button type="submit" id="vpn-button" class="btn btn-light">Povolit přístup</button>
+                                </form>
+                            </div>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -285,7 +286,8 @@ class Generator
                                     <button type="submit" id="unregister-button"
                                         class="btn btn-light">Odregistrovat</button>
                                 </form>
-                            </hr>
+                                
+                            </div>
                         </div>
                         <div class="card">
                             <div class="card-body">
