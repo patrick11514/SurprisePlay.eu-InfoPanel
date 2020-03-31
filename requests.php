@@ -27,9 +27,9 @@ if (!empty(@constant("MESSAGE"))) {
 if (empty($app->getErrors())) {
     if (@constant("DELETE_SESSION") !== true)
     $_SESSION["Post"]["Success"] = true;
-    \patrick115\Main\Tools\Utils::header("./" . $app->getPost()["source_page"]);
+    \patrick115\Main\Tools\Utils::header("./" . str_replace("|", "&", $app->getPost()["source_page"]));
 } else {
     $_SESSION["Request"]["Errors"] = $app->getErrors();
-    \patrick115\Main\Tools\Utils::header("./" . Utils::chars($_POST["source_page"]));
+    \patrick115\Main\Tools\Utils::header("./" . str_replace("|", "&", Utils::chars($_POST["source_page"])));
 }
 #$errors->returnError();
