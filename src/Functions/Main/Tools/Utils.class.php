@@ -168,6 +168,24 @@
         }
     }
     
+    public static function stdObjectToArray($stdObject)
+    {
+        return json_decode(json_encode($stdObject),true);
+    }
+
+    public static function arrayToStdObject($array)
+    {
+        return json_decode(json_encode($array));
+    }
+
+    public static function getIpOfUser($user)
+    {
+        $authme_id = self::getAuthmeIDByName($user);
+        $rv = \patrick115\Main\Database::init()->select(["last-ip"], "accounts", "LIMIT 1", "authme_id", $authme_id);
+        $stdObject = $rv->fetch_object();
+        return self::stdObjectToArray($stdObject)["last-ip"];
+    }
+
     public static function getUserByClientId($cid) 
     {
         $db = \patrick115\Main\Database::init();
