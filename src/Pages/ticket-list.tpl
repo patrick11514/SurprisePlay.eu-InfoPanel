@@ -16,46 +16,31 @@
     </nav>
 
     <div id="container" class="container-fluid">
-         %%ERRORS%%
+        %%ERRORS%%
         %%messages%%
         <div class="card">
             <div class="card-body">
                 <p class="title">Tvé Tikety</p>
                 <div class="table-responsive">
                     %%ticket_callback_player_list%%
-                    <!--<table data-request="get-todo" id="todo-table" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Název</th>
-                                <th>Typ</th>
-                                <th>Stav</th>
-                                <th>Datum založení</th>
-                                <th>Akce</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            <tr>
-                              <td>1</td>
-                              <td>Nahlášení bugu</td>
-                              <td>Nahlášení chyby</td>
-                              <td><span class="badge badge-yellow">Čeká na odpověď (Hráče/Podpory)</span></td>
-                              <td>3:33 25.03.2020</td>
-                              <td><button type="button" class="btn btn-small">Otevřít</button></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Nahlášení hráče</td>
-                              <td>Nahlášení hráče</td>
-                              <td><span class="badge badge-danger">Uzavřen</span></td>
-                              <td>3:33 25.03.2020</td>
-                              <td><button type="button" class="btn btn-small">Otevřít</button></td>
-                            </tr>
-                        </tbody>
-                    </table>!-->
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+$( function () {
+    $('#ticket-list').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Czech.json"
+        },
+        "searching": false,
+        "info": false,
+        "lengthChange":false,
+        "columnDefs": [
+        { "orderable": false, "targets": 5 }
+        ]
+
+    });
+} );
+</script>
