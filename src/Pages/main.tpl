@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//%%domain%%/public/css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//%%domain%%/public/css/data_tables.css">
     <script src="//%%domain%%/public/js/jquery.min.js"></script>
+    <script src="//%%domain%%/public/js/data_tables.min.js"></script>
 </head>
 <body>
     <div class="wrapper">
