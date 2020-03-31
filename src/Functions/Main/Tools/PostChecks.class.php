@@ -88,7 +88,7 @@ class PostChecks
                         "class" => "\patrick115\Adminka\Players\Settings",
                         "function" => "checkSettings",
                         "custom_error" => "Nastavení nebylo změněno!",
-                        "success_message" => "<span style=\"color:green\">Nastavení úspěšně změněno!</span>",
+                        "success_message" => "Nastavení úspěšně změněno!",
                         "parameters" => [
                             "autologin" => [
                                 "from" => "post"
@@ -259,6 +259,7 @@ class PostChecks
                         "method" => "function",
                         "class" => "\patrick115\Adminka\Tickets",
                         "function" => "writeTicket",
+                        "custom_error" => "Někde nastala chyba",
                         "parameters" => [
                             "username" => [
                                 "from" => "session",
@@ -281,6 +282,47 @@ class PostChecks
                     ]
                 ];
             break;
+            case "ticket-send-message":
+                return [
+                    "check" => [
+                        "message",
+                        "ticket_id"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "ticketCallback",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Zpráva odeslána!",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "message" => [
+                                "from" => "post"
+                            ],
+                            "ticket_id" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "callback"
+                            ],
+                            "callback" => [
+                                "from" => "text",
+                                "text" => "send-message"
+                            ],
+                            "source_page" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break;  
         }
     }
 }

@@ -110,17 +110,17 @@ class Database extends Error
             //Tickets
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_list`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_list` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `author` INT NOT NULL , `title` TEXT NOT NULL , `for` TEXT NOT NULL , `reason` TEXT NOT NULL , `waiting_for` INT NOT NULL , `create_timestamp` TEXT NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD CONSTRAINT `adminka_tickets`.`author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_list` ADD CONSTRAINT `author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_messages`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_messages` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `author` INT NOT NULL , `params` TEXT NOT NULL , `message` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `adminka_tickets`.`msg_author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `adminka_tickets`.`ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `msg_author_id` FOREIGN KEY (`author`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_banned_users`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_banned_users` ( `id` INT NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL , `banner` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `adminka_tickets`.`admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_alerts`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_alerts` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `type` TEXT NOT NULL , `message` TEXT NOT NULL , `after_message` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");

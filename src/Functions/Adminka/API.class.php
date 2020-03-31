@@ -118,6 +118,11 @@ class API
                 $rv = $this->database->execute("SELECT `uuid` FROM `main_perms`.`perms_user_permissions` WHERE `permission` = 'antiproxy.proxy' ORDER BY `perms_user_permissions`.`id` DESC LIMIT {$start}, {$end} ", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Žádná data nenalezena");
+                }
+
                 while ($row = $rv->fetch_assoc()) {
                     $i++;
                     $a++;
@@ -179,6 +184,11 @@ class API
                 $rv = $this->database->execute("SELECT `admin`, `unregistered`, `date`, `id` FROM `unregister-log` ORDER BY `unregister-log`.`id` DESC LIMIT {$start}, {$end}", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Žádná data nenalezena");
+                }
+
                 while ($row = $rv->fetch_assoc()) {
                     $i++;
                     $a++;
@@ -246,6 +256,11 @@ class API
                 $rv = $this->database->execute("SELECT `admin`, `nick`, `date`, `amount`, `method`, `id` FROM `gems-log` ORDER BY `gems-log`.`id` DESC LIMIT {$start}, {$end}", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
                 $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Žádná data nenalezena");
+                }
+
                 while ($row = $rv->fetch_assoc()) {
                     $i++;
                     $a++;
@@ -271,10 +286,6 @@ class API
                             <td>{$row["date"]}</td>
                         </tr>";
                     }
-                }
-
-                if (empty($return) && $value == 1) {
-                    return $this->throwError("Žádná data nenalezena");
                 }
 
                 if (empty($return)) {
