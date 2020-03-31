@@ -135,6 +135,12 @@ class Stats
         return $rv->fetch_object()->pass_length;
     }
 
+    public function getGems()
+    {
+        $rv = $this->database->select(["value"], "main_kredity`.`supercredits", "LIMIT 1", "name", $this->username);
+        return $rv->fetch_object()->value;
+    }
+
     public function getUserData()
     {
         $data = $this->config->getConfig("Main/player_info");
@@ -183,4 +189,20 @@ class Stats
         return $return;
     }
 
+    public function isBanned()
+    {
+        $uuid = Utils::getUUIDByNick($this->username);
+
+        $rv = $this->database->select(["id"], "main_bans`.`litebans_bans", "AND `active` = 1 LIMIT 1", "uuid", $uuid);
+
+        if (!$rv ||$this->database->num_rows($rv) == 0) {
+            $rv = $rv = $this->database->select(["id"], "main_bans`.`litebans_bans", "AND `active` = 1 LIMIT 1", "ip", Utils::getIpOfUser($this->username));
+
+            if (!$rv ||$this->database->num_rows($rv) == 0) {
+                return "Ne";
+            }
+            return "Ano";
+        }
+        return "Ano";
+    }
 }
