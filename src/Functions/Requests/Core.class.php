@@ -32,7 +32,8 @@ class Core
         "gems",
         "todo",
         "remove-todo",
-        "ticket-write"
+        "ticket-write",
+        "ticket-send-message"
     ];
     /**
      * Store method
