@@ -73,6 +73,21 @@
     box-shadow: 0 0 0 0.2rem rgba(189, 33, 48, 0.25);
 }
 
+.green {
+    background: #28a745!important;
+}
+
+.green:hover {
+    background: #238d3c!important;
+    color: #fff!important;
+}
+
+.green:focus {
+    background: #1d7831!important;
+    color: #fff!important;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
 
 a,
 a:hover,
