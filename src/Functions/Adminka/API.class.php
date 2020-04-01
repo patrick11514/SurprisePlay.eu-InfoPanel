@@ -113,7 +113,7 @@ class API
 
                 $start = ($value == 1) ? 0 : (5 * ($value - 1));
                 $end = ($value == 1) ? 6 : ((5 * $value) + 1);
-
+                $token = \patrick115\Main\Session::init()->getData("Security/CRF/token");
                 $return = "";
                 $rv = $this->database->execute("SELECT `uuid` FROM `main_perms`.`perms_user_permissions` WHERE `permission` = 'antiproxy.proxy' ORDER BY `perms_user_permissions`.`id` DESC LIMIT {$start}, {$end} ", true);
                 $i = ($value == 1) ? 0 : ($value - 1) * 5;
@@ -134,13 +134,22 @@ class API
                         $rank = $rank->getRank();
                         $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
 
-                    
+                        $vpn_id = Utils::createPackage(Utils::randomString(10) . ";" . $username . ";" . Utils::randomString(11))[1];
 
                         $return .= "
                         <tr>
                             <td>{$i}</td>
                             <td>{$username}</td>
                             <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td>
+                            <form method=\"post\" action=\"./requests.php\">
+                                <input type=\"hidden\" name=\"method\" value=\"remove-vpn\" required>
+                                <input type=\"hidden\" name=\"source_page\" value=\"?vpn-allow\" required>
+                                <input type=\"hidden\" name=\"CSRF_token\" value=\"" .$token .  "\" required>
+                                <input type=\"hidden\" name=\"id\" value=\"{$vpn_id}\" required>
+                                <button type=\"submit\" style=\"background:none;border:none;\"><i class=\"fas fa-trash\"></i></button></td>
+                            </form>
+                            </td>
                         </tr>";
                     }
                 }

@@ -238,7 +238,62 @@ class Templater
                     "type" => "player_list"
                 ]
             ]
-        ]
+        ],
+        "Ticket-List-Admin" => [
+            "title" => "Seznám tiketů",
+            "name" => "ticket-admin-list.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Seznam tiketů",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "multi" => true,
+                    "type" => [
+                        "admin_list",
+                        "check_if_perms",
+                        "get_admin_list"
+                    ]
+                ]
+            ]
+        ],
+        "Ticket-View-Admin" => [
+            "title" => "Zobrazit tiket",
+            "name" => "ticket-view-admin.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Zobrazit tiket",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "multi" => true,
+                    "type" => [
+                        "check_ticket_admin",
+                        "chat_admin",
+                        "player_info_admin",
+                        "send_message_check_admin"
+                    ]
+                ]
+            ]
+        ],
     ];
 
     /**
@@ -283,7 +338,8 @@ class Templater
      */
     private $pages_with_custom_replacements = [
         "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
-        "Ticket-Create", "Ticket-View", "Ticket-List",
+        "Ticket-Create", "Ticket-View", "Ticket-List", "Ticket-List-Admin",
+        "Ticket-View-Admin"
     ];
 
     /**
@@ -482,6 +538,10 @@ class Templater
                     }
                 } else {
                     $type = $this->pageAliases[$sourceName]["tickets"]["callback"]["type"];
+
+                    if (is_array($type)) {
+                        $this->error->catchError("If you want to use multi settings, add \"multi\" => true to your configuration.", debug_backtrace());
+                    }
 
                     $username = $this->session->getData("Account/User/Username");
 

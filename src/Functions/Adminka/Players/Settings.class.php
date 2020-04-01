@@ -33,6 +33,9 @@ class Settings
             "gem-count",
             "gem-action",
         ],
+        "removeVPN" => [
+            "id"
+        ]
     ];
 
     public function __construct($data)
@@ -49,6 +52,15 @@ class Settings
         $this->session = Session::init();
         $this->database = Database::init();
         $this->logger = Logger::init();
+    }
+
+    public function removeVPN()
+    {
+        $id = explode(";", Utils::getPackage([1 => $this->data["id"]]))[1];
+        $uuid = Utils::getUUIDByNick($id);
+    
+        $this->database->delete("main_perms`.`perms_user_permissions", ["uuid", "permission"], [$uuid, "antiproxy.proxy"]);
+        return true;
     }
 
     public function unregister()
@@ -272,6 +284,9 @@ class Settings
             $username = $this->session->getData("Account/User/Username");
             unlink(Main::getWorkDirectory() . "src/cache/{$username}");
             $is_changed = true;
+
+            define("DELETE_SESSION", true);
+            define("MESSAGE", ["Skin úpsěšně smazán, přihlaš se pro nové načtení skinu."]);
         }
 
         if ($is_changed === false) return false;

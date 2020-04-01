@@ -322,7 +322,112 @@ class PostChecks
                         ]
                     ]
                 ];
-            break;  
+            break;
+            case "ticket-send-message-admin":
+                return [
+                    "check" => [
+                        "message",
+                        "ticket_id"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "ticketCallback",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Zpráva odeslána!",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "message" => [
+                                "from" => "post"
+                            ],
+                            "ticket_id" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "callback"
+                            ],
+                            "callback" => [
+                                "from" => "text",
+                                "text" => "send-message-admin"
+                            ],
+                            "source_page" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break; 
+            case "toggle-ticket":
+                return [
+                    "check" => [
+                        "value",
+                        "ticket_id"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "ticketCallback",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Nastavení tiketu úspěšně změněno",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "value" => [
+                                "from" => "post"
+                            ],
+                            "ticket_id" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "callback"
+                            ],
+                            "callback" => [
+                                "from" => "text",
+                                "text" => "toggle-ticket"
+                            ],
+                        ]
+                    ]
+                ];
+            break; 
+            case "remove-vpn":
+                return [
+                    "check" => [
+                        "id"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "removeVPN",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Úspěšně zrušena VPN",
+                        "parameters" => [
+                            "id" => [
+                                "from" => "post" 
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "removeVPN"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

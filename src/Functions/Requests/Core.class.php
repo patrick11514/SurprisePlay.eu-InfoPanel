@@ -33,7 +33,10 @@ class Core
         "todo",
         "remove-todo",
         "ticket-write",
-        "ticket-send-message"
+        "ticket-send-message",
+        "ticket-send-message-admin",
+        "toggle-ticket",
+        "remove-vpn"
     ];
     /**
      * Store method
