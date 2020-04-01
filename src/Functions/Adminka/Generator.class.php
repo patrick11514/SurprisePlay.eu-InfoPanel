@@ -220,6 +220,7 @@ class Generator
                                                 <th>#</th>
                                                 <th>Jméno</th>
                                                 <th>Rank</th>
+                                                <th>#</th>
                                             </tr>
                                         </thead>
                                         <tbody id="vpn-allow-user-list">
