@@ -232,7 +232,7 @@ return [
             ],
             "Administrace" => [
                 "role" => "category",
-                "permission" => "mids",
+                "permission" => "leaders",
                 "items" => [
                     "Povolení VPN" => [
                         "permission" => "leaders",
@@ -267,29 +267,29 @@ return [
                     "Vedení" => [
                         "permission" => "full",
                         "icon" => "fas fa-circle",
-                        "link" => "?tickets-user",
-                        "page-name" => "tickets-user",
+                        "link" => "?ticket-list-admin&type=leader",
+                        "page-name" => "ticket-list-admin",
                         "icon-color" => "FF5555",
                     ],
                     "Hlavní Helper" => [
                         "permission" => "hl_helper",
                         "icon" => "fas fa-circle",
-                        "link" => "?tickets-user",
-                        "page-name" => "tickets-user",
+                        "link" => "?ticket-list-admin&type=hl.helper",
+                        "page-name" => "ticket-list-admin",
                         "icon-color" => "FFAA00",
                     ],
                     "Hlavní Builder" => [
                         "permission" => "hl_builder",
                         "icon" => "fas fa-circle",
-                        "link" => "?tickets-user",
-                        "page-name" => "tickets-user",
+                        "link" => "?ticket-list-admin&type=hl.builder",
+                        "page-name" => "ticket-list-admin",
                         "icon-color" => "FF55FF"
                     ],
                     "Helper" => [
                         "permission" => "helpers",
                         "icon" => "fas fa-circle",
-                        "link" => "?tickets-user",
-                        "page-name" => "tickets-user",
+                        "link" => "?ticket-list-admin&type=helper",
+                        "page-name" => "ticket-list-admin",
                         "icon-color" => "00AA00"
                     ]
                 ]
@@ -324,6 +324,8 @@ return [
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
             "Ticket-List" => "all",
+            "Ticket-List-Admin" => "mids",
+            "Ticket-View-Admin" => "mids"
         ],
         "group-perms" => [ //jména skupin s permissema
             "full" => [
@@ -423,6 +425,12 @@ return [
             "helper" => [
                 "name" => "Helper"
             ]
+        ],
+        "ticket-group-access" => [
+            "leader" => "full",
+            "hl.helper" => "hl_helper",
+            "hl.builder" => "hl_builder",
+            "helper" => "helpers"
         ],
         "ticket-reasons" => [
 
