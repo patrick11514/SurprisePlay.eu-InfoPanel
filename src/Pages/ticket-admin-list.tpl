@@ -1,3 +1,4 @@
+%%ticket_callback_check_if_perms%%
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
@@ -9,26 +10,21 @@
             <p>%%page_name%%</p>
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                    <a class="nav-link" href="?logout"><i class="fas fa-sign-in-alt"></i></a>
                 </li>
             </ul>
         </div>
     </nav>
 
     <div id="container" class="container-fluid">
-        <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%ERRORS%%
-        </div>
-        <div class="alert alert-success alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            %%messages%%
-        </div>
+        %%ERRORS%%
+        %%messages%%
         <div class="card">
             <div class="card-body">
                 <p class="title">Tikety</p>
                 <div class="table-responsive">
-                    <table data-request="get-todo" id="todo-table" class="table table-striped">
+                    %%ticket_callback_get_admin_list%%
+                    <!--<table data-request="get-todo" id="todo-table" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -60,9 +56,26 @@
                               <td><button type="button" class="btn btn-small">Otevřít</button> <button type="button" class="btn btn-small red">Uzavřít</button></td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table>!-->
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+$( function () {
+    $('#ticket-list').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Czech.json"
+        },
+        "searching": false,
+        "info": false,
+        "lengthChange":false,
+        "columnDefs": [
+        { "orderable": false, "targets": 5 },
+        { "type": "num", "tagets": 0}
+        ]
+
+    });
+} );
+</script>

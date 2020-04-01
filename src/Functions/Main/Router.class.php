@@ -30,7 +30,9 @@ class Router
         "todo" => "TodoList",
         "ticket-write" => "Ticket-Create",
         "ticket-view" => "Ticket-View",
-        "ticket-list" => "Ticket-List"
+        "ticket-list" => "Ticket-List",
+        "ticket-view-admin" => "Ticket-View-Admin",
+        "ticket-list-admin" => "Ticket-List-Admin"
     ];
 
     /**

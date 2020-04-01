@@ -38,7 +38,8 @@ $( function () {
         "info": false,
         "lengthChange":false,
         "columnDefs": [
-        { "orderable": false, "targets": 5 }
+        { "orderable": false, "targets": 5 },
+        { "type": "num", "tagets": 0}
         ]
 
     });

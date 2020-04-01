@@ -104,9 +104,6 @@ class Tickets
         );
         $message = str_replace(["&amp;", "\\r", "\\n"], ["&", "", ""], trim($this->vars["message"]));
 
-        var_dump($message);
-        #die();
-
         if (mb_strlen($title) > 40) {
             define("ERROR", ["Název tiketu nesmí obsahovat více, než 40 znaků"]);
             return false;
@@ -202,6 +199,11 @@ class Tickets
     public function ticketCallback()
     {
         switch ($this->vars["callback"]) {
+
+            /**
+             * TICKET CREATE
+             */
+
             case "redirect":
                 $sess = Session::init();
                 if (!$sess->isExist("Tickets/redirect_ticket_id")) {
@@ -211,6 +213,11 @@ class Tickets
                 unset($_SESSION["Tickets"]["redirect_ticket_id"]);
                 Utils::header("./?ticket-view&id=" . $id);
             break;
+
+            /**
+             * PLAYER_TICKET_VIEW
+             */
+
             case "check_ticket":
                 $router = Main::getApp("\patrick115\Main\Router");
                 $id = $router->getURIData("id", false);
@@ -225,58 +232,6 @@ class Tickets
                     $_SESSION["Request"]["Errors"] = ["Tiket s id {$id} nenalezen!"];
                     Utils::header("./?main");
                 }
-            break;
-            case "player_list":
-                $sess = Session::init();
-                $username = $sess->getData("Account/User/Username");
-                $user_id = Utils::getClientID($username);
-                $rv = $this->database->select(["id", "title", "reason", "create_timestamp", "waiting_for"], "adminka_tickets`.`tickets_list", "", "author", $user_id);
-
-                if ($this->database->num_rows($rv) > 0) {
-
-                    $return = "<table class=\"table table-striped\" id=\"ticket-list\">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Název</th>
-                                    <th>Typ</th>
-                                    <th>Stav</th>
-                                    <th>Datum založení</th>
-                                    <th>Akce</th>
-                                </tr>
-                            </thead>
-                            <tbody>";
-                    while ($row = $rv->fetch_assoc()) {
-                        $return .= "<tr>
-                        <td>{$row["id"]}</td>
-                        <td>{$row["title"]}</td>
-                        <td>{$row["reason"]}</td>
-                        <td>";
-                        switch ($row["waiting_for"]) {
-                            case self::TICKET_CLOSE:
-                                $return .= "<span class=\"badge badge-danger\">Uzavřen</span>";
-                            break;
-                            case self::TICKET_WAITING_FOR_ADMIN:
-                                $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
-                            break;
-                            case self::TICKET_WAITING_FOR_USER:
-                                $return .= "<span class=\"badge badge-green\">Čeká na odpověď Hráče</span>";
-                            break;
-                        }
-                        $return .= "</td>
-                        <td>" . date("H:i:s d.m.Y", (int) $row["create_timestamp"]) . "</td>
-                        <td><a href=\"?ticket-view&id={$row["id"]}\"><button type=\"button\" class=\"btn btn-small\">Otevřít</button>
-                        </tr>";
-
-                    }
-                    $return .= "</tbody>
-                    </table>";
-                } else {
-                    $return = "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
-                    Žádné tikety nenalezeny!
-                    </div>";
-                }
-                return $return;
             break;
             case "chat":
                 $id = $this->get_current_ticket_id();
@@ -444,6 +399,14 @@ class Tickets
                 $message = str_replace(["&amp;", "\\r", "\\n"], ["&", "", ""], trim($this->vars["message"]));
                 $username = $this->username;
 
+                if (@explode(";",
+                    @Utils::getPackage(
+                       [1 => $hashed_id]
+                    ))[0] == "AD") {
+                    define("ERROR", ["Nelze poslat admin zpravu do normalniho chatu!"]);
+                    return false;
+                } 
+
                 $id = @explode(";",
                     @Utils::getPackage(
                         [1 => $hashed_id]
@@ -508,8 +471,480 @@ class Tickets
                 ]
                 );
 
+                $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
+
                 return true;
             break;
+
+            /**
+             * TICKETS PLAYER LIST
+             */
+
+            case "player_list":
+                $sess = Session::init();
+                $username = $sess->getData("Account/User/Username");
+                $user_id = Utils::getClientID($username);
+                $rv = $this->database->select(["id", "title", "reason", "create_timestamp", "waiting_for"], "adminka_tickets`.`tickets_list", "", "author", $user_id);
+
+                if ($this->database->num_rows($rv) > 0) {
+
+                    $return = "<table class=\"table table-striped\" id=\"ticket-list\">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Název</th>
+                                    <th>Typ</th>
+                                    <th>Stav</th>
+                                    <th>Datum založení</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+                    while ($row = $rv->fetch_assoc()) {
+                        $return .= "<tr>
+                        <td>{$row["id"]}</td>
+                        <td>{$row["title"]}</td>
+                        <td>{$row["reason"]}</td>
+                        <td>";
+                        switch ($row["waiting_for"]) {
+                            case self::TICKET_CLOSE:
+                                $return .= "<span class=\"badge badge-danger\">Uzavřen</span>";
+                            break;
+                            case self::TICKET_WAITING_FOR_ADMIN:
+                                $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
+                            break;
+                            case self::TICKET_WAITING_FOR_USER:
+                                $return .= "<span class=\"badge badge-green\">Čeká na odpověď Hráče</span>";
+                            break;
+                        }
+                        $return .= "</td>
+                        <td>" . date("H:i:s d.m.Y", (int) $row["create_timestamp"]) . "</td>
+                        <td><a href=\"?ticket-view&id={$row["id"]}\"><button type=\"button\" class=\"btn btn-small\">Otevřít</button>
+                        </tr>";
+
+                    }
+                    $return .= "</tbody>
+                    </table>";
+                } else {
+                    $return = "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
+                    Žádné tikety nenalezeny!
+                    </div>";
+                }
+                return $return;
+            break;
+
+            /**
+             * TICKET ADMIN LIST
+             */
+
+            case "check_if_perms":
+                $router = Main::getApp("\patrick115\Main\Router");
+                $type = $router->getURIData("type", false);
+                if (empty($type)) {
+                    $_SESSION["Request"]["Errors"] = ["Typ je prázný"];
+                    Utils::header("./?main");
+                }
+
+                $groups = $this->config->getConfig("Main/ticket-group-access");
+
+                if (!array_key_exists($type, $groups)) {
+                    $_SESSION["Request"]["Errors"] = ["Neplatný typ"];
+                    Utils::header("./?main");
+                }
+
+                $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+
+                if (!$perms->getUser($this->username)->havePermission()->inGroup($groups[$type])) {
+                    $_SESSION["Request"]["Errors"] = ["Na toto nemáš oprávnění"];
+                    Utils::header("./?main");
+                }
+            break;
+            case "get_admin_list":
+                $router = Main::getApp("\patrick115\Main\Router");
+                $type = $router->getURIData("type", false);
+
+                $rv = $this->database->select(["id", "author", "title", "waiting_for", "reason", "create_timestamp"], "adminka_tickets`.`tickets_list", "", "for", $type);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    return "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
+                    Žádné tikety nenalezeny!
+                    </div>";
+                } 
+
+                $return = "<table id=\"ticket-list\" class=\"table table-striped\">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Název</th>
+                        <th>Hráč</th>
+                        <th>Typ</th>
+                        <th>Stav</th>
+                        <th>Datum založení</th>
+                        <th>Akce</th>
+                    </tr>
+                </thead>
+                <tbody>";
+
+                while($row = $rv->fetch_assoc()) {
+                    $return .= "<tr>
+                        <td>{$row["id"]}</td>
+                        <td>{$row["title"]}</td>";
+                        $username = Utils::getUserByClientId($row["author"]);
+                    $return .= "
+                        <td>{$username}</td>
+                        <td>{$row["reason"]}</td>
+                        <td>";
+                        if ($row["waiting_for"] == self::TICKET_CLOSE) {
+                            $return .= "<span class=\"badge badge-danger\">Uzavřen</span>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small green\">Otevřít</button>";
+                            $cls = Utils::createPackage(Utils::randomString(10) . ";open;" . Utils::randomString(10))[1];
+                        } else if ($row["waiting_for"] == self::TICKET_WAITING_FOR_ADMIN) {
+                            $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small red\">Uzavřít</button>";
+                            $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
+                        } else if ($row["waiting_for"] == self::TICKET_WAITING_FOR_USER) {
+                            $return .= "<span class=\"badge badge-green\">Čeká na odpověď Hráče</span>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small red\">Uzavřít</button>";
+                            $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
+                        }
+                    $return .= "</td>
+                        <td>" . date("H:i:s d.m.Y", (int) $row["create_timestamp"]) ."</td>
+                        <td>
+                        <form method=\"post\" action=\"./requests.php\">
+                        <a href=\"./?ticket-view-admin&id={$row["id"]}\">
+                            <button type=\"button\" class=\"btn btn-small\">Zobrazit</button>
+                        </a>
+                        
+                        <input type=\"hidden\" name=\"method\" value=\"toggle-ticket\" required>
+                        <input type=\"hidden\" name=\"source_page\" value=\"?ticket-list-admin|type={$type}\" required>
+                        <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
+                        <input type=\"hidden\" name=\"value\" value=\"{$cls}\" required>
+                        <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(10) . ";{$row["id"]};" . Utils::randomString(10))[1] . "\" required>
+                        {$scnd_button}
+                        </form>
+                        </td>
+                    </tr>";
+                }
+                $return .= "</tbody></table>";
+                return $return;
+            break;
+
+            /**
+             * TICKET ADMIN VIEW
+             */
+
+            case "check_ticket_admin":
+                $router = Main::getApp("\patrick115\Main\Router");
+                $id = $router->getURIData("id", false);
+
+                if (Utils::newEmpty($id) || !is_numeric($id) || $id < 1) {
+                    $_SESSION["Request"]["Errors"] = ["Neplatné id tiketu!"];
+                    Utils::header("./?main");
+                }
+
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    $_SESSION["Request"]["Errors"] = ["Tiket s id {$id} nenalezen!"];
+                    Utils::header("./?main");
+                }
+
+                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+                $groups = $this->config->getConfig("Main/ticket-group-access");
+
+                $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+
+                if (!$perms->getUser($this->username)->havePermission()->inGroup($groups[$rv->fetch_object()->for])) {
+                    $_SESSION["Request"]["Errors"] = ["Na zobrazení tohoto tiketu nemáš oprávnění!"];
+                    Utils::header("./?main");
+                }
+            break;
+            case "chat_admin":
+                $id = $this->get_current_ticket_id();
+
+                $alerts = [];
+
+                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "", "ticket_id", $id);
+
+                while ($row = $rv->fetch_assoc()) {
+
+                    $message = $row["message"];
+
+                    switch ($row["type"]) {
+                        case "change":
+                            $string = "<div class=\"alert alert-warning text-chat\">
+                            $message
+                        </div>";
+                        break;
+                        case "open":
+                            $string = "<div class=\"alert alert-success text-chat\">
+                            $message
+                        </div>";
+                        break;
+                        case "close":
+                            $string = "<div class=\"alert alert-danger text-chat\">
+                            $message
+                        </div>";
+                        break;
+                    }
+
+                    $alerts[$row["after_message"]] = $string;
+
+                }
+
+
+
+                $rv = $this->database->select(["id", "author", "params", "message", "date"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC", "ticket_id", $id);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    return "<div class=\"alert alert-danger alert-dismissible\" style=\"text-align:center;\">
+                    Někde nastala chyba
+                    </div>";
+                }
+                $return = "";
+                while ($row = $rv->fetch_assoc()) {
+
+                    if (!empty($alerts[$row["id"]])) {
+                        $return .= $alerts[$row["id"]];
+                    }
+
+                    $data = json_decode($row["params"] , 1);
+
+                    $username = Utils::getUserByClientId($row["author"]);
+
+                    $rank = Main::Create("\patrick115\Adminka\Players\Rank", [$username]);
+                    $player_rank = $rank->getRank();
+                    $rank_color = \patrick115\Main\Config::init()->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($player_rank)];
+                    
+                    $skin = Main::Create("\patrick115\Minecraft\Skins", [$username]);
+                    $skin = $skin->getSkin();
+
+                    if ($data["admin"] === false) {
+                        $return .= "<div class=\"direct-chat-msg right\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-right\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
+                        </div>
+                    </div>";
+                    } else {
+                        $return .= "<div class=\"direct-chat-msg\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-left\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
+                        </div>
+                    </div>";
+                    }
+                }
+                return $return;
+            break;
+            case "player_info_admin":
+                $id = $this->get_current_ticket_id();
+                
+                $rv = $this->database->select(["author"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+                $username = Utils::getUserByClientId($rv->fetch_object()->author);
+
+                $ip = Utils::getIpOfUser($username);
+                $rank = Main::Create("\patrick115\Adminka\Players\Rank", [$username]);
+                $stats = Main::Create("\patrick115\Minecraft\Stats", [$username]);
+                $ip_info = json_decode(
+                    file_get_contents("http://ip-api.com/json/{$ip}")
+                , 1);
+
+                $country = empty($ip_info["countryCode"]) ? "undefined_Undefined" : (($ip_info["countryCode"] == "CZ") ? "cs_CZ" : "sk_SK"); 
+                $rank = $rank->getRank();
+                $expiry = str_replace("Nevlastníš", "Nevlastní", $stats->getVipExpiry());
+                $city = !empty($ip_info["city"]) ? $ip_info["city"] : "Neznámé";
+                $banned = $stats->isBanned();
+                $money = $stats->getMoney();
+                $gems = $stats->getGems();
+                
+
+                return "<tr>
+                <td>IP:</td>
+                <td>{$ip} <img src=\"//%%domain%%/public/imgs/{$country}.png\" class=\"flag\"></td>
+            </tr>
+            <tr>
+                <td>Město:</td>
+                <td>{$city}</td>
+            </tr>
+            <tr>
+                <td>Rank:</td>
+                <td>{$rank}</td>
+            </tr>
+            <tr>
+                <td>Vyprší:</td>
+                <td>{$expiry}</td>
+            </tr>
+            <tr>
+                <td>Přistup s VPN:</td>
+                <td>{$stats->getAntiVPNStatus()}</td>
+            </tr>
+            <tr>
+                <td>Ban:</td>
+                <td>{$banned}</td>
+            </tr>
+            <tr>
+                <td>Peníze:</td>
+                <td>{$money}</td>
+            </tr>
+            <tr>
+                <td>Gemy:</td>
+                <td>{$gems}</td>
+            </tr>";
+
+            break;
+            case "send_message_check_admin":
+                $id = $this->get_current_ticket_id();
+                $rv = $this->database->select(["waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                
+                if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
+                    return "<div class=\"alert alert-danger text-chat\">
+                    Tiket je uzavřen, nelze do něj odepisovat!
+                    </div>";
+                } else {
+                    return "<form method=\"post\" action=\"./requests.php\">
+                    <input type=\"hidden\" name=\"method\" value=\"ticket-send-message-admin\" required>
+                    <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view-admin|id=" . $id . "\" required>
+                    <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
+                    <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage("AD;" . Utils::randomString(5) . ";" . $id . ";" . Utils::randomString(5))[1] . "\" required>
+                    <div class=\"form-group\">
+                        <label for=\"message\">Zpráva</label>
+                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" required></textarea>
+                    </div>
+                    <button type=\"submit\" class=\"btn btn-light\">Odeslat zprávu</button>
+                </form>";
+                }
+            break;
+
+            case "send-message-admin":
+                $hashed_id = $this->vars["ticket_id"];
+                $message = str_replace(["&amp;", "\\r", "\\n"], ["&", "", ""], trim($this->vars["message"]));
+                $username = $this->username;
+
+                if (@explode(";",
+                    @Utils::getPackage(
+                       [1 => $hashed_id]
+                    ))[0] != "AD") {
+                    define("ERROR", ["Nelze poslat normali zpravu do admin chatu!"]);
+                    return false;
+                } 
+
+                $id = @explode(";",
+                    @Utils::getPackage(
+                        [1 => $hashed_id]
+                    )
+                )[2];
+
+                if ($id != explode("=", explode("|", $this->vars["source_page"])[1])[1]) {
+                    define("ERROR", ["Id tiketu je neplatné"]);
+                    return false;
+                }
+
+                $rv = $this->database->select(["author", "waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    $this->logger->log("Hráč obešel hash!", "warning", true);
+                    define("ERROR", ["Id tiketu je neplatné"]);
+                    return false;
+                }
+
+                $author = Utils::getUserByClientId($rv->fetch_object()->author);
+
+                if ($author != $username) {
+                    $this->logger->log("Hráč se snaži upravovat cizí tikety!", "critical", true);
+                    define("ERROR", ["Nejsi majitelem tohoto tiketu!"]);
+                    return false;
+                }
+
+                if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
+                    $this->logger->log("Hráč se snaži upravovat zavřené tikety!", "critical", true);
+                    define("ERROR", ["Tento tiket je uzavřen!"]);
+                    return false;
+                }
+
+                if (mb_strlen($message) > 200) {
+                    define("ERROR", ["Zpráva nesmí být delší než 200 znaků"]);
+                    return false;
+                }
+        
+                if (mb_strlen($message) < 10) {
+                    define("ERROR", ["Zpráva je příliš krátká"]);
+                    return false;
+                }
+
+                $this->database->insert("adminka_tickets`.`tickets_messages",
+                [
+                    "id",
+                    "ticket_id",
+                    "author",
+                    "params",
+                    "message",
+                    "timestamp",
+                    "date"
+                ],
+                [
+                    "",
+                    $id,
+                    Utils::getClientID($username),
+                    json_encode(["admin" => true]),
+                    $message,
+                    time(),
+                    date("H:i:s d.m.Y")
+                ]
+                );
+
+                $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_USER]);
+
+                return true;
+            break;
+
+            /**
+             * Requests
+             */
+
+             case "toggle-ticket":
+                $id = @explode(";", @Utils::getPackage([1 => $this->vars["ticket_id"]]))[1];
+                $value = @explode(";", @Utils::getPackage([1 => $this->vars["value"]]))[1];
+
+                if (empty($id)) {
+                    define("ERROR", ["Neplatné id"]);
+                    return false;
+                }
+                if (!is_numeric($id)) {
+                    define("ERROR", ["Id musí být číslo"]);
+                    return false;
+                }
+
+                if (empty($value)) {
+                    define("ERROR", ["Neplatná hodnota"]);
+                    return false;
+                }
+                if (!in_array($value, ["open", "close"])) {
+                    define("ERROR", ["Neznámá hodnota"]);
+                    return false;
+                }
+
+                switch($value) {
+                    case "open":
+                        $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_USER]);
+                        return true;
+                    break;
+                    case "close":
+                        $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_CLOSE]);
+                        return true;
+                    break;
+                }
+                
+             break;
             default:
                 return "No process found";
             break;
