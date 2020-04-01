@@ -350,7 +350,7 @@ class Database extends Error
      * @param string|array $haystack
      * @param string|array $needle
      */
-    public function delete($table, $haystack, $needle)
+    public function delete($table, $haystack, $needle, $options = "")
     {
         if (is_array($haystack)) {
             if (!is_array($needle)) {
@@ -373,14 +373,16 @@ class Database extends Error
 
         for ($i = 0; $i < count($haystack); $i++) {
             if (is_int($needle[$i])) {
-                $cond .= "`$table`.`" . Utils::chars($haystack[$i]) . "` = " . Utils::chars($needle[$i]);
+                $cond .= "`" . ((strpos($table, "`.`") !== false) ? explode("`.`", $table)[1] : $table) . "`.`" . Utils::chars($haystack[$i]) . "` = " . Utils::chars($needle[$i]) . " AND ";
             } else {
-                $cond .= "`$table`.`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "'";
+                $cond .= "`" . ((strpos($table, "`.`") !== false) ? explode("`.`", $table)[1] : $table) . "`.`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "' AND ";
             }
         }
 
-        $command = "DELETE FROM `$table` WHERE {$cond};";
+        $cond = rtrim($cond, " AND ");
 
+        $command = "DELETE FROM `$table` WHERE {$cond} {$options};";
+        echo $command;
         $this->execute($command);
     }
 
