@@ -41,6 +41,7 @@
                                 %%ticket_callback_player_info_admin%%
                             </tbody>
                         </table>
+                        %%ticket_callback_change_group%%
                     </div>
                 </div>
             </div>
