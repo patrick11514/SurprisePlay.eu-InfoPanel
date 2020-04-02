@@ -97,7 +97,8 @@ class Generator
             "VPNAllow",
             "Unregister",
             "Gems",
-            "Todo"
+            "Todo",
+            "Change-User-Data"
         ];
 
         if (!in_array($form_name, $stored_forms)) {
@@ -161,6 +162,7 @@ class Generator
                                 </form>
                             </div>
                         </div>
+                        %%settings_allow_vpn_form%%
                     </div>
                 </div>
                 ';
@@ -347,7 +349,7 @@ class Generator
                             <p>%%page_name%%</p>
                             <ul class="nav navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                                    <a class="nav-link" href="?logout"><i class="fas fa-sign-in-alt"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -447,7 +449,7 @@ class Generator
                             <p>%%page_name%%</p>
                             <ul class="nav navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i></a>
+                                    <a class="nav-link" href="?logout"><i class="fas fa-sign-in-alt"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -532,6 +534,90 @@ class Generator
                                 </form>
                             </div>
                         </div>
+                    </div>
+                </div>
+            ';
+            break;
+            case "Change-User-Data":
+                $this->genData = '
+                <div id="content">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" id="sidebarCollapse" href="#"><i class="fas fa-align-left"></i></a>
+                                </li>
+                            </ul>
+                            <p>%%page_name%%</p>
+                            <ul class="nav navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="?logout"><i class="fas fa-sign-in-alt"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+
+                    <div id="container" class="container-fluid">
+                        %%ERRORS%%
+                        %%messages%%
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="title">Přesun dat:</p>
+                                <hr>
+                                <form action="./requests.php" method="post">
+                                    <input type="hidden" name="method" value="changeData" required>
+                                    <input type="hidden" name="source_page" value="?change-user-data" required>
+                                    <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
+                                    <div class="form-group">
+                                        <label for="from-nick">Z jakého nicku</label>
+                                        <input type="text" id="from-nick" name="from-nick" class="form-control" required>
+                                        <div class="list-group" id="from-nicks" pos="1">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="to-nick">Na jaký nick</label>
+                                        <input type="text" id="to-nick" name="to-nick" class="form-control" required>
+                                        <div class="list-group" id="to-nicks" pos="2">
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="confirm-button" class="btn btn-light">Přesunout data</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!--<div class="card">
+                            <div class="card-body">
+                                <p>Vytvořit úkol</p>
+                                <hr>
+                                <form action="./requests.php" method="post" role="form">
+                                    <input type="hidden" name="method" value="todo" required>
+                                    <input type="hidden" name="source_page" value="?todo" required>
+                                    <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
+                                    <div class="form-group">
+                                        <label for="todo-nicks">Pro koho</label>
+                                        <div id="loader-nicks" class="d-flex justify-content-center" style="padding-top:5%;">
+                                            <div class="spinner-border" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                        <select id="todo-nicks" style="visibility:hidden;" name="for"
+                                            class="loading-nicks form-control" required>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tags">Tagy (CTRL + CLICK)</label>
+
+                                        <select name="tags[]" id="tags" class="form-control" multiple="multiple" required>
+                                            %%TODO_TAGS%%
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message">Zpráva</label>
+                                        <textarea id="message" name="message" class="form-control" required></textarea>
+                                    </div>
+                                    <button type="submit" id="todo-button" class="btn btn-light">Přidat</button>
+                                </form>
+                            </div>
+                        </div>!-->
                     </div>
                 </div>
             ';
