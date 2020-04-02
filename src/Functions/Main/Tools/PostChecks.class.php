@@ -428,6 +428,100 @@ class PostChecks
                     ]
                 ];
             break;
+            case "player-vpn-allow":
+                return [
+                    "check" => [
+                        "reason",
+                        "confirm"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "allowUserVPN",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Žádost byla odeslána",
+                        "parameters" => [
+                            "reason" => [
+                                "from" => "post" 
+                            ],
+                            "confirm" => [
+                                "from" => "post"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "allowVPN"
+                            ],
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
+            case "ticket-change-group":
+                return [
+                    "check" => [
+                        "group",
+                        "ticket_id"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "changeTicketGroup",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Skupina byla změněna",
+                        "parameters" => [
+                            "group" => [
+                                "from" => "post" 
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "changeGroup"
+                            ],
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "ticket_id" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
+            case "changedata":
+                return [
+                    "check" => [
+                        "from-nick",
+                        "to-nick"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Minecraft\ChangeData",
+                        "function" => "changeData",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Data byla přesunuta",
+                        "parameters" => [
+                            "from-nick" => [
+                                "from" => "post" 
+                            ],
+                            "to-nick" => [
+                                "from" => "post",
+                            ]
+                        ]
+                    ]
+                ];
+            break;
         }
     }
 }

@@ -258,6 +258,12 @@ return [
                         "link" => "?todo",
                         "page-name" => "todo"
                     ],
+                    "Přesun dat mezi hráči" => [
+                        "permission" => "hl_helper",
+                        "icon" => "fas fa-arrows-alt-h",
+                        "link" => "?change-user-data",
+                        "page-name" => "change-user-data"
+                    ]
                 ]
             ],
             "Podpora" => [
@@ -320,6 +326,7 @@ return [
             "Unregister" => "leaders",
             "Gems" => "full",
             "TodoList" => "leaders",
+            "ChangUserData" => "hl_helper",
             //tickety
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
@@ -502,6 +509,17 @@ return [
                 "enabled" => true
             ],
             
+        ],
+        "vpn_allow" => [
+            "category" => "Povolení VPN", #z ticketů výše
+            "ticket_name" => "Žádost o povolení VPN", #název předvytvořeného tiketu
+            "message" => "Dobrý den, žádám o povolení VPN." #\r\n = nový řádek
+            . "\r\n" 
+            . "\r\n"
+            . "Důvod povolení: %reason%"
+            . "\r\n"
+            . "\r\n"
+            . "s pozdravem %username%.",
         ]
     ]
 ];

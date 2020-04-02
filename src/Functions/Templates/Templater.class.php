@@ -68,12 +68,19 @@ class Templater
                 "user-email",
                 "password",
                 "version",
-                "copy"
+                "copy",
+                "settings_allow_vpn_form"
             ],
             "page_name" => "Nastavení profilu",
             "generate_form" => [
                 "name" => "settings",
                 "var_name" => "settings"
+            ],
+            "tickets" => [
+                "callback" => [
+                    "enabled" => true,
+                    "type" => "allow_user_vpn"
+                ]
             ]
         ],
         "ErrorPage" => [
@@ -289,9 +296,30 @@ class Templater
                         "check_ticket_admin",
                         "chat_admin",
                         "player_info_admin",
-                        "send_message_check_admin"
+                        "send_message_check_admin",
+                        "change_group"
                     ]
                 ]
+            ],
+        ],
+        "ChangUserData" => [
+            "title" => "Přesun dat mezi hráči",
+            "name" => "change-user-data.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Přesun dat mezi hráči",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Change-User-Data",
+                "var_name" => "change_user" 
             ]
         ],
     ];
@@ -325,6 +353,7 @@ class Templater
         "autologin_second_name" => "%%autologin_nd_name%%",
         "user-email" => "%%user-email%%",
         "password" => "%%password%%",
+        "settings_allow_vpn_form" => "%%settings_allow_vpn_form%%",
 
         //todo
         "todo_tags" => "%%TODO_TAGS%%",
@@ -339,7 +368,7 @@ class Templater
     private $pages_with_custom_replacements = [
         "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
         "Ticket-Create", "Ticket-View", "Ticket-List", "Ticket-List-Admin",
-        "Ticket-View-Admin"
+        "Ticket-View-Admin", "ChangUserData"
     ];
 
     /**
@@ -773,6 +802,44 @@ class Templater
                     
                     $replacement = $data->getData("tickets_reasons")->generate();
 
+                break;
+                case "settings_allow_vpn_form":
+                    $username = $this->session->getData("Account/User/Username");
+                    $app = Main::Create("\patrick115\Minecraft\Stats", [$username]);
+
+                    if ($app->getAntiVPNStatus() == "Zakázan") {
+
+                        $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
+                        $token = $CSRF->getToken();
+                        $replacement =  '
+                    
+                    <div class="card">
+                          <div class="card-body">
+                              <p>Povolení přístupu vpn na serveru</p>
+                              <hr>
+                              <form method="post" action="./requests.php">
+                                  <input type="hidden" name="method" value="player-vpn-allow" required>
+                                  <input type="hidden" name="source_page" value="?settings" required>
+                                  <input type="hidden" name="CSRF_token" value="' . $token . '" required>
+                                  <div class="form-group">
+                                      <label for="reason">Z jakého důvodu chceš povolit přístup s VPN</label>
+                                      <input type="text" class="form-control" id="reason" name="reason" required>
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="confirm">Potrvzuji, že nebudu VPN zneužívat k obcházení banu</label>
+                                      <select name="confirm" id="confirm" class="form-control" required>
+                                          <option value=""></option>
+                                          <option value="allow">Potvrzuji</option>
+                                      </select>
+                                  </div>
+                                  <button type="submit" class="btn btn-light">Odeslat žádost</button>
+                              </form>
+                          </div>
+                      </div>';
+                    } else {
+                        $replacement = "";
+                    }
+                    
                 break;
                 default:
                     

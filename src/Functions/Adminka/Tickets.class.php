@@ -39,6 +39,14 @@ class Tickets
         "callback" => [
             "username",
             "callback"
+        ],
+        "allowVPN" => [
+            "reason",
+            "confirm"
+        ],
+        "changeGroup" => [
+            "group",
+            "ticket_id"
         ]
     ];
     private $vars;
@@ -238,7 +246,7 @@ class Tickets
 
                 $alerts = [];
 
-                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "", "ticket_id", $id);
+                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "ORDER BY `tickets_alerts`.`id` DESC", "ticket_id", $id);
 
                 while ($row = $rv->fetch_assoc()) {
 
@@ -246,23 +254,33 @@ class Tickets
 
                     switch ($row["type"]) {
                         case "change":
-                            $string = "<div class=\"alert alert-warning text-chat\">
+                            $string = "<center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-warning text-chat\">
                             $message
                         </div>";
                         break;
                         case "open":
-                            $string = "<div class=\"alert alert-success text-chat\">
+                            $string = "<center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-success text-chat\">
                             $message
                         </div>";
                         break;
                         case "close":
-                            $string = "<div class=\"alert alert-danger text-chat\">
+                            $string = "
+                            <center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-danger text-chat\">
                             $message
                         </div>";
                         break;
                     }
 
-                    $alerts[$row["after_message"]] = $string;
+                    $alerts[$row["after_message"]][] = $string;
 
                 }
 
@@ -279,7 +297,9 @@ class Tickets
                 while ($row = $rv->fetch_assoc()) {
 
                     if (!empty($alerts[$row["id"]])) {
-                        $return .= $alerts[$row["id"]];
+                        foreach ($alerts[$row["id"]] as $alert) {
+                            $return .= $alert;
+                        }
                     }
 
                     $data = json_decode($row["params"] , 1);
@@ -664,7 +684,7 @@ class Tickets
 
                 $alerts = [];
 
-                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "", "ticket_id", $id);
+                $rv = $this->database->select(["type", "message", "after_message", "date"], "adminka_tickets`.`tickets_alerts", "ORDER BY `tickets_alerts`.`id` DESC", "ticket_id", $id);
 
                 while ($row = $rv->fetch_assoc()) {
 
@@ -672,23 +692,33 @@ class Tickets
 
                     switch ($row["type"]) {
                         case "change":
-                            $string = "<div class=\"alert alert-warning text-chat\">
+                            $string = "<center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-warning text-chat\">
                             $message
                         </div>";
                         break;
                         case "open":
-                            $string = "<div class=\"alert alert-success text-chat\">
+                            $string = "<center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-success text-chat\">
                             $message
                         </div>";
                         break;
                         case "close":
-                            $string = "<div class=\"alert alert-danger text-chat\">
+                            $string = "
+                            <center>
+                            <span class=\"direct-chat-timestamp\" style=\"font-size:12px\">{$row["date"]}</span>
+                            </center>
+                            <div class=\"alert alert-danger text-chat\">
                             $message
                         </div>";
                         break;
                     }
 
-                    $alerts[$row["after_message"]] = $string;
+                    $alerts[$row["after_message"]][] = $string;
 
                 }
 
@@ -705,7 +735,9 @@ class Tickets
                 while ($row = $rv->fetch_assoc()) {
 
                     if (!empty($alerts[$row["id"]])) {
-                        $return .= $alerts[$row["id"]];
+                        foreach ($alerts[$row["id"]] as $alert) {
+                            $return .= $alert;
+                        }
                     }
 
                     $data = json_decode($row["params"] , 1);
@@ -933,18 +965,124 @@ class Tickets
                     return false;
                 }
 
+                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "ticket_id", $id);
+
+                $perms = $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+
+                $groups = $this->config->getConfig("Main/ticket-group-access");
+                    
+                if (!$perms->getUser($this->username)->havePermission()->inGroup($groups[$rv->fetch_object()->for])) {
+                    define("ERROR", ["Nemáš právo upravovat tento tiket"]);
+                    return false;
+                } 
+
                 switch($value) {
                     case "open":
                         $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_USER]);
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC LIMIT 1", "ticket_id", $id);
+                        $this->database->insert("adminka_tickets`.`tickets_alerts", 
+                        [
+                            "id", 
+                            "ticket_id", 
+                            "type", 
+                            "message", 
+                            "after_message", 
+                            "timestamp", 
+                            "date"
+                        ], 
+                        [
+                            "",
+                            $id,
+                            "open",
+                            "Tiket byl znova otevřen",
+                            $rv->fetch_object()->id,
+                            time(),
+                            date("H:i:s d.m.Y")
+                        ]
+                        );
                         return true;
                     break;
                     case "close":
                         $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_CLOSE]);
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_messages", "ORDER BY `tickets_messages`.`id` DESC LIMIT 1", "ticket_id", $id);
+                        $this->database->insert("adminka_tickets`.`tickets_alerts", 
+                        [
+                            "id", 
+                            "ticket_id", 
+                            "type", 
+                            "message", 
+                            "after_message", 
+                            "timestamp", 
+                            "date"
+                        ], 
+                        [
+                            "",
+                            $id,
+                            "close",
+                            "Tiket byl uzavřen",
+                            $rv->fetch_object()->id,
+                            time(),
+                            date("H:i:s d.m.Y")
+                        ]
+                        );
                         return true;
                     break;
                 }
                 
-             break;
+            break;
+            case "change_group":
+                $id = $this->get_current_ticket_id();
+
+                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+                $for = $rv->fetch_object()->for;
+
+                $return = "<p class=\"title\">Přesun tiketu do jiné kategorie</p>
+                <hr>
+                <form method=\"post\" action=\"./requests.php\">
+                    <input type=\"hidden\" name=\"method\" value=\"ticket-change-group\" required>
+                    <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view-admin|id=" . $id . "\" required>
+                    <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
+                    <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(10) . ";{$id};" . Utils::randomString(8))[1] . "\" required>
+                    <div class=\"form-group\">
+                        <label for=\"group\">Vyber skupinu</label>
+                        <select name=\"group\" id=\"group\" class=\"form-control\" required=\"\">
+                            <option value=\"\"></option>
+                        ";
+
+                $groups = $this->config->getConfig("Main/ticket-categories");
+
+                unset($groups[$for]);
+
+                foreach ($groups as $group_name => $group_data) {
+                    $return .= "<option value=\"" . Utils::createPackage(Utils::randomString(11) . ";{$group_name};" . Utils::randomString(12))[1] . "\">" . $group_data["name"] . "</option>";
+                }
+
+                $return .= "</select>
+                </div>
+                <button type=\"submit\" class=\"btn btn-light\">Změnit</button>
+                </form>";
+
+                return $return;
+            break;
+            /**
+             *  Settings ALLOW User VPN
+             */
+
+            case "allow_user_vpn":
+                $session = Session::init();
+                if (!$session->isExist("Tickets/redirect_vpn_user_allow")) {
+                    return "";
+                }
+
+                $id = $session->getData("Tickets/redirect_vpn_user_allow");
+
+                unset($_SESSION["Tickets"]["redirect_vpn_user_allow"]);
+
+                Utils::header("./?ticket-view&id={$id}");
+                
+            break;
+
             default:
                 return "No process found";
             break;
@@ -986,5 +1124,99 @@ class Tickets
                 }
             break;
         }
+    }
+
+    public function allowUserVPN()
+    {
+        $reason = $this->vars["reason"];
+        $confirm = $this->vars["confirm"];
+
+        if ($confirm != "allow") {
+            define("ERROR", ["Nepotvrdil jsi že povolení nebudeš zneužívat"]);
+            return false;
+        }
+
+        $vpn = $this->config->getConfig("Main/vpn_allow");
+
+
+
+        $this->vars["name"] = $vpn["ticket_name"];
+        $this->vars["message"] = str_replace(["%username%", "%reason%"], [$this->username, $reason], $vpn["message"]);
+
+        $this->vars["type"] = Utils::createPackage("%%TICKET_ID;" . $vpn["category"] . ";TICKET_ID%%")[1];
+
+        $this->writeTicket();
+
+        $session = Session::init();
+        
+        $ticket_id = $session->getData("Tickets/redirect_ticket_id");
+        unset($_SESSION["Tickets"]["redirect_ticket_id"]);
+        $_SESSION["Tickets"]["redirect_vpn_user_allow"] = $ticket_id;
+
+        return true;
+    }
+
+    public function changeTicketGroup()
+    {
+        $id = @explode(";", @Utils::getPackage([1 => $this->vars["ticket_id"]]))[1];
+        $group = @explode(";", @Utils::getPackage([1 => $this->vars["group"]]))[1];
+        if (empty($id)) {
+            define("ERROR", ["Neplatné id"]);
+            return false;
+        }
+        if (!is_numeric($id)) {
+            define("ERROR", ["Id musí být číslo"]);
+            return false;
+        }
+
+        $rv = $this->database->select(["id", "for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+        if (!$rv || $this->database->num_rows($rv) == 0) {
+            define("ERROR", ["Tiket s tímto id neexistuje"]);
+            return false;
+        } 
+
+        $perms = $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+
+        $groups = $this->config->getConfig("Main/ticket-group-access");
+
+        if (!$perms->getUser($this->username)->havePermission()->inGroup($groups[$rv->fetch_object()->for])) {
+            define("ERROR", ["Nemáš právo upravovat tento tiket"]);
+            return false;
+        } 
+
+        if (empty($group)) {
+            define("ERROR", ["Neplatná skupina"]);
+            return false;
+        }
+
+        $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["for"], [$group]);
+
+        $cat = $this->config->getConfig("Main/ticket-categories");
+
+        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_messages", "ORDER BY `id` DESC LIMIT 1", "ticket_id", $id);
+        $this->database->insert("adminka_tickets`.`tickets_alerts", 
+        [
+            "id",
+            "ticket_id",
+            "type",
+            "message",
+            "after_message",
+            "timestamp",
+            "date"
+        ], 
+        [
+            "",
+            $id,
+            "change",
+            "Tiket byl přesunut do kategorie {$cat[$group]["name"]}",
+            $rv->fetch_object()->id,
+            time(),
+            date("H:i:s d.m.Y")
+        ]
+        );
+
+        return true;
+
     }
 }

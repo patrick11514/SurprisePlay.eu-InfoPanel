@@ -36,7 +36,10 @@ class Core
         "ticket-send-message",
         "ticket-send-message-admin",
         "toggle-ticket",
-        "remove-vpn"
+        "remove-vpn",
+        "player-vpn-allow",
+        "ticket-change-group",
+        "changeData"
     ];
     /**
      * Store method
@@ -139,6 +142,7 @@ class Core
         if (empty($checkings["db_requests"])) {
             $this->error->catchError("Return db request from PostChecking is empty, skipping.", debug_backtrace());
             $this->errors[] = "Někde nastala chyba!";
+
             return;
         }
 
