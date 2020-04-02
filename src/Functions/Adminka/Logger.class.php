@@ -23,7 +23,7 @@ class Logger
 
     public function log($message, $type = "info", $syslog = false)
     {
-        $types = ["info", "login", "settings", "logout", "antivpn", "unregister", "warning"];
+        $types = ["info", "login", "settings", "logout", "antivpn", "unregister", "warning", "transfer_data"];
         if (empty($message)) {
             $this->error->catchError("All variables must be filled!", debug_backtrace());
             return;
@@ -60,7 +60,7 @@ class Logger
                 "message", 
                 "sessionid",
                 "timestamp",
-                "date"
+                "date",
             ], 
             [
                 "", 
