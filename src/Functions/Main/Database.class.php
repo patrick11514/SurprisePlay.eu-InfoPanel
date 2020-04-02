@@ -271,7 +271,7 @@ class Database extends Error
         $pars = rtrim($pars, ", ");
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
-        echo $command;
+        
         $this->execute($command, false);
     }
 
@@ -283,7 +283,7 @@ class Database extends Error
      * @param string|array $names name of row
      * @param string|array $vals to this string
      */
-    public function update($table, $haystack, $needle, $names, $vals)
+    public function update($table, $haystack, $needle, $names, $vals, $parameter = "")
     {
         if (!is_array($names)) {
             $this->errors->catchError("Names must be array", debug_backtrace());
@@ -338,7 +338,7 @@ class Database extends Error
             $where = "`" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "'";
         }
 
-        $command = "UPDATE `$table` SET $sets WHERE $where";
+        $command = "UPDATE `$table` SET $sets WHERE $where {$parameter}";
 
         $this->execute($command, false);
 
