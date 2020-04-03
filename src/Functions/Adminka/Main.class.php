@@ -3,8 +3,9 @@
 namespace patrick115\Adminka;
 
 use patrick115\Main\Error;
+use patrick115\Main\Tools\Constanter;
 
-class Main implements \patrick115\Interfaces\Main
+class Main
 {
     /**
      * Error class
@@ -132,8 +133,12 @@ class Main implements \patrick115\Interfaces\Main
         if (DEBUG === true) {
             echo "<!--Starting at " . self::$workDirectory . "!-->" . PHP_EOL;
         }
-        self::Create("patrick115\Main\Router", [$_SERVER["REQUEST_URI"]]);
-        self::Create("patrick115\Adminka\Players\Accounts", [])->run();
+        $constanter = Constanter::init();
+        $fc = $constanter->get("check_fc");
+
+        self::Create($constanter->get("1"), [])->$fc();
+        self::Create($constanter->get("2"), [$_SERVER["REQUEST_URI"]]);
+        self::Create($constanter->get("3"), [])->run();
     }
 
     public static function Check()
@@ -152,6 +157,7 @@ class Main implements \patrick115\Interfaces\Main
             "6d61696e5f7065726d73",
             "737572766976616c5f636d69",
         ];
+
         $fc = \patrick115\Main\Tools\Constanter::init()->get("_616e6f6e796d6f7573");
         $fc($_4gx86, $_2xgf6, $_2xf8h);
         
