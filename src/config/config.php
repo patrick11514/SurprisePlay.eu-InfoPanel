@@ -2,14 +2,14 @@
 
 return [
     "Database" => [
-        "address" => "localhost",
+        "address" => "localhost",//"82.208.16.140", 
         "port" => 3306,
-        "username" => "root",
-        "password" => "BV64qYYqIizV5XJzvi",
+        "username" => "root",//"infopanel",
+        "password" => "BV64qYYqIizV5XJzvi",//"79Yz4wjGBK3gUKq",
         "database" => "adminka",
     ],
     "Aliases" => [
-        "domain" => null //Změna domény v titlu stránky
+        "domain" => 'SurprisePlay.eu' //Změna domény v titlu stránky
     ],
 
 
@@ -155,6 +155,7 @@ return [
             "sponzor" => "Sponzor",
             "surprise" => "Surprise",
             "youtuber" => "YouTuber",
+            "eventer" => "Eventer",
             "zk-builder" => "Zkušební Builder",
             "zk-helper" => "Zkušební Helper",
             "builder" => "Builder",
@@ -186,6 +187,7 @@ return [
             "sponzor" => "#FFFF55",
             "surprise" => "#FF5555",
             "youtuber" => "#AA0000",
+            "eventer" => "#5555FF",
             "zk-builder" => "#AAAAAA",
             "zk-helper" => "#AAAAAA",
             "builder" => "#AA00AA",
@@ -266,7 +268,7 @@ return [
                     ],
                     "Unban" => [
                         "permission" => "leaders",
-                        "icon" => "fas fa-ban",
+                        "icon" => "fas fa-arrows-alt-h",
                         "link" => "?unban",
                         "page-name" => "unban"
                     ]
@@ -333,7 +335,6 @@ return [
             "Gems" => "full",
             "TodoList" => "leaders",
             "ChangUserData" => "hl_helper",
-            "Unban" => "leaders",
             //tickety
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
@@ -402,6 +403,7 @@ return [
                 "sponzor",
                 "surprise",
                 "youtuber",
+                "eventer",
                 "zk-builder",
                 "zk-helper",
                 "builder",
@@ -450,7 +452,7 @@ return [
 
             //Leader, Vedení Majitel
             "Žádost o YT" => [
-                "displayname" => "Žádost o youtubera",
+                "displayname" => "Žádost o YouTubera",
                 "for" => "leader",
                 "enabled" => true
             ],

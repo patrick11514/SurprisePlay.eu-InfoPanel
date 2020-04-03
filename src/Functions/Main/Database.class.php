@@ -73,11 +73,13 @@ class Database extends Error
                 $this->config->getConfig("Database/password"),
                 $this->config->getConfig("Database/database")
             );
-            $conn->set_charset("utf8mb4");
 
             if (isset($conn->connect_error)) {
+                die($this->errorConvert($conn->connect_error) . "(" . $conn->connect_error . ")");
                 $this->errors->catchError($this->errorConvert($conn->connect_error), debug_backtrace());
             }
+
+            $conn->set_charset("utf8mb4");
 
             //Default
             if (!@$conn->query("SELECT 1 FROM `accounts`")) {
