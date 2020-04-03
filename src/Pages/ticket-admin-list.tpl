@@ -24,39 +24,6 @@
                 <p class="title">Tikety - %%ticket_group%%</p>
                 <div class="table-responsive">
                     %%ticket_callback_get_admin_list%%
-                    <!--<table data-request="get-todo" id="todo-table" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Název</th>
-                                <th>Hráč</th>
-                                <th>Typ</th>
-                                <th>Stav</th>
-                                <th>Datum založení</th>
-                                <th>Akce</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>Nahlášení bugu</td>
-                              <td>Skypad6000</td>
-                              <td>Nahlášení chyby</td>
-                              <td><span class="badge badge-yellow">Čeká na odpověď (Hráče/Podpory)</span></td>
-                              <td>3:33 25.03.2020</td>
-                              <td><button type="button" class="btn btn-small">Otevřít</button> <button type="button" class="btn btn-small red">Uzavřít</button></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Nahlášení hráče</td>
-                              <td>Skypad6000</td>
-                              <td>Nahlášení hráče</td>
-                              <td><span class="badge badge-danger">Uzavřen</span></td>
-                              <td>3:33 25.03.2020</td>
-                              <td><button type="button" class="btn btn-small">Otevřít</button> <button type="button" class="btn btn-small red">Uzavřít</button></td>
-                            </tr>
-                        </tbody>
-                    </table>!-->
                 </div>
             </div>
         </div>
