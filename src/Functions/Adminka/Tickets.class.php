@@ -619,15 +619,15 @@ class Tickets
                         <td>";
                         if ($row["waiting_for"] == self::TICKET_CLOSE) {
                             $return .= "<span class=\"badge badge-danger\">Uzavřen</span>";
-                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small green\">Otevřít</button>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small btn-green\">Otevřít</button>";
                             $cls = Utils::createPackage(Utils::randomString(10) . ";open;" . Utils::randomString(10))[1];
                         } else if ($row["waiting_for"] == self::TICKET_WAITING_FOR_ADMIN) {
                             $return .= "<span class=\"badge badge-yellow\">Čeká na odpověď Podpory</span>";
-                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small red\">Uzavřít</button>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small btn-red\">Uzavřít</button>";
                             $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
                         } else if ($row["waiting_for"] == self::TICKET_WAITING_FOR_USER) {
                             $return .= "<span class=\"badge badge-green\">Čeká na odpověď Hráče</span>";
-                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small red\">Uzavřít</button>";
+                            $scnd_button = "<button type=\"submit\" class=\"btn btn-small btn-red\">Uzavřít</button>";
                             $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
                         }
                     $return .= "</td>
