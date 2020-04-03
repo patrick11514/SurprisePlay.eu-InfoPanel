@@ -118,7 +118,6 @@ $const->send(@\patrick115\Main\Tools\Utils::getPackage("636865636b5f6663"),
 $const->send(@\patrick115\Main\Tools\Utils::getPackage("676c6f62616c2d66696c652d6c697374"),
             [
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f41646d696e6b612f4150492e636c6173732e706870"),
-                @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f41646d696e6b612f47656e657261746f722e636c6173732e706870"),
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f41646d696e6b612f4c6f676765722e636c6173732e706870"),
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f41646d696e6b612f4d61696e2e636c6173732e706870"),
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f41646d696e6b612f4e617669676174696f6e2e636c6173732e706870"),
