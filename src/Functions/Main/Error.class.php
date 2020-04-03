@@ -113,13 +113,13 @@ class Error
         if ($this->catcherror === null) {
             #Utils::header("./");
         }
-        $return = "<h2 style=\"color:red;\">Found " . count($this->catcherror) . " errors!</h2>
+        $return = "<p>Vyskytlo se " . count($this->catcherror) ." chyb!</p>
+        <hr>
         <pre>";
         foreach ($this->catcherror as $id => $error) {
             $return .= "[" . $this->catchtime[$id] . "] " . $error . PHP_EOL;
         }
         $return .= "</pre>";
-        $return .= "<h2><a href=\"./\">Back to home page</a></h2>";
         return $return;
     }
     
