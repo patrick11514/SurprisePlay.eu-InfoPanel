@@ -819,7 +819,7 @@ class Templater
                     
                     <div class="card">
                           <div class="card-body">
-                              <p>Povolení přístupu vpn na serveru</p>
+                              <p>Povolení přístupu VPN na serveru</p>
                               <hr>
                               <form method="post" action="./requests.php">
                                   <input type="hidden" name="method" value="player-vpn-allow" required>

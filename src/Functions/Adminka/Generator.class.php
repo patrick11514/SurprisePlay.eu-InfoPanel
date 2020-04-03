@@ -562,7 +562,7 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p>Přesun dat:</p>
+                                <p>Přesun dat (VIP, tagy)</p>
                                 <hr>
                                 <form action="./requests.php" method="post">
                                     <input type="hidden" name="method" value="changeData" required>
