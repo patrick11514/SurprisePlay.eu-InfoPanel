@@ -39,7 +39,8 @@ class Core
         "remove-vpn",
         "player-vpn-allow",
         "ticket-change-group",
-        "changeData"
+        "changeData",
+        "unban"
     ];
     /**
      * Store method

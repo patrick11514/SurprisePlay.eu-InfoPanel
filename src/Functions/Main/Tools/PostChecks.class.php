@@ -524,6 +524,32 @@ class PostChecks
                     ]
                 ];
             break;
+            case "unban":
+                return [
+                    "check" => [
+                        "nick"
+                    ],
+                    "db_requests" => [
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Players\Settings",
+                        "function" => "unban",
+                        "custom_error" => "Někde nastala chyba",
+                        "success_message" => "Hráč byl odbanován!",
+                        "parameters" => [
+                            "nick" => [
+                                "from" => "post" 
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "unban"
+                            ]
+                        ] 
+                    ]
+                ];
+            break;
         }
     }
 }

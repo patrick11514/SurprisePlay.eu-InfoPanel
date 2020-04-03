@@ -33,7 +33,8 @@ class Router
         "ticket-list" => "Ticket-List",
         "ticket-view-admin" => "Ticket-View-Admin",
         "ticket-list-admin" => "Ticket-List-Admin",
-        "change-user-data" => "ChangUserData"
+        "change-user-data" => "ChangUserData",
+        "unban" => "Unban"
     ];
 
     /**
