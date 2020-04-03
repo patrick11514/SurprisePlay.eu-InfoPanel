@@ -46,8 +46,8 @@ class Todo
 
         foreach ($this->data["tags"] as $tag) {
             if (empty($tags[$tag])) {
-                define("MESSAGE", ["<span style=\"color:red\">Undefined tag {$tag}!</span>"]);
-                return true;
+                define("ERROR", ["Neznámý tag {$tag}!"]);
+                return false;
             } else {
                 $tagy[] = $tag;
             }
@@ -58,16 +58,16 @@ class Todo
         $_creator_id = Utils::getClientID($_creator);
 
         if ($_creator_id === null) {
-            define("MESSAGE", ["<span style=\"color:red\">User {$_creator} has been never in infopanel!</span>"]);
-            return true;
+            define("ERROR", ["Hráč {$_creator} nebyl nikdy v infopanelu!"]);
+            return false;
         }
 
         $_for = $this->data["for"];
         $_for_id = Utils::getClientID($_for);
 
         if ($_for_id === null) {
-            define("MESSAGE", ["<span style=\"color:red\">User {$_for} has been never in infopanel!</span>"]);
-            return true;
+            define("ERROR", ["Hráč {$_for} nebyl nikdy v infopanelu!"]);
+            return false;
         }
 
         $_message = strip_tags($this->data["message"]);
@@ -115,8 +115,8 @@ class Todo
         ";ID%%");
         $rv = $this->database->select(["id"], "todo-list", "LIMIT 1", "id" , $id);
         if (!$rv || $this->database->num_rows($rv) == 0) {
-            define("MESSAGE", ["<span style=\"color:red\">Id nenalezeno</span>"]);
-            return true;
+            define("ERROR", ["Id nenalezeno"]);
+            return false;
         }
         $this->database->delete("todo-list", ["id"], [$id]);
         

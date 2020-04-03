@@ -205,6 +205,8 @@ class PostChecks
                         "method" => "function",
                         "class" => "\patrick115\Adminka\Todo",
                         "function" => "addTodo",
+                        "custom_error" => "Někde nastala chyba",
+                        
                         "parameters" => [
                             "for" => [
                                 "from" => "post"

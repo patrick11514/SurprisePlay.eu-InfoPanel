@@ -162,7 +162,17 @@ class Settings
 
         if (!in_array($method, $methods)) {
             define("ERROR", ["Neplatná metoda!"]);
-            return true;
+            return false;
+        }
+
+        if (!is_numeric($amount)) {
+            define("ERROR", ["{$amount} není číslo!"]);
+            return false;
+        }
+
+        if ($amount == 0) {
+            define("ERROR", ["Hodnota nesmí být číslo!"]);
+            return false;
         }
 
         $rv = $this->database->select(["value"], "main_kredity`.`supercredits", "LIMIT 1", "name", strtolower($player));
@@ -171,7 +181,7 @@ class Settings
         if ($method == "remove") {
             if ($amount > $credits) {
                 define("ERROR", ["Hráč má pouze {$credits} gemů, proto nelze odebrat {$amount} gemů"]);
-                return true;
+                return false;
             }
             $new_gems = $credits - $amount;
         } else {
