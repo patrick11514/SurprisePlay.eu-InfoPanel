@@ -301,7 +301,7 @@
     public static function getPackage($data)
     {
         $method = "H*";
-        if (empty($data[1])) {
+        if (!is_array($data)) {
             $data = [1 => $data];
         }
         $path = $data[1];
