@@ -33,8 +33,8 @@
         </nav>
 
         %%content%%
-
     </div>
+    
 <script src="//%%domain%%/public/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
