@@ -47,7 +47,10 @@ class Tickets
         "changeGroup" => [
             "group",
             "ticket_id"
-        ]
+        ],
+        "templater_get_admin_group" => [
+            "username"
+        ],
     ];
     private $vars;
 
@@ -943,7 +946,15 @@ class Tickets
              * Requests
              */
 
-             case "toggle-ticket":
+            case "get-current-group":
+                $router = Main::getApp("\patrick115\Main\Router");
+                $type = $router->getURIData("type", false);
+
+                $groups = $this->config->getConfig("Main/ticket-categories");
+                return $groups[$type]["name"];
+            break;
+
+            case "toggle-ticket":
                 $id = @explode(";", @Utils::getPackage([1 => $this->vars["ticket_id"]]))[1];
                 $value = @explode(";", @Utils::getPackage([1 => $this->vars["value"]]))[1];
 
@@ -965,7 +976,7 @@ class Tickets
                     return false;
                 }
 
-                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "ticket_id", $id);
+                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
 
                 $perms = $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
 

@@ -21,7 +21,7 @@
         %%messages%%
         <div class="card">
             <div class="card-body">
-                <p class="title">Tikety</p>
+                <p class="title">Tikety - %%ticket_group%%</p>
                 <div class="table-responsive">
                     %%ticket_callback_get_admin_list%%
                     <!--<table data-request="get-todo" id="todo-table" class="table table-striped">

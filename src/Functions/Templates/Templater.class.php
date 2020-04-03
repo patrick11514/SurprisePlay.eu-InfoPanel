@@ -7,6 +7,7 @@ use patrick115\Main\Error;
 use patrick115\Main\Session;
 use patrick115\Main\Tools\Utils;
 use patrick115\Adminka\Main;
+use patrick115\Adminka\Tickets;
 use patrick115\Main\Database;
 
 class Templater
@@ -89,7 +90,8 @@ class Templater
             "sourcefile" => "empty.tpl",
             "special_vars" => [
                 "copyright",
-                "error_data"
+                "error_data",
+                "version"
             ],
         ],
         "VPNAllow" => [
@@ -255,7 +257,8 @@ class Templater
                 "navigation",
                 "copyright",
                 "version",
-                "copy"
+                "copy",
+                "ticket-group"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
@@ -360,6 +363,7 @@ class Templater
 
         //tickets
         "ticket_types" => "%%ticket_ticket_types%%",
+        "ticket-group" => "%%ticket_group%%"
     ];
     /**
      * Pages with custom repalcemenest
@@ -840,6 +844,19 @@ class Templater
                         $replacement = "";
                     }
                     
+                break;
+                case "ticket-group":
+                    $username = $this->session->getData("Account/User/Username");
+
+                    $array = [
+                        "method" => "templater_get_admin_group",
+                        "username" => $username,
+                        "callback" => "get-current-group",
+                    ];
+
+                    $ticket = Main::Create("\patrick115\Adminka\Tickets", [$array]);
+
+                    $replacement = $ticket->ticketCallback();
                 break;
                 default:
                     
