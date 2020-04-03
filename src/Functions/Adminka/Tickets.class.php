@@ -246,7 +246,7 @@ class Tickets
 
                 $user_id = Utils::getClientID($this->username);
                 if ($rv->fetch_object()->author != $user_id) {
-                    $_SESSION["Request"]["Errors"] = ["Nelvastníš tento tiket!"];
+                    $_SESSION["Request"]["Errors"] = ["Nevlastníš tento tiket!"];
                     Utils::header("./?main");
                 }
             break;
@@ -900,11 +900,6 @@ class Tickets
 
                 $author = Utils::getUserByClientId($rv->fetch_object()->author);
 
-                if ($author != $username) {
-                    $this->logger->log("Hráč se snaži upravovat cizí tikety!", "critical", true);
-                    define("ERROR", ["Nejsi majitelem tohoto tiketu!"]);
-                    return false;
-                }
 
                 if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
                     $this->logger->log("Hráč se snaži upravovat zavřené tikety!", "critical", true);
