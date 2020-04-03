@@ -562,7 +562,7 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p class="title">Přesun dat:</p>
+                                <p>Přesun dat:</p>
                                 <hr>
                                 <form action="./requests.php" method="post">
                                     <input type="hidden" name="method" value="changeData" required>
@@ -584,40 +584,6 @@ class Generator
                                 </form>
                             </div>
                         </div>
-                        <!--<div class="card">
-                            <div class="card-body">
-                                <p>Vytvořit úkol</p>
-                                <hr>
-                                <form action="./requests.php" method="post" role="form">
-                                    <input type="hidden" name="method" value="todo" required>
-                                    <input type="hidden" name="source_page" value="?todo" required>
-                                    <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
-                                    <div class="form-group">
-                                        <label for="todo-nicks">Pro koho</label>
-                                        <div id="loader-nicks" class="d-flex justify-content-center" style="padding-top:5%;">
-                                            <div class="spinner-border" role="status">
-                                                <span class="sr-only">Loading...</span>
-                                            </div>
-                                        </div>
-                                        <select id="todo-nicks" style="visibility:hidden;" name="for"
-                                            class="loading-nicks form-control" required>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="tags">Tagy (CTRL + CLICK)</label>
-
-                                        <select name="tags[]" id="tags" class="form-control" multiple="multiple" required>
-                                            %%TODO_TAGS%%
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="message">Zpráva</label>
-                                        <textarea id="message" name="message" class="form-control" required></textarea>
-                                    </div>
-                                    <button type="submit" id="todo-button" class="btn btn-light">Přidat</button>
-                                </form>
-                            </div>
-                        </div>!-->
                     </div>
                 </div>
             ';
