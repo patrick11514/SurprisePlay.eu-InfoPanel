@@ -8,12 +8,11 @@
     <link rel="shortcut icon" href="//%%domain%%/public/imgs/favicon.ico">
     <link rel="stylesheet" href="//%%domain%%/public/css/fontawesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="//%%domain%%/public/css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//%%domain%%/public/css/data_tables.css">
+    <link rel="stylesheet" type="text/css" href=" https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css "> 
     <script src="//%%domain%%/public/js/jquery.min.js"></script>
-    <script src="//%%domain%%/public/js/data_tables.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js "></script> 
 </head>
 <body>
     <div class="wrapper">
