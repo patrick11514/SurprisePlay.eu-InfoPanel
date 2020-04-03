@@ -35,6 +35,9 @@ class Settings
         ],
         "removeVPN" => [
             "id"
+        ],
+        "unban" => [
+            "nick"
         ]
     ];
 
@@ -300,6 +303,25 @@ class Settings
         }
 
         if ($is_changed === false) return false;
+        return true;
+    }
+
+    public function unban()
+    {
+        $username = $this->data["nick"];
+
+        $stats = Main::Create("\patrick115\Minecraft\Stats", [$username]);
+        $banned = $stats->isBanned();
+
+        if ($banned == "Ne") {
+            define("ERROR", ["Tento hráč není zabanovan"]);
+            return false;
+        }
+
+        $uuid = Utils::getUUIDByNick($username);
+
+        $this->database->update("main_bans`.`litebans_bans", ["uuid", "active"], [$uuid, 1], ["active", "removed_by_name"], [0, $this->session->getData("Account/User/Username")]);
+
         return true;
     }
 }
