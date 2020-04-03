@@ -263,6 +263,12 @@ return [
                         "icon" => "fas fa-arrows-alt-h",
                         "link" => "?change-user-data",
                         "page-name" => "change-user-data"
+                    ],
+                    "Unban" => [
+                        "permission" => "leaders",
+                        "icon" => "fas fa-ban",
+                        "link" => "?unban",
+                        "page-name" => "unban"
                     ]
                 ]
             ],
@@ -327,6 +333,7 @@ return [
             "Gems" => "full",
             "TodoList" => "leaders",
             "ChangUserData" => "hl_helper",
+            "Unban" => "leaders",
             //tickety
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
@@ -463,7 +470,7 @@ return [
                 "enabled" => true
             ],
             "Problém s gemy" => [
-                "displayname" => "Nahlášení bugu",
+                "displayname" => "Problém s gemy",
                 "for" => "leader",
                 "enabled" => true
             ],
@@ -505,6 +512,11 @@ return [
             ],
             "Nahlášení hráče" => [
                 "displayname" => "Nahlášení hráče (Reklama, Spam, Nevhodný nick...)",
+                "for" => "helper",
+                "enabled" => true
+            ],
+            "Jiné" => [
+                "displayname" => "Jiné",
                 "for" => "helper",
                 "enabled" => true
             ],

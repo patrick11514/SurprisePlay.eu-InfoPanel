@@ -319,10 +319,14 @@ class Database extends Error
         $sets = "";
 
         for ($i = 0; $i < (count($names)); $i++) {
-            if (\patrick115\Main\Tools\Utils::isJson($vals[$i])) {
+            if (\patrick115\Main\Tools\Utils::isJson($vals[$i]) && !is_numeric($vals[$i])) {
                 $sets .= "`" . Utils::chars($names[$i]) . "` = '{$vals[$i]}', ";
             } else {
-                $sets .= "`" . Utils::chars($names[$i]) . "` = '" . Utils::chars($vals[$i]) . "', ";
+                if (is_numeric($vals[$i]) ||$vals[$i] === 0) {
+                    $sets .= "`" . Utils::chars($names[$i]) . "` = " . $vals[$i] . ", ";
+                } else {
+                    $sets .= "`" . Utils::chars($names[$i]) . "` = '" . Utils::chars($vals[$i]) . "', ";
+                }
             }
             
         }
@@ -331,11 +335,23 @@ class Database extends Error
         if (is_array($haystack)) {
             $where = "";
             for ($i = 0; $i < (count($haystack) - 1); $i++) {
-                $where .= "`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "' AND ";
+                if (is_numeric($needle[$i]) || $needle[$i] === 0) {
+                    $where .= "`" . Utils::chars($haystack[$i]) . "` = " . Utils::chars($needle[$i]) . " AND ";
+                } else {
+                    $where .= "`" . Utils::chars($haystack[$i]) . "` = '" . Utils::chars($needle[$i]) . "' AND ";
+                }
             }
-            $where .= "`" . Utils::chars($haystack[(count($haystack) - 1)]) . "` = '" . Utils::chars($needle[(count($needle) - 1)]) . "'";
+            if (is_numeric($needle[(count($needle) - 1)]) || $needle[(count($needle) - 1)] === 0) {
+                $where .= "`" . Utils::chars($haystack[(count($haystack) - 1)]) . "` = " . Utils::chars($needle[(count($needle) - 1)]);
+            } else {
+                $where .= "`" . Utils::chars($haystack[(count($haystack) - 1)]) . "` = '" . Utils::chars($needle[(count($needle) - 1)]) . "'";
+            }
         } else {
-            $where = "`" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "'";
+            if (is_numeric($needle) ||$needle === 0) {
+                $where = "`" . Utils::chars($haystack) . "` = " . Utils::chars($needle);
+            } else {
+                $where = "`" . Utils::chars($haystack) . "` = '" . Utils::chars($needle) . "'";
+            }
         }
 
         $command = "UPDATE `$table` SET $sets WHERE $where {$parameter}";

@@ -325,6 +325,26 @@ class Templater
                 "var_name" => "change_user" 
             ]
         ],
+        "Unban" => [
+            "title" => "Odbanování hráčů",
+            "name" => "unban.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Odbanování hráčů",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Unban",
+                "var_name" => "unban" 
+            ]
+        ],
     ];
 
     /**
@@ -372,7 +392,7 @@ class Templater
     private $pages_with_custom_replacements = [
         "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
         "Ticket-Create", "Ticket-View", "Ticket-List", "Ticket-List-Admin",
-        "Ticket-View-Admin", "ChangUserData"
+        "Ticket-View-Admin", "ChangUserData", "Unban"
     ];
 
     /**
