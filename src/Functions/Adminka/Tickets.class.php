@@ -238,9 +238,15 @@ class Tickets
                     Utils::header("./?main");
                 }
 
-                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                $rv = $this->database->select(["id", "author"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
                 if (!$rv || $this->database->num_rows($rv) == 0) {
                     $_SESSION["Request"]["Errors"] = ["Tiket s id {$id} nenalezen!"];
+                    Utils::header("./?main");
+                }
+
+                $user_id = Utils::getClientID($this->username);
+                if ($rv->fetch_object()->author != $user_id) {
+                    $_SESSION["Request"]["Errors"] = ["Nelvastníš tento tiket!"];
                     Utils::header("./?main");
                 }
             break;
