@@ -59,8 +59,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <p>Základní informace o Vás ze serveru</p>
-                <br>
+                <p class="title">Základní informace o Vás ze serveru</p>
                 <table class="table table-condensed" style="background-color:white;">
                     <tbody>
                         %%player_info%%
