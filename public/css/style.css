@@ -516,3 +516,8 @@ a:focus {
 	color: #fff;
 	background: #f39c12;
 }
+
+.badge-green {
+	color: #fff;
+	background: #28A745;
+}
