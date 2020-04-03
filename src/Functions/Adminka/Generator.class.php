@@ -563,20 +563,20 @@ class Generator
                         %%messages%%
                         <div class="card">
                             <div class="card-body">
-                                <p>Přesun dat (VIP, tagy)</p>
+                                <p>Přesun dat mezi hráči (VIP, tagy)</p>
                                 <hr>
                                 <form action="./requests.php" method="post">
                                     <input type="hidden" name="method" value="changeData" required>
                                     <input type="hidden" name="source_page" value="?change-user-data" required>
                                     <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
                                     <div class="form-group">
-                                        <label for="from-nick">Z jakého nicku</label>
+                                        <label for="from-nick">Z jakého nicku chceš převést VIP a Tagy</label>
                                         <input type="text" id="from-nick" name="from-nick" class="form-control" required>
                                         <div class="list-group" id="from-nicks" pos="1">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="to-nick">Na jaký nick</label>
+                                        <label for="to-nick">Na jaký nick chceš převést VIP a Tagy</label>
                                         <input type="text" id="to-nick" name="to-nick" class="form-control" required>
                                         <div class="list-group" id="to-nicks" pos="2">
                                         </div>
@@ -620,7 +620,7 @@ class Generator
                                     <input type="hidden" name="source_page" value="?unban" required>
                                     <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
                                     <div class="form-group">
-                                        <label for="nick">Nick</label>
+                                        <label for="nick">Zadej nick, který chceš odbanovat</label>
                                         <input type="text" id="nick" name="nick" class="form-control" required>
                                         <div class="list-group" id="nicks">
                                         </div>

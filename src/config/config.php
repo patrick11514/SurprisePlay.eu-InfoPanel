@@ -268,7 +268,7 @@ return [
                     ],
                     "Unban" => [
                         "permission" => "leaders",
-                        "icon" => "fas fa-arrows-alt-h",
+                        "icon" => "fas fa-ban",
                         "link" => "?unban",
                         "page-name" => "unban"
                     ]
@@ -335,6 +335,7 @@ return [
             "Gems" => "full",
             "TodoList" => "leaders",
             "ChangUserData" => "hl_helper",
+            "Unban" => "leaders",
             //tickety
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
@@ -373,6 +374,7 @@ return [
                 "inherits" => [
                     "hl_helper"
                 ],
+                "e-helper",
                 "helper",
                 "zk-helper"
             ],

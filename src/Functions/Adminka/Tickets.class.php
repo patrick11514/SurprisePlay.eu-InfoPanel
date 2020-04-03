@@ -120,8 +120,8 @@ class Tickets
             return false;
         }
 
-        if (mb_strlen($message) > 200) {
-            define("ERROR", ["Zpráva nesmí být delší než 200 znaků"]);
+        if (mb_strlen($message) > 1000) {
+            define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
             return false;
         }
 
@@ -363,8 +363,8 @@ class Tickets
                     <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
                     <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(5) . ";" . $id . ";" . Utils::randomString(5))[1] . "\" required>
                     <div class=\"form-group\">
-                        <label for=\"message\">Zpráva</label>
-                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" required></textarea>
+                        <label for=\"message\">Zpráva <span style=\"color:red;font-size:small;\">minimálně 10 znaků</span></label>
+                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" maxlength=\"1000\" required></textarea>
                     </div>
                     <button type=\"submit\" class=\"btn btn-light\">Odeslat zprávu</button>
                 </form>";
@@ -469,8 +469,8 @@ class Tickets
                     return false;
                 }
 
-                if (mb_strlen($message) > 200) {
-                    define("ERROR", ["Zpráva nesmí být delší než 200 znaků"]);
+                if (mb_strlen($message) > 1000) {
+                    define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
                     return false;
                 }
         
@@ -858,8 +858,8 @@ class Tickets
                     <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
                     <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage("AD;" . Utils::randomString(5) . ";" . $id . ";" . Utils::randomString(5))[1] . "\" required>
                     <div class=\"form-group\">
-                        <label for=\"message\">Zpráva</label>
-                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" required></textarea>
+                        <label for=\"message\">Zpráva <span style=\"color:red;font-size:small;\">minimálně 10 znaků</span></label>
+                        <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" maxlength=\"1000\" required></textarea>
                     </div>
                     <button type=\"submit\" class=\"btn btn-light\">Odeslat zprávu</button>
                 </form>";
@@ -907,8 +907,8 @@ class Tickets
                     return false;
                 }
 
-                if (mb_strlen($message) > 200) {
-                    define("ERROR", ["Zpráva nesmí být delší než 200 znaků"]);
+                if (mb_strlen($message) > 1000) {
+                    define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
                     return false;
                 }
         
