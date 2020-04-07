@@ -28,7 +28,7 @@
                     <input type="hidden" name="source_page" value="?ticket-write" required>
                     <input type="hidden" name="CSRF_token" value="%%CSRF_Token%%" required>
                     <div class="form-group">
-                        <label for="name">Název tiketu</label>
+                        <label for="name">Název tiketu <span style="color:red;font-size:small;">minimálně 5 znaků</span></label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="form-group">
@@ -38,7 +38,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="message">Zpráva</label>
+                        <label for="message">Zpráva <span style="color:red;font-size:small;">minimálně 10 znaků</span></label>
                         <textarea type="text" class="form-control" id="message" name="message" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-light">Vytvořit tiket</button>
