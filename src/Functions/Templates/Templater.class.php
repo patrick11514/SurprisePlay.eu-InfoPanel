@@ -552,9 +552,6 @@ class Templater
             $messages = "";
         }
 
-        $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
-        $CSRF->newToken();
-
         $main = str_replace("%%content%%", file_get_contents($template), file_get_contents($this->templatesDir . "/" . $source));
         if (!empty($this->pageAliases[$sourceName]["generate_form"])) {
             $forms = \patrick115\Adminka\Main::Create("\patrick115\Adminka\Generator", ["form"]);
@@ -611,6 +608,8 @@ class Templater
                 }
             }
         }
+
+        $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
 
         $main = str_replace(
             [

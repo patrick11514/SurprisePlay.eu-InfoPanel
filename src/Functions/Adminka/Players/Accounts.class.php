@@ -139,6 +139,8 @@ class Accounts
         }
 
         
+        $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
+        $CSRF->newToken();
 
 
         session_write_close();

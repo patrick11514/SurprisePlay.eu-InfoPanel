@@ -138,8 +138,6 @@ class Core
             return;
         }
 
-        $token->newToken();
-
         if (empty($checkings["db_requests"])) {
             $this->error->catchError("Return db request from PostChecking is empty, skipping.", debug_backtrace());
             $this->errors[] = "Někde nastala chyba!";
