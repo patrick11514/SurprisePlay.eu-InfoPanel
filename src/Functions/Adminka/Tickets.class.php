@@ -130,7 +130,7 @@ class Tickets
             return false;
         }
 
-        if (mb_strlen($message) < 20) {
+        if (mb_strlen($message) < 10) {
             define("ERROR", ["Zpráva je příliš krátká"]);
             return false;
         }
@@ -1012,6 +1012,9 @@ class Tickets
                             date("H:i:s d.m.Y")
                         ]
                         );
+
+                        Logger::init()->log("{$this->username} opened ticket with id {$id}.");
+
                         return true;
                     break;
                     case "close":
@@ -1037,6 +1040,9 @@ class Tickets
                             date("H:i:s d.m.Y")
                         ]
                         );
+
+                        Logger::init()->log("{$this->username} closed ticket with id {$id}.");
+
                         return true;
                     break;
                 }
@@ -1045,11 +1051,35 @@ class Tickets
             case "change_group":
                 $id = $this->get_current_ticket_id();
 
-                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                $rv = $this->database->select(["for", "waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
 
-                $for = $rv->fetch_object()->for;
+                $rv = $rv->fetch_object();
 
-                $return = "<p class=\"title\">Přesun tiketu do jiné kategorie</p>
+                $for = $rv->for;
+
+                $status = $rv->waiting_for;
+
+                if ($status == self::TICKET_CLOSE) {
+                    $button = "<button type=\"submit\" class=\"btn btn-light\">Otevřít</button>";
+                    $cls = Utils::createPackage(Utils::randomString(10) . ";open;" . Utils::randomString(10))[1];
+                } else {
+                    $button = "<button type=\"submit\" class=\"btn btn btn-light\" style=\"background: #dc3545;\">Uzavřít</button>";
+                    $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
+                }
+
+                $return = "<p class=\"title\">Otevřít/Uzavřít tiket</p>
+                <hr>
+                <form method=\"post\" action=\"./requests.php\">
+                
+                    <input type=\"hidden\" name=\"method\" value=\"toggle-ticket\" required>
+                    <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view-admin|id={$id}\" required>
+                    <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
+                    <input type=\"hidden\" name=\"value\" value=\"{$cls}\" required>
+                    <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(10) . ";{$id};" . Utils::randomString(10))[1] . "\" required>
+                    {$button}
+                </form>
+                <br>
+                <p class=\"title\">Přesun tiketu do jiné kategorie</p>
                 <hr>
                 <form method=\"post\" action=\"./requests.php\">
                     <input type=\"hidden\" name=\"method\" value=\"ticket-change-group\" required>

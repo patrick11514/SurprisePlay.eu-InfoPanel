@@ -40,7 +40,8 @@ $( function () {
         "columnDefs": [
         { "orderable": false, "targets": 5 },
         { "type": "num", "tagets": 0}
-        ]
+        ],
+        "order": [[ 3, "desc" ], [ 0, "asc" ]]
 
     });
 } );
