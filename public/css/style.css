@@ -551,7 +551,7 @@ a:focus {
 }
 
 .badge {
-	padding-bottom: 4px;
+	padding-bottom: 3px;
 }
 
 .badge-yellow {
@@ -562,4 +562,10 @@ a:focus {
 .badge-green {
 	color: #fff;
 	background: #28A745;
+}
+
+@media (max-width: 1730px) {
+    .badge {
+		padding-bottom: 4px;
+	}
 }
