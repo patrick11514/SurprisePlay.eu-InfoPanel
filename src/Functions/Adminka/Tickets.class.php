@@ -455,7 +455,9 @@ class Tickets
                     return false;
                 }
 
-                $author = Utils::getUserByClientId($rv->fetch_object()->author);
+                $rv = $rv->fetch_object();
+
+                $author = Utils::getUserByClientId($rv->author);
 
                 if ($author != $username) {
                     $this->logger->log("Hráč se snaži upravovat cizí tikety!", "critical", true);
@@ -463,7 +465,7 @@ class Tickets
                     return false;
                 }
 
-                if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
+                if ($rv->waiting_for == self::TICKET_CLOSE) {
                     $this->logger->log("Hráč se snaži upravovat zavřené tikety!", "critical", true);
                     define("ERROR", ["Tento tiket je uzavřen!"]);
                     return false;
@@ -501,7 +503,7 @@ class Tickets
                 );
 
                 $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
-
+                die();
                 return true;
             break;
 
@@ -532,7 +534,7 @@ class Tickets
                     while ($row = $rv->fetch_assoc()) {
                         $return .= "<tr>
                         <td>{$row["id"]}</td>
-                        <td>{$row["title"]}</td>
+                        <td>" . str_replace("&amp;", "&", $row["title"]) . "</td>
                         <td>{$row["reason"]}</td>
                         <td>";
                         switch ($row["waiting_for"]) {
@@ -617,7 +619,7 @@ class Tickets
                 while($row = $rv->fetch_assoc()) {
                     $return .= "<tr>
                         <td>{$row["id"]}</td>
-                        <td>{$row["title"]}</td>";
+                        <td>" . str_replace("&amp;", "&", $row["title"]) . "</td>";
                         $username = Utils::getUserByClientId($row["author"]);
                     $return .= "
                         <td>{$username}</td>
@@ -898,10 +900,12 @@ class Tickets
                     return false;
                 }
 
-                $author = Utils::getUserByClientId($rv->fetch_object()->author);
+                $rv = $rv->fetch_object();
 
+                $author = Utils::getUserByClientId($rv->author);
 
-                if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
+                
+                if ($rv->waiting_for == self::TICKET_CLOSE) {
                     $this->logger->log("Hráč se snaži upravovat zavřené tikety!", "critical", true);
                     define("ERROR", ["Tento tiket je uzavřen!"]);
                     return false;
