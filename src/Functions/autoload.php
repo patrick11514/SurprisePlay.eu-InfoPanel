@@ -5,7 +5,7 @@ use patrick115\Main\Session;
 use patrick115\Main\Config;
 use patrick115\Main\Tools\Constanter;
 
-define("CURRENT_VERSION", "0.4.2");
+define("CURRENT_VERSION", "0.4.3");
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
