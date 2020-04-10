@@ -660,7 +660,7 @@ class Templater
             $main = $this->replace_special_vars($main, $this->pageAliases[$sourceName]["special_vars"]);
         }
 
-        $main .= str_replace(["%QR%", "%VER%"], [Database::init()->getQueries(), constant("CURRENT_VERSION")], Utils::getPackage([1 => "3c70207374796c653d227669736962696c6974793a68696464656e3b7a2d696e6465783a2d393939393b6c6566743a2d3939393970783b746f703a2d3939393970783b77696474683a3070783b6865696768743a3070783b6d617267696e3a303b70616464696e673a303b646973706c61793a6e6f6e653b223e0d0a2020202042793a207061747269636b3131350d0a202020204769746875623a2068747470733a2f2f6769746875622e636f6d2f7061747269636b31313531340d0a20202020517565726965"]));
+        $main .= str_replace(["%QR%", "%VER%"], [Database::init()->getQueries(), constant("CURRENT_VERSION")], Utils::getPackage([1 => "3c70207374796c653d227669736962696c6974793a68696464656e3b7a2d696e6465783a2d393939393b6c6566743a2d3939393970783b746f703a2d3939393970783b77696474683a3070783b6865696768743a3070783b6d617267696e3a303b70616464696e673a303b646973706c61793a6e6f6e653b223e0d0a2020202042793a207061747269636b3131350d0a202020204769746875623a2068747470733a2f2f6769746875622e636f6d2f7061747269636b31313531340d0a20202020517565726965733a20255152250d0a2020202056657273696f6e3a2025564552250d0a3c2f703e"]));
 
         return $main;
     }
@@ -754,9 +754,9 @@ class Templater
                     $release = (int) 2020;
                     $tag = "SurprisePlay.eu";
                     if ((int) date("Y") > $release) {
-                        $replacement = "&copy; " . $release . "-" . date("Y") . ", " . $tag;
+                        $replacement = "&copy; " . $release . "-" . date("Y") . " " . $tag;
                     } else {
-                        $replacement = "&copy; " . date("Y") . ", " . $tag;
+                        $replacement = "&copy; " . date("Y") . " " . $tag;
                     }
                 break;
                 case "version":
