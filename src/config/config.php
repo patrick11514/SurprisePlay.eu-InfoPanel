@@ -312,22 +312,15 @@ return [
                     ]
                 ]
             ],
-            "Ostatní" => [
+            "Nábory" => [
                 "role" => "category",
                 "permission" => "all",
-                "visible" => true, #true = zobrazit kategorii náborů; false = nezobrazovat; Toto nastavení lze přidat i do každé položky v items, i do jiných kategorií
+                "visible" => false, #true = zobrazit kategorii náborů; false = nezobrazovat; Toto nastavení lze přidat i do každé položky v items, i do jiných kategorií
                 "items" => [
                     "Nábor na helpera" => [
-                        "visible" => false,
                         "permission" => "all",
                         "icon" => "fa fa-hands-helping",
                         "link" => "#",
-                        "page-name" => "#",
-                    ],
-                    "Changelog" => [
-                        "permission" => "all",
-                        "icon" => "fas fa-list-ul",
-                        "link" => "./changelog.php",
                         "page-name" => "#",
                     ]
                 ],
