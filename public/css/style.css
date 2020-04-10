@@ -1,3 +1,7 @@
+body {
+	background: #F4F6F9;
+}
+
 ::-webkit-scrollbar {
 	width: 10px;
 }
@@ -525,6 +529,21 @@ a:focus {
 	padding: .20rem 1.25rem;
 }
 
+#footer {
+	padding: 15px;
+	background: #fff;
+	border-top: 3px solid #2999ed;
+}
+
+#footer a {
+    color: #2999ED;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    color: #178FE1;
+}
+
 .text-chat {
 	text-align: center;
 }
@@ -551,7 +570,7 @@ a:focus {
 }
 
 .badge {
-	padding-bottom: 3px;
+	padding-bottom: 4px;
 }
 
 .badge-yellow {
@@ -564,8 +583,14 @@ a:focus {
 	background: #28A745;
 }
 
-@media (max-width: 1730px) {
-    .badge {
-		padding-bottom: 4px;
-	}
+@media (max-width: 1125px) {
+    #footer .text-left {
+        text-align: center!important;
+    }
+    #footer .text-center {
+        text-align: center!important;
+    }
+    #footer .text-right {
+        text-align: center!important;
+    }
 }
