@@ -154,6 +154,7 @@ return [
             "legend" => "Legend",
             "sponzor" => "Sponzor",
             "surprise" => "Surprise",
+            "bunny" => "Bunny",
             "youtuber" => "YouTuber",
             "eventer" => "Eventer",
             "zk-builder" => "Zkušební Builder",
@@ -169,23 +170,26 @@ return [
             "majitel" => "Majitel",
         ],
         "vips" => [ //seznam groupek, co jsou VIP
+            "bunny",
             "surprise",
             "sponzor",
             "legend",
             "heroic"
         ],
         "vip_levels" =>[ //čím menší číslo, tím vyšší level (1 = nejlepší vip) - Nejvyšší vip nemusí začínat číslem 1
-            1 => "surprise",
-            2 => "sponzor",
-            3 => "legend",
-            4 => "heroic"
+            1 => "bunny",
+            2 => "surprise",
+            3 => "sponzor",
+            4 => "legend",
+            5 => "heroic"
         ],
         "group_colors" => [ //barvičky groupe
             "default" => "#7b7f85",
             "heroic" => "#55FF55",
             "legend" => "#55FFFF",
-            "sponzor" => "#FFFF55",
+            "sponzor" => "#FFC107",
             "surprise" => "#FF5555",
+            "bunny" => "#FF54FF",
             "youtuber" => "#AA0000",
             "eventer" => "#5555FF",
             "zk-builder" => "#AAAAAA",
@@ -280,47 +284,54 @@ return [
                 "items" => [
                     "Vedení" => [
                         "permission" => "full",
-                        "icon" => "fas fa-circle",
+                        "icon" => "fas fa-user-secret",
                         "link" => "?ticket-list-admin&type=leader",
                         "page-name" => "ticket-list-admin",
                         "icon-color" => "FF5555",
                     ],
                     "Hlavní Helper" => [
                         "permission" => "hl_helper",
-                        "icon" => "fas fa-circle",
+                        "icon" => "fas fa-user-tie",
                         "link" => "?ticket-list-admin&type=hl.helper",
                         "page-name" => "ticket-list-admin",
                         "icon-color" => "FFAA00",
                     ],
                     "Hlavní Builder" => [
                         "permission" => "hl_builder",
-                        "icon" => "fas fa-circle",
+                        "icon" => "fas fa-cubes",
                         "link" => "?ticket-list-admin&type=hl.builder",
                         "page-name" => "ticket-list-admin",
                         "icon-color" => "FF55FF"
                     ],
                     "Helper" => [
                         "permission" => "helpers",
-                        "icon" => "fas fa-circle",
+                        "icon" => "fas fa-user",
                         "link" => "?ticket-list-admin&type=helper",
                         "page-name" => "ticket-list-admin",
                         "icon-color" => "00AA00"
                     ]
                 ]
             ],
-            "Nábory" => [
+            "Ostatní" => [
                 "role" => "category",
                 "permission" => "all",
-                "visible" => false, #true = zobrazit kategorii náborů; false = nezobrazovat; Toto nastavení lze přidat i do každé položky v items, i do jiných kategorií
+                "visible" => true, #true = zobrazit kategorii náborů; false = nezobrazovat; Toto nastavení lze přidat i do každé položky v items, i do jiných kategorií
                 "items" => [
                     "Nábor na helpera" => [
+                        "visible" => false,
                         "permission" => "all",
                         "icon" => "fa fa-hands-helping",
                         "link" => "#",
                         "page-name" => "#",
+                    ],
+                    "Changelog" => [
+                        "permission" => "all",
+                        "icon" => "fas fa-list-ul",
+                        "link" => "./changelog.php",
+                        "page-name" => "#",
                     ]
-                ]
-            ]
+                ],
+            ],
         ],
         "page_perms" => [ //permisse, na určité stránky (Ne navigace)
             //logout
@@ -393,6 +404,7 @@ return [
                 ],
                 "youtuber",
                 "surprise",
+                "bunny",
                 "sponzor",
                 "legend",
                 "heroic",
@@ -404,6 +416,7 @@ return [
                 "legend",
                 "sponzor",
                 "surprise",
+                "bunny",
                 "youtuber",
                 "eventer",
                 "zk-builder",
