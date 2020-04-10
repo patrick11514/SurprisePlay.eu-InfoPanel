@@ -585,6 +585,46 @@ class Generator
                                 </form>
                             </div>
                         </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="title">Záznam přesunu dat mezi hráči</p>
+                                <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="transfer-table" style="visibility:hidden;" class="loading table table-striped">
+                                        <thead>                  
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Kdo</th>
+                                                <th>Rank</th>
+                                                <th>Z hráče</th>
+                                                <th>Na hráče</th>
+                                                <th>Datum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transfer-user-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav id="transfer-page-buttons" class="loading" style="visibility:hidden;">
+                                  <ul class="pagination justify-content-center mb-0">
+                                    <li id="li-transfer-prev-page" class="page-item">
+                                        <a id="transfer-prev-page" class="page-link" href="#">Přechozí</a>
+                                    </li>
+                                    <li class="page-item active">
+                                        <span id="transfer-page-id" data-page="" class="page-link">
+                                        </span>
+                                    </li>
+                                    <li id="li-transfer-next-page" class="page-item">
+                                        <a id="transfer-next-page" class="page-link" href="#">Další</a>
+                                    </li>
+                                  </ul>
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                 </div>
             ';
@@ -625,9 +665,53 @@ class Generator
                                         <div class="list-group" id="nicks">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="reason">Důvod unbanu</label>
+                                        <input type="text" id="reason" name="reason" class="form-control" required>
+                                    </div>
 
                                     <button type="submit" id="confirm-button" class="btn btn-light">Odbanovat</button>
                                 </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="title">Seznam odbanovaných hráčů</p>
+                                <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="unban-table" style="visibility:hidden;" class="loading table table-striped">
+                                        <thead>                  
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Kdo</th>
+                                                <th>Rank</th>
+                                                <th>Koho odbanoval</th>
+                                                <th>Důvod unbanu</th>
+                                                <th>Datum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="unban-user-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav id="unban-page-buttons" class="loading" style="visibility:hidden;">
+                                  <ul class="pagination justify-content-center mb-0">
+                                    <li id="li-unban-prev-page" class="page-item">
+                                        <a id="unban-prev-page" class="page-link" href="#">Přechozí</a>
+                                    </li>
+                                    <li class="page-item active">
+                                        <span id="unban-page-id" data-page="" class="page-link">
+                                        </span>
+                                    </li>
+                                    <li id="li-unban-next-page" class="page-item">
+                                        <a id="unban-next-page" class="page-link" href="#">Další</a>
+                                    </li>
+                                  </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
