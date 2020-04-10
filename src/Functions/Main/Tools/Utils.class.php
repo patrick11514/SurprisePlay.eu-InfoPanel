@@ -219,8 +219,25 @@
         if ($app->num_rows($rv) > 0) {
             return $rv->fetch_object()->id;
         } else {
-            \patrick115\Main\Error::init()->catchError("Your record in global database not found, please contact Administrators!", debug_backtrace());
-            return;
+            $app->insert("accounts",
+            [
+                "id",
+                "authme_id",
+                "e-mail",
+                "last-ip",
+                "ip-list"
+            ],
+            [
+                "",
+                $a_id,
+                null,
+                null,
+                "{}"
+            ]);
+            
+            $rv = $app->
+                select(["id"], "accounts", "LIMIT 1", "authme_id", $a_id);
+            return $rv->fetch_object()->id;
         }
     }
 
