@@ -18,14 +18,18 @@ class API
         "get-Unregistred-list",
         "get-gemsLog",
         "get-todoList",
-        "get-TodoUsers"
+        "get-TodoUsers",
+        "get-transfer-list",
+        "get-unban-list"
     ];
     private $values = [
         "get-user-list" => "findningnick",
         "get-allowVPN-list" => "page",
         "get-Unregistred-list" => "page",
         "get-gemsLog" => "page",
-        "get-todoList" => "page"
+        "get-todoList" => "page",
+        "get-transfer-list" => "page", 
+        "get-unban-list" => "page"
     ];
 
     private $post;
@@ -59,6 +63,9 @@ class API
     public function check()
     {
         $csrf = Main::Create("\patrick115\Requests\CSRF", []);
+        if (empty($this->post["CSRF_TOKEN"])) {
+            return $this->throwError("No token found.");
+        }
         if (!$csrf->checkToken($this->post["CSRF_TOKEN"])) {
             return $this->throwError("Invalid key, refesh page.");
         }
@@ -140,7 +147,7 @@ class API
                         <tr>
                             <td>{$i}</td>
                             <td>{$username}</td>
-                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
                             <td>
                             <form method=\"post\" action=\"./requests.php\">
                                 <input type=\"hidden\" name=\"method\" value=\"remove-vpn\" required>
@@ -216,7 +223,7 @@ class API
                         <tr>
                             <td>{$row["id"]}</td>
                             <td>{$username}</td>
-                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
                             <td>{$row["admin"]}</td>
                             <td>{$row["date"]}</td>
                         </tr>";
@@ -288,7 +295,7 @@ class API
                         <tr>
                             <td>{$row["id"]}</td>
                             <td>{$username}</td>
-                            <td><span class=\"badge\" style=\"color:{$rank_color};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$rank}</span></td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
                             <td>{$row["admin"]}</td>
                             <td>{$row["amount"]}</td>
                             <td>{$method}</td>
@@ -468,6 +475,158 @@ class API
                     "message" => $return
                 ];
                 $return = json_encode($return);
+            break;
+            case "get-transfer-list":
+                if ($value < 0 || $value == 0) {
+                    return $this->throwError("Neplatná Stránka!");
+                }
+
+                $start = ($value == 1) ? 0 : (5 * ($value - 1));
+                $end = ($value == 1) ? 6 : ((5 * $value) + 1);
+
+                $return = "";
+                $rv = $this->database->execute("SELECT `userid`, `message`, `date` FROM `logger` WHERE `type` = 'transfer_data' ORDER BY `logger`.`id` DESC LIMIT {$start}, {$end}", true);
+                $i = ($value == 1) ? 0 : ($value - 1) * 5;
+                $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Žádná data nenalezena");
+                }
+
+                while ($row = $rv->fetch_assoc()) {
+                    $i++;
+                    $a++;
+                    if (5 >= $a) {
+
+                        $username = Utils::getUserByClientId($row["userid"]);
+
+                        $rank = new Rank($username);
+
+                        $rank = $rank->getRank();
+                        $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
+
+                        $raw = str_replace("Přesunul data z hráče ", "", $row["message"]);
+                        $ex = explode(" na hráče ", $raw);
+
+                        $from = $ex[0];
+                        $to = $ex[1];
+
+                        $return .= "
+                        <tr>
+                            <td>{$i}</td>
+                            <td>{$username}</td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
+                            <td>{$from}</td>
+                            <td>{$to}</td>
+                            <td>{$row["date"]}</td>
+                        </tr>";
+                    }
+                }
+
+                if (empty($return)) {
+                    return $this->throwError("Neplatná stránka");
+                }
+
+                if ($value == 1 && $a > 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "enabled";
+                } else if ($value == 1 && $a <= 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "disabled";
+                } else if ($value > 1 && $a > 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "enabled";
+                } else if ($value > 1 && $a <= 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                } else {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                }
+
+                $array = [
+                    "success" => true,
+                    "message" => $return,
+                    "currentpage" => $value,
+                    "prev" => $status_prev_button,
+                    "next" => $status_next_button,
+                ];
+
+                $return = json_encode($array);
+            break;
+            case "get-unban-list":
+                if ($value < 0 || $value == 0) {
+                    return $this->throwError("Neplatná Stránka!");
+                }
+
+                $start = ($value == 1) ? 0 : (5 * ($value - 1));
+                $end = ($value == 1) ? 6 : ((5 * $value) + 1);
+
+                $return = "";
+                $rv = $this->database->execute("SELECT `unbanner`, `player`, `reason`, `date` FROM `unbans` ORDER BY `unbans`.`id` DESC LIMIT {$start}, {$end}", true);
+                $i = ($value == 1) ? 0 : ($value - 1) * 5;
+                $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Žádná data nenalezena");
+                }
+
+                while ($row = $rv->fetch_assoc()) {
+                    $i++;
+                    $a++;
+                    if (5 >= $a) {
+
+                        $username = Utils::getUserByClientId($row["unbanner"]);
+
+                        $rank = new Rank($username);
+
+                        $rank = $rank->getRank();
+                        $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
+
+                        $player = Utils::getUserByClientId($row["player"]);
+
+                        $return .= "
+                        <tr>
+                            <td>{$i}</td>
+                            <td>{$username}</td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
+                            <td>{$player}</td>
+                            <td>{$row["reason"]}</td>
+                            <td>{$row["date"]}</td>
+                        </tr>";
+                    }
+                }
+
+                if (empty($return)) {
+                    return $this->throwError("Neplatná stránka");
+                }
+
+                if ($value == 1 && $a > 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "enabled";
+                } else if ($value == 1 && $a <= 5) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "disabled";
+                } else if ($value > 1 && $a > 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "enabled";
+                } else if ($value > 1 && $a <= 5) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                } else {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                }
+
+                $array = [
+                    "success" => true,
+                    "message" => $return,
+                    "currentpage" => $value,
+                    "prev" => $status_prev_button,
+                    "next" => $status_next_button,
+                ];
+
+                $return = json_encode($array);
             break;
         }
         return $return;
