@@ -71,6 +71,9 @@ class Navigation
                     $this->error->catchError("No icon for $nav_item_name in $nav_category_name not found!", debug_backtrace());
                     continue;
                 }
+                if (!@Utils::newEmpty($nav_item_data["visible"]) && $nav_item_data["visible"] === false) {
+                    continue;
+                }
                 if (!empty($nav_item_data["role"]) && $nav_item_data["role"] == "list") {
                     if (!$app->getUser($username)->havePermission()->inGroup($nav_item_data["permission"])) {
                         continue;
@@ -125,6 +128,10 @@ class Navigation
                         continue;
                     }
                     if (!$app->getUser($username)->havePermission()->inGroup($nav_item_data["permission"])) {
+                        continue;
+                    }
+
+                    if (!@Utils::newEmpty($nav_item_data["visible"]) && $nav_item_data["visible"] === false) {
                         continue;
                     }
 
