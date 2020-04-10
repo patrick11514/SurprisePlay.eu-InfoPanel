@@ -37,7 +37,8 @@ class Settings
             "id"
         ],
         "unban" => [
-            "nick"
+            "nick",
+            "reason"
         ]
     ];
 
@@ -119,7 +120,7 @@ class Settings
 
         if ($status == "Povolen") {
             define("ERROR", ["Tento hráč již má povolený přístup s VPN!"]);
-            return true;
+            return false;
         }
 
         $uuid = Utils::getUUIDByNick($username);
@@ -186,8 +187,16 @@ class Settings
                 define("ERROR", ["Hráč má pouze {$credits} gemů, proto nelze odebrat {$amount} gemů"]);
                 return false;
             }
+            if ($amount < 0) {
+                define("ERROR", ["Počet gemů musí být větší než 0"]);
+                return false;
+            }
             $new_gems = $credits - $amount;
         } else {
+            if ($amount < 0) {
+                define("ERROR", ["Počet gemů musí být větší než 0"]);
+                return false;
+            }
             $new_gems = $credits + $amount;
         }
 
@@ -321,6 +330,24 @@ class Settings
         $uuid = Utils::getUUIDByNick($username);
 
         $this->database->update("main_bans`.`litebans_bans", ["uuid", "active"], [$uuid, 1], ["active", "removed_by_name"], [0, $this->session->getData("Account/User/Username")]);
+
+        $this->database->insert("unbans", 
+        [
+            "id",
+            "unbanner",
+            "player",
+            "reason",
+            "date",
+            "timestamp"
+        ],
+        [
+            "",
+            Utils::getClientID($this->session->getData("Account/User/Username")),
+            Utils::getClientID($username),
+            $this->data["reason"],
+            date("H:i:s d.m.Y"),
+            time()
+        ]);
 
         return true;
     }

@@ -42,7 +42,7 @@ $( function () {
         { "orderable": false, "targets": 5 },
         { "type": "num", "tagets": 0}
         ],
-        "order": [[ 4, "desc" ], [ 0, "asc" ]]
+        "order": [[ 4, "desc" ], [ 0, "desc" ]]
 
     });
 } );

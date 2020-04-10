@@ -325,7 +325,7 @@ class Tickets
                     if ($data["admin"] === false) {
                         $return .= "<div class=\"direct-chat-msg\">
                         <div class=\"direct-chat-info clearfix\">
-                            <span class=\"direct-chat-name pull-left\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
                             <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
                         </div>
                         <img class=\"direct-chat-img\" src=\"{$skin}\">
@@ -336,7 +336,7 @@ class Tickets
                     } else {
                         $return .= "<div class=\"direct-chat-msg right\">
                         <div class=\"direct-chat-info clearfix\">
-                            <span class=\"direct-chat-name pull-right\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
                             <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
                         </div>
                         <img class=\"direct-chat-img\" src=\"{$skin}\">
@@ -763,7 +763,7 @@ class Tickets
                     if ($data["admin"] === false) {
                         $return .= "<div class=\"direct-chat-msg right\">
                         <div class=\"direct-chat-info clearfix\">
-                            <span class=\"direct-chat-name pull-right\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
                             <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
                         </div>
                         <img class=\"direct-chat-img\" src=\"{$skin}\">
@@ -774,7 +774,7 @@ class Tickets
                     } else {
                         $return .= "<div class=\"direct-chat-msg\">
                         <div class=\"direct-chat-info clearfix\">
-                            <span class=\"direct-chat-name pull-left\"><span class=\"rank\" style=\"color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
                             <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
                         </div>
                         <img class=\"direct-chat-img\" src=\"{$skin}\">
@@ -1060,10 +1060,10 @@ class Tickets
                 $status = $rv->waiting_for;
 
                 if ($status == self::TICKET_CLOSE) {
-                    $button = "<button type=\"submit\" class=\"btn btn-light\">Otevřít</button>";
+                    $button = "<button type=\"submit\" class=\"btn btn-light-green\">Otevřít</button>";
                     $cls = Utils::createPackage(Utils::randomString(10) . ";open;" . Utils::randomString(10))[1];
                 } else {
-                    $button = "<button type=\"submit\" class=\"btn btn btn-light\" style=\"background: #dc3545;\">Uzavřít</button>";
+                    $button = "<button type=\"submit\" class=\"btn btn-light-red\">Uzavřít</button>";
                     $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
                 }
 
@@ -1257,6 +1257,8 @@ class Tickets
             date("H:i:s d.m.Y")
         ]
         );
+
+        $this->database->update("adminka_tickets`.`tickets_list", ["id"], [$id], ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
 
         return true;
 

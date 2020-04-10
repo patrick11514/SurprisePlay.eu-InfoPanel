@@ -108,6 +108,11 @@ class Database extends Error
                 $conn->query("CREATE TABLE `adminka`.`sys_log` ( `id` INT NOT NULL , `type` TEXT NOT NULL , `message` TEXT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL ) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `sys_log` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);");
             }
+            if (!@$conn->query("SELECT 1 FROM `unbans`")) {
+                $conn->query("CREATE TABLE `adminka`.`unbans` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `unbanner` INT NOT NULL , `player` INT NOT NULL , `reason` TEXT NOT NULL , `date` TEXT NOT NULL , `timestamp` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
+                $conn->query("ALTER TABLE `unbans` ADD CONSTRAINT `banner_id` FOREIGN KEY (`unbanner`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `unbans` ADD CONSTRAINT `unbanned_id` FOREIGN KEY (`player`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+            }
 
             //Tickets
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_list`")) {
@@ -273,7 +278,7 @@ class Database extends Error
         $pars = rtrim($pars, ", ");
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
-        
+
         $this->execute($command, false);
     }
 
