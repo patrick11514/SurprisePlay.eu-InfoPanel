@@ -527,7 +527,8 @@ class PostChecks
             case "unban":
                 return [
                     "check" => [
-                        "nick"
+                        "nick",
+                        "reason"
                     ],
                     "db_requests" => [
                         "use" => false
@@ -541,6 +542,9 @@ class PostChecks
                         "parameters" => [
                             "nick" => [
                                 "from" => "post" 
+                            ],
+                            "reason" => [
+                                "from" => "post"
                             ],
                             "method" => [
                                 "from" => "text",
