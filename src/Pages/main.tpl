@@ -34,6 +34,21 @@
 
         %%content%%
     </div>
+    <div id="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4 text-left">
+                    Verze: %%version%%
+                </div>
+                <div class="col-md-4 text-center">
+                    %%copyright%%
+                </div>
+                <div class="col-md-4 text-right">
+                    <a href="./changelog.php">ChangeLog</a>
+                </div>
+            </div>
+        </div>
+    </div>
     
 <script src="//%%domain%%/public/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
