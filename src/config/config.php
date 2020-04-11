@@ -185,8 +185,8 @@ return [
         ],
         "group_colors" => [ //barvičky groupe
             "default" => "#7b7f85",
-            "heroic" => "#55FF55",
-            "legend" => "#55FFFF",
+            "heroic" => "#28A745",
+            "legend" => "#1E90FF",
             "sponzor" => "#FFC107",
             "surprise" => "#FF5555",
             "bunny" => "#FF54FF",
