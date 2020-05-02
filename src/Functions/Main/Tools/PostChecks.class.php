@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Get help arrays for Core of Requests
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Main\Tools;
 
 class PostChecks
@@ -15,7 +26,7 @@ class PostChecks
      * @param string $method
      * @param array  $check
      */
-    public function __construct($method, array $check)
+    public function __construct(string $method, array $check)
     {
         if (!in_array($method, $check)) {
             \patrick115\Main\Error::init()->catchError("Method $method not found!", debug_backtrace());
@@ -279,6 +290,35 @@ class PostChecks
                             "method" => [
                                 "from" => "text",
                                 "text" => "createTicket"
+                            ],
+                            "img_url" =>[
+                                "from" => "uploader"
+                            ]
+                        ]
+                    ],
+                    "uploader" => [
+                        "enabled" => true,
+                        "method" => "if",
+                        "name" => "file",
+                        "allowed_extensions" => [
+                            "png",
+                            "jpg",
+                            "jpeg",
+                            "webp",
+                            "bmp",
+                            "gif"
+                        ],
+                        "on" => [
+                            "upload" => [
+                                "method" => "function",
+                                "class" => "\patrick115\Images\Uploader",
+                                "function" => "uploadFile",
+                                "parameters" => [
+                                    
+                                ]
+                            ],
+                            "error" => [
+                                "method" => "error"
                             ]
                         ]
                     ]
@@ -320,6 +360,35 @@ class PostChecks
                             ],
                             "source_page" => [
                                 "from" => "post"
+                            ],
+                            "img_url" =>[
+                                "from" => "uploader"
+                            ]
+                        ]
+                    ],
+                    "uploader" => [
+                        "enabled" => true,
+                        "method" => "if",
+                        "name" => "file",
+                        "allowed_extensions" => [
+                            "png",
+                            "jpg",
+                            "jpeg",
+                            "webp",
+                            "bmp",
+                            "gif"
+                        ],
+                        "on" => [
+                            "upload" => [
+                                "method" => "function",
+                                "class" => "\patrick115\Images\Uploader",
+                                "function" => "uploadFile",
+                                "parameters" => [
+                                    
+                                ]
+                            ],
+                            "error" => [
+                                "method" => "error"
                             ]
                         ]
                     ]
@@ -361,6 +430,35 @@ class PostChecks
                             ],
                             "source_page" => [
                                 "from" => "post"
+                            ],
+                            "img_url" =>[
+                                "from" => "uploader"
+                            ]
+                        ]
+                    ],
+                    "uploader" => [
+                        "enabled" => true,
+                        "method" => "if",
+                        "name" => "file",
+                        "allowed_extensions" => [
+                            "png",
+                            "jpg",
+                            "jpeg",
+                            "webp",
+                            "bmp",
+                            "gif"
+                        ],
+                        "on" => [
+                            "upload" => [
+                                "method" => "function",
+                                "class" => "\patrick115\Images\Uploader",
+                                "function" => "uploadFile",
+                                "parameters" => [
+                                    
+                                ]
+                            ],
+                            "error" => [
+                                "method" => "error"
                             ]
                         ]
                     ]
@@ -502,7 +600,8 @@ class PostChecks
                 return [
                     "check" => [
                         "from-nick",
-                        "to-nick"
+                        "to-nick",
+                        "type"
                     ],
                     "db_requests" => [
                         "use" => false
@@ -519,6 +618,9 @@ class PostChecks
                             ],
                             "to-nick" => [
                                 "from" => "post",
+                            ],
+                            "type" => [
+                                "from" => "post"
                             ]
                         ]
                     ]
@@ -551,6 +653,86 @@ class PostChecks
                                 "text" => "unban"
                             ]
                         ] 
+                    ]
+                ];
+            break;
+            case "delete-ticket":
+                return [
+                    "check" => [
+                        "method",
+                        "id"
+                    ],
+                    "db_requests" =>[
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "ticketCallback",
+                        "custom_error" => "Nepovedlo se smazat tiket!",
+                        "success_message" => "Tiket byl smazán",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "callback"
+                            ],
+                            "callback" => [
+                                "from" => "text",
+                                "text" => "delete-ticket"
+                            ],
+                            "id" => [
+                                "from" => "post"
+                            ]
+                        ]
+                    ]
+                ];
+            break;
+            case "block-user":
+                return [
+                    "check" => [
+                        "ticket_id",
+                        "value",
+                        "user"
+                    ],
+                    "db_requests" =>[
+                        "use" => false
+                    ],
+                    "check_with" => [
+                        "method" => "function",
+                        "class" => "\patrick115\Adminka\Tickets",
+                        "function" => "ticketCallback",
+                        "custom_error" => "Někde nastala chyba!",
+                        "success_message" => "Akce byla provedena úspěšně",
+                        "parameters" => [
+                            "username" => [
+                                "from" => "session",
+                                "path" => "Account/User/Username"
+                            ],
+                            "method" => [
+                                "from" => "text",
+                                "text" => "callback"
+                            ],
+                            "callback" => [
+                                "from" => "text",
+                                "text" => "block-user"
+                            ],
+                            "ticket_id" => [
+                                "from" => "post"
+                            ],
+                            "value" => [
+                                "from" => "post"
+                            ],
+                            "user" => [
+                                "from" => "post"
+                            ],
+                            "skip-block" => [
+                                "from" => "post"
+                            ]
+                        ]
                     ]
                 ];
             break;

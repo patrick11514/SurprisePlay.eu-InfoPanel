@@ -76,6 +76,8 @@ $(function() {
                 $("#nicks").text("Nelze kontaktovat API.");
             });
         } else {
+            $("#allow-nick").removeClass("is-invalid");
+            $("#vpn-button").prop('disabled', false);
             $("#nicks").text("");
         }
     });

@@ -24,6 +24,64 @@ return [
     "debug" => true,
 
     "Main" => [ 
+        "server_info" => [
+            "Registred" =>[
+                "name" => "Registrováno uživatelů", #Název 
+                "color" => "blue", #barva
+                "icon" => "fas fa-users", #ikonka
+                "source" => [ #zdroj
+                    "source_name" => "database", #zdroj (database, session, function)
+                    "command" => "SELECT count(*) AS `users` FROM `main_authme`.`authme`", #select command
+                    "select" => "users" #co chci ze selecttu vybrat
+                ]
+            ],
+            "Banned" => [
+                "name" => "Zabanováno uživatelů",
+                "color" => "red",
+                "icon" => "fas fa-exclamation-triangle",
+                "source" => [
+                    "source_name" => "database",
+                    "command" => "SELECT COUNT(*) as `bans` FROM `main_bans`.`litebans_bans` WHERE `active` = 1",
+                    "select" => "bans"
+                ]
+            ],
+            "Votes" => [
+                "name" => "Hlasů pro server",
+                "color" => "green",
+                "icon" => "fas fa-exclamation-triangle",
+                "source" => [
+                    "source_name" => "database",
+                    "command" => "SELECT SUM(`votifier`) AS `votes` FROM `survival_cmi`.`cmi_users`",
+                    "select" => "votes"
+                ]
+            ],
+            "Balance" => [
+                "name" => "Oběh peněz na serveru",
+                "color" => "yellow",
+                "icon" => "fas fa-coins",
+                "source" => [
+                    "source_name" => "multiple", # chci multiple operaci
+                    "operator" => "+", #hodnoty chci postupně sčítat
+                    "currency" => true, #finální hodnotu chci potom převést na peníze (xxx xxx.xx $)
+                    "multiple" => [ #array
+                        [ #arrayů
+                            "source" => [ # a tady to je stejně jako u ostatních
+                                "source_name" => "database", #zdroj (database, session, function)
+                                "command" => "SELECT SUM(`Balance`) AS `money` FROM `survival_cmi`.`cmi_users`", #command
+                                "select" => "money" #co chci vybrat ze selectu
+                            ]
+                        ],
+                        [ #opět další array v array
+                            "source" => [
+                                "source_name" => "database",
+                                "command" => "SELECT SUM(`Balance`) AS `money` FROM `islands_cmi`.`cmi_users`",
+                                "select" => "money"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
         "player_info" => [ //Informace o hráči na hlavní stránce
             "username" => [
                 "name" => "Jméno",
@@ -57,14 +115,14 @@ return [
                 ]
             ],
             "ip_address" => [
-                "name" => "IP Adresa",
+                "name" => "IP Adresa", #Název v tabulkce
                 "source" => [
-                    "source_name" => "database",
-                    "command" => "SELECT `ip` FROM `main_authme`.`authme` WHERE `realname` = '%1' LIMIT 1;",
-                    "select" => "ip",
-                    "vars" => [
-                        "%1" => [
-                            "from" => "session",
+                    "source_name" => "database", #Zdroj informací (database, function, session)
+                    "command" => "SELECT `ip` FROM `main_authme`.`authme` WHERE `realname` = '%1' LIMIT 1;", #command, který se vykoná, lze použít proměnné
+                    "select" => "ip", #co se má selectnout z toho commandu
+                    "vars" => [ #definování proměnných v commandu
+                        "%1" => [ #jaká tam je proměnná
+                            "from" => "session", #odkud se vezme
                             "data" => "Account/User/Username"
                         ]
                     ]
@@ -97,12 +155,15 @@ return [
             "money" => [
                 "name" => "Peníze",
                 "source" => [
-                    "source_name" => "function",
-                    "class" => "\patrick115\Minecraft\Stats",
-                    "function" => "getMoney",
-                    "create_param" => [
-                        "from" => "session",
-                        "data" => "Account/User/Username"
+                    "source_name" => "database",
+                    "command" => "SELECT `balance` FROM `survival_cmi`.`cmi_users` WHERE `username` = '%name' LIMIT 1",
+                    "currency" => true,
+                    "select" => "balance",
+                    "vars" => [
+                        "%name" => [
+                            "from" => "session",
+                            "data" => "Account/User/Username"
+                        ]
                     ]
                 ]
             ],
@@ -275,6 +336,12 @@ return [
                         "icon" => "fas fa-ban",
                         "link" => "?unban",
                         "page-name" => "unban"
+                    ],
+                    "Blocked List" =>[
+                        "permission" => "leaders",
+                        "icon" => "fas fa-user-slash",
+                        "link" => "?blocked-list",
+                        "page-name" => "blocked-list"
                     ]
                 ]
             ],
@@ -340,6 +407,7 @@ return [
             "TodoList" => "leaders",
             "ChangUserData" => "hl_helper",
             "Unban" => "leaders",
+            "Blocked-list" => "leaders",
             //tickety
             "Ticket-Create" => "all",
             "Ticket-View" => "all",
@@ -532,6 +600,7 @@ return [
             ],
             
         ],
+        "ticket-block-group" => "leaders",
         "vpn_allow" => [
             "category" => "Povolení VPN", #z ticketů výše
             "ticket_name" => "Žádost o povolení VPN", #název předvytvořeného tiketu

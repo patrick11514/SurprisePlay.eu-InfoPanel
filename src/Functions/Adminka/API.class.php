@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * API class, got requests from AJAX, and
+ * return things from database.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Adminka\Players\Rank;
@@ -9,9 +21,21 @@ use patrick115\Main\Tools\Utils;
 
 class API
 {
+    /**
+     * Database class
+     * @var object
+     */
     private $database;
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
 
+    /**
+     * Allowed AJAX requests
+     * @var array
+     */
     private $posts = [
         "get-user-list",
         "get-allowVPN-list",
@@ -20,8 +44,13 @@ class API
         "get-todoList",
         "get-TodoUsers",
         "get-transfer-list",
-        "get-unban-list"
+        "get-unban-list",
+        "get-blockedList"
     ];
+    /**
+     * Allowed AJAX requests
+     * @var array
+     */
     private $values = [
         "get-user-list" => "findningnick",
         "get-allowVPN-list" => "page",
@@ -29,12 +58,21 @@ class API
         "get-gemsLog" => "page",
         "get-todoList" => "page",
         "get-transfer-list" => "page", 
-        "get-unban-list" => "page"
+        "get-unban-list" => "page",
+        "get-blockedList" => "page"
     ];
 
+    /**
+     * Data from POST
+     * @var array
+     */
     private $post;
 
-    public function __construct($post)
+    /**
+     * Construct class
+     * @param array $post - Data from POST
+     */
+    public function __construct(array $post)
     {
         $admin_account = $_SESSION["Account"]["Admin_Account"];
 
@@ -60,6 +98,12 @@ class API
         $this->post = $newpost;
     }
 
+    /**
+     * Chceck if token is valid, if key is valid,
+     * than get data and return it
+     * 
+     * @return string
+     */
     public function check()
     {
         $csrf = Main::Create("\patrick115\Requests\CSRF", []);
@@ -78,7 +122,13 @@ class API
         return $this->getData($method, isset($this->values[$method]) ? $this->post[$this->values[$method]] : null);
     }
 
-    private function throwError($message) 
+    /**
+     * Create from error, json with error
+     * 
+     * @param string $message - message of error
+     * @return string
+     */
+    private function throwError(string $message) 
     {
         return json_encode(
             [
@@ -88,7 +138,14 @@ class API
         );
     }
 
-    private function getData($method, $value)
+    /**
+     * Get data based by method
+     * 
+     * @param string $method - method to get data
+     * @param mixed $value - value from post
+     * @return string
+     */
+    private function getData(string $method, $value)
     {
         switch ($method) {
             case "get-user-list":
@@ -289,7 +346,7 @@ class API
                         $rank = $rank->getRank();
                         $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
 
-                        $method = ($row["method"] == "add") ? "<span class=\"badge\" style=\"color:green;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">Přidáno</span>" : "<span class=\"badge\" style=\"color:red;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">Odebráno</span>";
+                        $method = ($row["method"] == "add") ? "<span class=\"badge badge-primary\" style=\"background-color:green;\">Přidáno</span>" : "<span class=\"badge badge-primary\" style=\"background-color:red;\">Odebráno</span>";
 
                         $return .= "
                         <tr>
@@ -364,9 +421,9 @@ class API
                                 if (empty($tagy[$tag]["name"]) || empty($tagy[$tag]["color"])) {
                                     return $this->throwError("Tag settings is invalid!");
                                 }
-                                $tag_string .= "<span class=\"badge\" style=\"color:{$tagy[$tag]["color"]};font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$tagy[$tag]["name"]}</span>";
+                                $tag_string .= "<span class=\"badge badge-primary\" style=\"background-color:{$tagy[$tag]["color"]};\">{$tagy[$tag]["name"]}</span>";
                             } else {
-                                $tag_string .= "<span class=\"badge\" style=\"color:#AAAAAA;font-size:1rem;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$tag}</span>";
+                                $tag_string .= "<span class=\"badge badge-primary\" style=\"background-color:#AAAAAA;\">{$tag}</span>";
                             }
                         }
 
@@ -505,7 +562,7 @@ class API
                         $rank = $rank->getRank();
                         $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
 
-                        $raw = str_replace("Přesunul data z hráče ", "", $row["message"]);
+                        $raw = str_replace(["Přesunul data z hráče ", "Přesunul Group z hráče ", "Přesunul Tagy z hráče ", "Přesunul VIP a Tagy z hráče ", "Přesunul Group a Tagy z hráče "], ["", "", "", "", ""], $row["message"]);
                         $ex = explode(" na hráče ", $raw);
 
                         $from = $ex[0];
@@ -626,6 +683,96 @@ class API
                     "next" => $status_next_button,
                 ];
 
+                $return = json_encode($array);
+            break;
+            case "get-blockedList":
+                if ($value < 0 || $value == 0) {
+                    return $this->throwError("Neplatná Stránka!");
+                }
+
+                $start = ($value == 1) ? 0 : (20 * ($value - 1));
+                $end = ($value == 1) ? 21 : ((20 * $value) + 1);
+
+                $return = "";
+                $rv = $this->database->execute("SELECT `id`, `user_id`, `banner`, `ticket_id`, `date` FROM `adminka_tickets`.`tickets_banned_users` ORDER BY `tickets_banned_users`.`id` DESC LIMIT {$start}, {$end}", true);
+                $i = ($value == 1) ? 0 : ($value - 1) * 20;
+                $a = 0;
+
+                if ($this->database->num_rows($rv) == 0) {
+                    return $this->throwError("Nikdo není zablokován");
+                }
+
+                $token = \patrick115\Main\Session::init()->getData("Security/CRF/token");
+
+                while ($row = $rv->fetch_assoc()) {
+                    $i++;
+                    $a++;
+                    if (5 >= $a) {
+
+                        $user_id = $row["user_id"];
+                        $user = Utils::getUserByClientId($user_id);
+
+                        $block_id = $row["banner"];
+                        $block = Utils::getUserByClientId($block_id);
+
+                        $rank = new Rank($user);
+
+                        $rank = $rank->getRank();
+                        $rank_color = $this->config->getConfig("Main/group_colors")[Utils::ConvertRankToRaw($rank)];
+
+                    
+
+                        $return .= "
+                        <tr>
+                            <td>{$row["id"]}</td>
+                            <td>{$user}</td>
+                            <td><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$rank}</span></td>
+                            <td>{$block}</td>
+                            <td><a href=\"./?ticket-view-admin&id={$row["ticket_id"]}\">{$row["ticket_id"]}</a></td>
+                            <td>{$row["date"]}</td>
+
+                            <td><form method=\"post\" action=\"./requests.php\">
+                            <input type=\"hidden\" name=\"method\" value=\"block-user\" required>
+                            <input type=\"hidden\" name=\"source_page\" value=\"?blocked-list\" required>
+                            <input type=\"hidden\" name=\"CSRF_token\" value=\"" .$token .  "\" required>
+                            <input type=\"hidden\" name=\"value\" value=\"" .Utils::createPackage(Utils::randomString(10) . ";unblock;" . Utils::randomString(12))[1] . "\" required>
+                            <input type=\"hidden\" name=\"ticket_id\" value=\"" .Utils::createPackage(Utils::randomString(10) . ";{$row["ticket_id"]};" . Utils::randomString(12))[1] . "\" required>
+                            <input type=\"hidden\" name=\"user\" value=\"" .Utils::createPackage(Utils::randomString(10) . ";{$row["user_id"]};" . Utils::randomString(12))[1] . "\" required>
+                            <input type=\"hidden\" name=\"skip-block\" value=\"" .Utils::createPackage(Utils::randomString(10) . ";true;" . Utils::randomString(12))[1] . "\" required>
+                            <button type=\"submit\" style=\"background:none;border:none;\"><i class=\"fas fa-trash\"></i></button></td>
+                        </form></td>
+                        </tr>";
+                    }
+                }
+
+                if (empty($return)) {
+                    return $this->throwError("Neplatná stránka");
+                }
+
+                if ($value == 1 && $a > 20) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "enabled";
+                } else if ($value == 1 && $a <= 20) {
+                    $status_prev_button = "disabled";
+                    $status_next_button = "disabled";
+                } else if ($value > 1 && $a > 20) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "enabled";
+                } else if ($value > 1 && $a <= 20) {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                } else {
+                    $status_prev_button = "enabled";
+                    $status_next_button = "disabled";
+                }
+
+                $array = [
+                    "success" => true,
+                    "message" => $return,
+                    "currentpage" => $value,
+                    "prev" => $status_prev_button,
+                    "next" => $status_next_button,
+                ];
                 $return = json_encode($array);
             break;
         }

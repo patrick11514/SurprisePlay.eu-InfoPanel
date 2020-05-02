@@ -20,7 +20,7 @@ use patrick115\Main\Error;
 use patrick115\Main\Singleton;
 use patrick115\Main\Tools\Utils;
 
-class Database extends Error
+class Database
 {
     use Singleton;
 
@@ -45,8 +45,16 @@ class Database extends Error
      */
     public $error;
 
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
 
+    /**
+     * Error class
+     * @var object
+     */
     private $errors;
 
     private function __construct()
@@ -125,9 +133,10 @@ class Database extends Error
                 $conn->query("ALTER TABLE `adminka_tickets`.`tickets_messages` ADD CONSTRAINT `ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_banned_users`")) {
-                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_banned_users` ( `id` INT NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL , `banner` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
+                $conn->query("CREATE TABLE `adminka_tickets`.`tickets_banned_users` ( `id` INT NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL , `banner` INT NOT NULL , `ticket_id` INT NOT NULL, `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;");
                 $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `banned_user_id` FOREIGN KEY (`user_id`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
                 $conn->query("ALTER TABLE `adminka_tickets`.`tickets_banned_users` ADD CONSTRAINT `admin_user_id` FOREIGN KEY (`banner`) REFERENCES `adminka`.`accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+                $conn->query("ALTER TABLE `tickets_banned_users` ADD CONSTRAINT `banned_ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets_list`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
             }
             if (!@$conn->query("SELECT 1 FROM `adminka_tickets`.`tickets_alerts`")) {
                 $conn->query("CREATE TABLE `adminka_tickets`.`tickets_alerts` ( `id` INT NOT NULL AUTO_INCREMENT , `ticket_id` INT NOT NULL , `type` TEXT NOT NULL , `message` TEXT NOT NULL , `after_message` INT NOT NULL , `timestamp` TEXT NOT NULL , `date` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
@@ -187,7 +196,7 @@ class Database extends Error
      * @param string $needle
      *
      */
-    public function select($params, $table, $options = "", $haystack = null, $needle = null)
+    public function select($params, $table, $options = "", $haystack = null, $needle = null, $showCommand = false)
     {
 
         if (empty($params) || empty($table)) {
@@ -211,6 +220,10 @@ class Database extends Error
                 $needle = Utils::chars($needle);
             }
             $command = "SELECT $list FROM `$table` WHERE `" . Utils::chars($haystack) . "` = '{$needle}' $options";
+        }
+
+        if ($showCommand) {
+            echo $command . PHP_EOL;
         }
 
         $return = $this->execute($command, true);
@@ -279,6 +292,8 @@ class Database extends Error
 
         $command = "INSERT INTO `$table` ($vals) VALUES ($pars);";
 
+        echo $command . "<br>";
+
         $this->execute($command, false);
     }
 
@@ -290,7 +305,7 @@ class Database extends Error
      * @param string|array $names name of row
      * @param string|array $vals to this string
      */
-    public function update($table, $haystack, $needle, $names, $vals, $parameter = "")
+    public function update($table, $haystack, $needle, $names, $vals, $parameter = "", $showCommand = false)
     {
         if (!is_array($names)) {
             $this->errors->catchError("Names must be array", debug_backtrace());
@@ -363,6 +378,10 @@ class Database extends Error
 
         $command = "UPDATE `$table` SET $sets WHERE $where {$parameter}";
 
+        if ($showCommand) {
+            echo $command . "<br>";
+        }
+
         $this->execute($command, false);
 
     }
@@ -373,7 +392,7 @@ class Database extends Error
      * @param string|array $haystack
      * @param string|array $needle
      */
-    public function delete($table, $haystack, $needle, $options = "")
+    public function delete($table, $haystack, $needle, $options = "", $showCommand = false)
     {
         if (is_array($haystack)) {
             if (!is_array($needle)) {
@@ -405,10 +424,19 @@ class Database extends Error
         $cond = rtrim($cond, " AND ");
 
         $command = "DELETE FROM `$table` WHERE {$cond} {$options};";
-        echo $command;
+
+        if ($showCommand) {
+            echo $command . PHP_EOL;
+        }
+
         $this->execute($command);
     }
 
+    /**
+     * Get count of rows in mysqli object
+     * @param object $rv
+     * @return int
+     */
     public function num_rows($rv)
     {
         $rows = $rv->num_rows;
@@ -419,7 +447,13 @@ class Database extends Error
         return $rows;
     }
 
-    public function getCountRows($table, $condition = null)
+    /**
+     * Count rows in table
+     * @param string $table - table 
+     * @param mixed $confition - more parameters
+     * @return int
+     */
+    public function getCountRows(string $table, $condition = null)
     {
 
         $rv = $this->execute("SELECT COUNT(*) FROM `$table` $condition;", true);
@@ -430,6 +464,10 @@ class Database extends Error
         return $count;
     }
 
+    /**
+     * Get count of queries
+     * @return int
+     */
     public function getQueries()
     {
         return $this->conn->query("SHOW SESSION STATUS LIKE 'Questions'")->fetch_object()->Value;

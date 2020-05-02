@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Rank Class, get current rank of logged
+ * user in InfoPanel. Rank get from database
+ * in base of config and weight of groups.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka\Players;
 
 use patrick115\Main\Database;
@@ -30,7 +43,7 @@ class Rank
      * Construct function
      * @param string $username
      */
-    public function __construct($username)
+    public function __construct(string $username)
     {
         $this->database = Database::init();
         $this->config = Config::init();
@@ -71,6 +84,9 @@ class Rank
         return $current_rank;
     }
 
+    /**
+     * Get user current count
+     */
     private function getCurrentRank()
     {
         $rv = $this->database->select(["primary_group"], "main_perms`.`perms_players", "LIMIT 1", "username", strtolower($this->username));

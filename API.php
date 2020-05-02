@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * API File.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
+/**
+ * Json UTF-8
+ */
 header("Content-type: application/json; charset=utf-8");
 
 use patrick115\Adminka\Main;

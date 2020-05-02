@@ -1,4 +1,5 @@
 %%ticket_callback_redirect%%
+%%ticket_callback_is_blocked%%
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
@@ -23,7 +24,7 @@
             <div class="card-body">
                 <p>Založit nový Tiket</p>
                 <hr>
-                <form method="post" action="./requests.php" role="form">
+                <form method="post" action="./requests.php" role="form" enctype="multipart/form-data">
                     <input type="hidden" name="method" value="ticket-write" required>
                     <input type="hidden" name="source_page" value="?ticket-write" required>
                     <input type="hidden" name="CSRF_token" value="%%CSRF_Token%%" required>
@@ -36,6 +37,15 @@
                         <select name="type" class="form-control" required>
                             %%ticket_ticket_types%%
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="file">Přiložit obrázek <span style="color:red;font-size:small;">maximálně %%ticket_max_file_size%%</span></label>
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="file" name="file">
+                                <label class="custom-file-label" for="file">Vybrat soubor</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="message">Zpráva <span style="color:red;font-size:small;">minimálně 10 znaků</span></label>

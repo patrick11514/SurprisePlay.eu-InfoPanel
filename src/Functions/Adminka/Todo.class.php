@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Main class for Todo list
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Database;
@@ -9,9 +20,21 @@ use patrick115\Main\Tools\Utils;
 
 class Todo  
 {
+    /**
+     * Database class
+     * @var object
+     */
     private $database;
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
 
+    /**
+     * Methods for POST
+     * @var array
+     */
     private $todo_data = [
         "todo" => [
             "for", "tags", "message"
@@ -20,10 +43,17 @@ class Todo
             "id"
         ]
     ];
-
+    /**
+     * Data from POST
+     * @var array
+     */
     private $data;
 
-    public function __construct($data)
+    /**
+     * Construct class
+     * @param array $data - data from POST
+     */
+    public function __construct(array $data)
     {
         foreach ($this->todo_data[$data["method"]] as $datas) {
             if (empty($data[$datas])) {
@@ -38,6 +68,10 @@ class Todo
         $this->config = Config::init();
     }
 
+    /**
+     * Add new element to ticket
+     * @return bool
+     */
     public function addTodo()
     {
         $session = \patrick115\Main\Session::init();
@@ -99,6 +133,10 @@ class Todo
         return true;
     }
 
+    /**
+     * Remove element from todo
+     * @return bool
+     */
     public function removeTodo()
     {
         $id = rtrim(

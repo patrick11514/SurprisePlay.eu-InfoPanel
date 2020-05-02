@@ -18,6 +18,10 @@ trait Singleton
 
     private static $instance = NULL;
 
+    /**
+     * Init function
+     * @return object
+     */
     public static function init()
     {
         if (self::$instance === NULL) {

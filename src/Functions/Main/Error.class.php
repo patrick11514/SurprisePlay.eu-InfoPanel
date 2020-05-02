@@ -35,8 +35,6 @@ class Error
      */
     private $catchtime = NULL;
 
-    private $transfer_error;
-
     private function __construct() {}
 
     /**
@@ -81,6 +79,10 @@ class Error
         }
     }
 
+    /**
+     * Check if error
+     * @return bool
+     */
     public function errorExist()
     {
         if (empty($this->catcherror)) {
@@ -91,8 +93,9 @@ class Error
 
     /**
      * Put error to var
+     * @param mixed $e - error message
      */
-    public function putError($e)
+    public function putError(string $e)
     {
         if (empty($e)) {
             $this->catchError("Error not set", debug_backtrace());
@@ -102,12 +105,17 @@ class Error
 
     /**
      * Return error from var
+     * @return string
      */
     public function getError()
     {
         return $this->transfer_error;
     }
 
+    /**
+     * Convert Errors to HTML Code
+     * @return string
+     */
     public function getErrorHTML()
     {
         if ($this->catcherror === null) {

@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Generator, give pregenerated forms and,
+ * texts by method
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Error;
@@ -11,19 +23,39 @@ use patrick115\Adminka\Tickets;
 
 class Generator
 {
-
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
 
+    /**
+     * Method of pregenerated form
+     * @var string
+     */
     private $method;
+    /**
+     * Var contains pregenerated form
+     * @var string
+     */
     private $genData;
 
+    /**
+     * Aviliable methods
+     * @var array
+     */
     private $aviliable_methods = [
         "form",
         "data",
         "table"
     ];
 
-    public function __construct($method)
+    /**
+     * Construct function
+     * @param string $method
+     * @return null
+     */
+    public function __construct(string $method)
     {
         $this->error = Error::init();
         if (in_array($method, $this->aviliable_methods)) {
@@ -34,13 +66,21 @@ class Generator
         }
     }
 
+    /**
+     * Return pregenerated form
+     * @return string
+     */
     public function generate()
     {
         return $this->genData;
     }
 
-
-    public function getData($data_name)
+    /**
+     * Get pregenerated data
+     * @param string $data_name - name of saved data
+     * @return string
+     */
+    public function getData(string $data_name)
     {
         if ($this->method != "data") {
             $this->error->catchError("Can't use getData, when method is not data.", debug_backtrace());
@@ -86,6 +126,11 @@ class Generator
         return Main::Create("\patrick115\Adminka\Generator", ["data"]);
     }
 
+    /**
+     * Get pregenerated form
+     * @param string $form_name - name of form
+     * @return string
+     */
     public function getForm($form_name)
     {
         if ($this->method != "form") {
@@ -99,7 +144,8 @@ class Generator
             "Gems",
             "Todo",
             "Change-User-Data",
-            "Unban"
+            "Unban",
+            "Blocked-User-List"
         ];
 
         if (!in_array($form_name, $stored_forms)) {
@@ -199,7 +245,7 @@ class Generator
                                     <input type="hidden" name="source_page" value="?vpn-allow" required>
                                     <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
                                     <div class="form-group">
-                                        <label for="allow-nick">Zadej nick, pro který chceš povolot připojení s VPN</label>
+                                        <label for="allow-nick">Zadej nick, pro který chceš povolit připojení s VPN</label>
                                         <input type="text" name="allow-nick" id="allow-nick" class="form-control" placeholder="Zadej nick" required>
                                         <div class="list-group" id="nicks">
                                         </div>
@@ -581,6 +627,17 @@ class Generator
                                         <div class="list-group" id="to-nicks" pos="2">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="select">Co chceš přesně převést?</label>
+                                        <select id="select" class="form-control" name="type">
+                                            <option value=""></option>
+                                            <option value="' . Utils::createPackage(Utils::randomString(10) . ";VIP;" . Utils::randomString(15))[1] . '">Převést pouze VIP</option>
+                                            <option value="' . Utils::createPackage(Utils::randomString(10) . ";Tags;" . Utils::randomString(15))[1] . '">Převést pouze Tagy</option>
+                                            <option value="' . Utils::createPackage(Utils::randomString(10) . ";Group;" . Utils::randomString(15))[1] . '">Převést pouze Group (Helper...)</option>
+                                            <option value="' . Utils::createPackage(Utils::randomString(10) . ";VIPTags;" . Utils::randomString(15))[1] . '">Převést VIP+Tagy</option>
+                                            <option value="' . Utils::createPackage(Utils::randomString(10) . ";GroupTags;" . Utils::randomString(15))[1] . '">Převést Group (Helper...) + Tagy</option>
+                                        </select>
+                                    </div>
                                     <button type="submit" id="confirm-button" class="btn btn-light">Přesunout data</button>
                                 </form>
                             </div>
@@ -717,6 +774,74 @@ class Generator
                     </div>
                 </div>
                 ';
+            break;
+            case "Blocked-User-List":
+                $this->genData = '
+                <div id="content">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" id="sidebarCollapse" href="#"><i class="fas fa-align-left"></i></a>
+                                </li>
+                            </ul>
+                            <p>%%page_name%%</p>
+                            <ul class="nav navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="./?logout"><i class="fas fa-sign-in-alt"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+
+                    <div id="container" class="container-fluid">
+                        %%ERRORS%%
+                        %%messages%%
+                        <div class="card">
+                            <div class="card-body">
+                            <input type="hidden" name="CSRF_token" id="CSRF_TOKEN" value="%%CSRF_Token%%" required>
+                                <p class="title">Zablokování hráči na tiketech</p>
+                                <div id="loader" class="d-flex justify-content-center" style="padding-top:5%;">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="blocked-user-table" style="visibility:hidden;" class="loading table table-striped">
+                                        <thead>                  
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Jméno</th>
+                                                <th>Rank</th>
+                                                <th>Zablokoval</th>
+                                                <th>V tiketu</th>
+                                                <th>Kdy</th>
+                                                <th>#</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="blocked-user-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav id="blocked-user-page-buttons" class="loading" style="visibility:hidden;">
+                                  <ul class="pagination justify-content-center mb-0">
+                                    <li id="li-blocked-user-prev-page" class="page-item">
+                                        <a id="blocked-user-prev-page" class="page-link" href="#">Přechozí</a>
+                                    </li>
+                                    <li class="page-item active">
+                                        <span id="blocked-user-page-id" data-page="" class="page-link">
+                                        </span>
+                                    </li>
+                                    <li id="li-blocked-user-next-page" class="page-item">
+                                        <a id="blocked-user-next-page" class="page-link" href="#">Další</a>
+                                    </li>
+                                  </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ';
             break;
             default:
                 $this->genData = '

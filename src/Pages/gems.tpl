@@ -140,6 +140,8 @@ $(function() {
                 $("#nicks").text("Nelze kontaktovat API.");
             });
         } else {
+            $("#gems-nick").removeClass("is-invalid");
+            $("#gems-button").prop('disabled', false);
             $("#nicks").text("");
         }
     });

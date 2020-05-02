@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Permission class, that check permissions based 
+ * config, on page, or on group.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Config;
@@ -9,13 +21,36 @@ use patrick115\Main\Error;
 
 class Permissions
 {
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
+    /**
+     * Session class
+     * @var object
+     */
     private $session;
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
 
-    private $current_page;
+    /**
+     * Your username
+     * @var string
+     */
     private $username;
+    /**
+     * All groups and their names
+     * @var array
+     */
     private $perms;
+    /**
+     * User rank
+     * @var string
+     */
     private $user_rank;
 
     public function __construct()
@@ -25,12 +60,20 @@ class Permissions
         $this->error = Error::init();
     }
 
-    public function getUser($username)
+    /**
+     * Save username to variable
+     * @return object
+     */
+    public function getUser(string $username)
     {
         $this->username = $username;
         return Main::getApp("\patrick115\Adminka\Permissions");
     }
 
+    /**
+     * Check if user have permission
+     * @return object
+     */
     public function havePermission()
     {
 
@@ -46,7 +89,11 @@ class Permissions
         return Main::getApp("\patrick115\Adminka\Permissions");;
     }
 
-    public function inGroup($group)
+    /**
+     * Check if user is in group
+     * @return bool
+     */
+    public function inGroup(string $group)
     {
         if (empty($this->perms[$group])) {
             $this->error->catchError("Group $group not found!", debug_backtrace());
@@ -58,7 +105,12 @@ class Permissions
         return false;
     }
 
-    public function inPage($page)
+    /**
+     * Check if user have permission in page
+     * @param string $page - page for checking
+     * @return bool
+     */
+    public function inPage(string $page)
     {
         $page_perm = $this->config->getConfig("Main/page_perms");
         if (empty($page_perm[$page])) {
@@ -77,6 +129,10 @@ class Permissions
         return false;
     }
 
+    /**
+     * Load permissions from config, and
+     * fill inherit groups
+     */
     private function loadPermissions()
     {
         $perms = $this->config->getConfig("Main/group-perms");

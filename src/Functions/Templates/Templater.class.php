@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Templater, prepairing and displaying templates
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Templates;
 
 use patrick115\Main\Config;
@@ -31,10 +42,7 @@ class Templater
                 "%%skin_URL%%" => "Account/User/Skin"
             ],
             "special_vars" => [
-                "registered_users",
-                "banned_users",
-                "votes",
-                "currency",
+                "server_info",
                 "player_info",
                 "copyright",
                 "navigation",
@@ -185,7 +193,8 @@ class Templater
                 "copyright",
                 "version",
                 "copy",
-                "ticket_types"
+                "ticket_types",
+                "ticket_max_file_size"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
@@ -194,7 +203,11 @@ class Templater
             "tickets" => [
                 "callback" => [
                     "enabled" => true,
-                    "type" => "redirect"
+                    "multi" => true,
+                    "type" => [
+                        "redirect",
+                        "is_blocked"
+                    ]
                 ]
             ]
         ],
@@ -207,7 +220,8 @@ class Templater
                 "navigation",
                 "copyright",
                 "version",
-                "copy"
+                "copy",
+                "ticket_max_file_size"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
@@ -227,7 +241,7 @@ class Templater
             ]
         ],
         "Ticket-List" => [
-            "title" => "Seznám tiketů",
+            "title" => "Seznam tiketů",
             "name" => "ticket-list.tpl",
             "sourcefile" => "main.tpl",
             "page_name" => "Seznam tiketů",
@@ -249,7 +263,7 @@ class Templater
             ]
         ],
         "Ticket-List-Admin" => [
-            "title" => "Seznám tiketů",
+            "title" => "Seznam tiketů",
             "name" => "ticket-admin-list.tpl",
             "sourcefile" => "main.tpl",
             "page_name" => "Seznam tiketů",
@@ -285,7 +299,8 @@ class Templater
                 "navigation",
                 "copyright",
                 "version",
-                "copy"
+                "copy",
+                "ticket_max_file_size"
             ],
             "session_data" => [
                 "%%username%%" => "Account/User/Username",
@@ -345,6 +360,26 @@ class Templater
                 "var_name" => "unban" 
             ]
         ],
+        "Blocked-list" => [
+            "title" => "Seznam zablokovaných hráčů na tiketech",
+            "name" => "blocked-list.tpl",
+            "sourcefile" => "main.tpl",
+            "page_name" => "Seznam zablokovaných hráčů na tiketech",
+            "special_vars" => [
+                "navigation",
+                "copyright",
+                "version",
+                "copy"
+            ],
+            "session_data" => [
+                "%%username%%" => "Account/User/Username",
+                "%%skin_URL%%" => "Account/User/Skin"
+            ],
+            "generate_form" => [
+                "name" => "Blocked-User-List",
+                "var_name" => "BLOCKED" 
+            ]
+        ]
     ];
 
     /**
@@ -353,11 +388,8 @@ class Templater
      */
     private $special_vars = [
         //main page
-        "registered_users" => "%%registered_users%%",
-        "banned_users" => "%%banned_users%%",
-        "votes" => "%%votes%%",
-        "currency" => "%%currency%%",
         "player_info" => "%%player_info%%",
+        "server_info" => "%%server_info%%",
 
         //main template
         "copyright" => "%%copyright%%",
@@ -383,7 +415,8 @@ class Templater
 
         //tickets
         "ticket_types" => "%%ticket_ticket_types%%",
-        "ticket-group" => "%%ticket_group%%"
+        "ticket-group" => "%%ticket_group%%",
+        "ticket_max_file_size" => "%%ticket_max_file_size%%"
     ];
     /**
      * Pages with custom repalcemenest
@@ -392,7 +425,7 @@ class Templater
     private $pages_with_custom_replacements = [
         "MainPage", "Settings", "VPNAllow", "Unregister", "Gems", "TodoList",
         "Ticket-Create", "Ticket-View", "Ticket-List", "Ticket-List-Admin",
-        "Ticket-View-Admin", "ChangUserData", "Unban"
+        "Ticket-View-Admin", "ChangUserData", "Unban", "Blocked-list"
     ];
 
     /**
@@ -408,12 +441,23 @@ class Templater
     private $error;
     /**
      * Config class
-     * @var config
+     * @var object
      */
     private $config;
-
+    /**
+     * Session class
+     * @var object
+     */
     private $session;
-
+    /**
+     * Database class
+     * @var object
+     */
+    private $database;
+    /**
+     * Copy class
+     * @var object
+     */
     private $copy;
 
     /**
@@ -425,6 +469,7 @@ class Templater
         $this->error = Error::init();
         $this->config = Config::init();
         $this->session = Session::init();
+        $this->database = Database::init();
 
         if (file_exists($dir)) {
             if (is_dir($dir)) {
@@ -446,7 +491,9 @@ class Templater
         $this->aliases = \patrick115\Main\Config::init()->getConfig("Aliases");
         $this->copy = \patrick115\Adminka\Main::Create("\patrick115\cpy\Copy", []);
     }
-
+    /**
+     * Show error page
+     */
     public function errorPage()
     {
         $this->Show("ErrorPage");
@@ -455,6 +502,7 @@ class Templater
     /**
      * Show page
      * @param string $template
+     * @return null
      */
     public function Show($template)
     {
@@ -665,6 +713,13 @@ class Templater
         return $main;
     }
 
+    /**
+     * This page show, if you don't have permissions
+     * on any page
+     * @param string $sourceName - Source name of tempalte
+     * @param string $tpl_data
+     * @return string
+     */
     private function noPermissionPage($sourceName, $tpl_data)
     {   
         if (!empty(explode("?", $_SERVER["REQUEST_URI"])[1])) {
@@ -729,23 +784,20 @@ class Templater
         ]);
     }
 
+    /**
+     * Replace special variables
+     * @param string $pageData - HTML code of page
+     * @param array $vars - Vars to replace
+     * @return string
+     */
     private function replace_special_vars($pageData, array $vars)
     {
         $app = \patrick115\Adminka\Main::Create("\patrick115\Minecraft\Stats", [Session::init()->getData("Account/User/Username")]);
 
         foreach ($vars as $var) {
             switch ($var) {
-                case "registered_users":
-                    $replacement = $app->getRegisteredUsers();
-                break;
-                case "banned_users":
-                    $replacement = $app->getBannedUsers();
-                break;
-                case "votes":
-                    $replacement = $app->getAllVotes();
-                break;
-                case "currency":
-                    $replacement = $app->getGlobalCurrency();
+                case "server_info":
+                    $replacement = $app->getInfo();
                 break;
                 case "player_info":
                     $replacement = $app->getUserData();
@@ -830,7 +882,15 @@ class Templater
                     $username = $this->session->getData("Account/User/Username");
                     $app = Main::Create("\patrick115\Minecraft\Stats", [$username]);
 
-                    if ($app->getAntiVPNStatus() == "Zakázan") {
+                    $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", Utils::getClientID($username));
+
+                    if (!$rv || $this->database->num_rows($rv) == 0) {
+                        $blocked = false;
+                    } else {
+                        $blocked = true;
+                    }
+
+                    if ($app->getAntiVPNStatus() == "Zakázan" && $blocked === false) {
 
                         $CSRF = \patrick115\Adminka\Main::Create("\patrick115\Requests\CSRF", []);
                         $token = $CSRF->getToken();
@@ -876,6 +936,9 @@ class Templater
                     $ticket = Main::Create("\patrick115\Adminka\Tickets", [$array]);
 
                     $replacement = $ticket->ticketCallback();
+                break;
+                case "ticket_max_file_size":
+                    $replacement = ini_get("upload_max_filesize");
                 break;
                 default:
                     

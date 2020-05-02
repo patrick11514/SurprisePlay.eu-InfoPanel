@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Session class, for easy manipulation
+ * with sessions
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Main;
 
 use patrick115\Main\Singleton;
@@ -28,6 +40,7 @@ class Session
 
     /**
      * Create class
+     * @return null
      */
     public function create()
     {
@@ -47,6 +60,7 @@ class Session
 
     /**
      * Destroy class
+     * @return null
      */
     public function destroy()
     {

@@ -77,6 +77,8 @@ $(function() {
                 $("#nicks").text("Nelze kontaktovat API.");
             });
         } else {
+            $("#unregister-nick").removeClass("is-invalid");
+            $("#unregister-button").prop('disabled', false);
             $("#nicks").text("");
         }
     });

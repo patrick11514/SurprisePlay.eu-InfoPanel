@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * CSRF token for hijacking informations
+ * of users
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Requests;
 
 use patrick115\Main\Tools\Utils;
@@ -31,6 +43,9 @@ class CSRF
         }
     }
 
+    /**
+     * Create new token
+     */
     public function newToken()
     {
         unset($_SESSION["Security"]);
@@ -38,6 +53,10 @@ class CSRF
         $_SESSION["Security"]["CRF"]["token"] = $this->token;
     }
 
+    /**
+     * Check if token is valid
+     * @return bool
+     */
     public function checkToken($token)
     {
         if ($token !== $this->token) {
@@ -46,6 +65,10 @@ class CSRF
         return true;
     }
 
+    /**
+     * Get current token
+     * @return string
+     */
     public function getToken()
     {
         return $this->token;

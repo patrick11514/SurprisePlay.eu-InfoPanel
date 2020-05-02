@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Logger, log informations to database
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Database;
@@ -12,7 +23,15 @@ class Logger
 {
     use Singleton;
 
+    /**
+     * Class database
+     * @var object
+     */
     private $database;
+    /**
+     * Class error
+     * @var object
+     */
     private $error;
 
     private function __construct()
@@ -21,7 +40,15 @@ class Logger
         $this->error = Error::init();
     }
 
-    public function log($message, $type = "info", $syslog = false)
+    /**
+     * Logger function, log data to tadabase
+     * 
+     * @param string $message - message of log
+     * @param string $type - type of log
+     * @param bool $syslog - if is system log
+     * @return null
+     */
+    public function log(string $message, string $type = "info", bool $syslog = false)
     {
         $types = ["info", "login", "settings", "logout", "antivpn", "unregister", "warning", "transfer_data", "tickets"];
         if (empty($message)) {

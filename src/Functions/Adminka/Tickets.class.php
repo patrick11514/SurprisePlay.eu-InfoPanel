@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Main class for tickets
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Config;
@@ -12,21 +23,56 @@ use patrick115\Adminka\Logger;
 
 class Tickets 
 {
-
+    /**
+     * Username of current user
+     * @var string
+     */
     private $username;
 
+    /**
+     * Main constants
+     * @var int
+     */
     const TICKET_WAITING_FOR_USER = 0;
     const TICKET_WAITING_FOR_ADMIN = 1;
     const TICKET_CLOSE = 2;
 
+    /**
+     * Groups in tickets
+     * @var array
+     */
     private $ticket_groups = [];
+    /**
+     * Reasons for tickets
+     * @var array
+     */
     private $ticket_reasons = [];
 
+    /**
+     * Database class
+     * @var object
+     */
     private $database;
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
+    /**
+     * Logger class
+     * @var object
+     */
     private $logger;
 
+    /**
+     * Methods for POST
+     * @var array
+     */
     private $methods = [
         "getData" => [
             "username"
@@ -52,9 +98,18 @@ class Tickets
             "username"
         ],
     ];
+    /**
+     * Posts from POST
+     * @var array
+     */
     private $vars;
 
-    public function __construct($data)
+    /**
+     * Construct function
+     * @param array $data -Data from Post
+     * @return bool
+     */
+    public function __construct(array $data)
     {
         $this->error = Error::init();
         if (empty($data["method"])) {
@@ -91,17 +146,28 @@ class Tickets
         $this->username = $this->vars["username"];
     }
 
-
+    /**
+     * Get reasons from config
+     * @return array
+     */
     public function getReasons()
     {
         return $this->ticket_reasons;
     }
 
+    /**
+     * Get ticket groups from config
+     * @return array
+     */
     public function getGroups()
     {
         return $this->ticket_groups;
     }
 
+    /**
+     * Create new ticket
+     * @return bool
+     */
     public function writeTicket()
     {
         $user = Utils::getClientID($this->username);
@@ -120,8 +186,8 @@ class Tickets
             return false;
         }
 
-        if (mb_strlen($message) > 1000) {
-            define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
+        if (mb_strlen($message) > 20000) {
+            define("ERROR", ["Zpráva nesmí být delší než 20000 znaků"]);
             return false;
         }
 
@@ -143,6 +209,10 @@ class Tickets
         }
 
         $time = time();
+
+        $rv = $this->database->execute("SELECT `id` FROM `adminka_tickets`.`tickets_list` ORDER BY `tickets_list`.`id` DESC LIMIT 1;", true);
+
+        $potencial_id = ($rv->fetch_object()->id) + 1;
 
         $this->database->insert("adminka_tickets`.`tickets_list", 
         [
@@ -169,11 +239,34 @@ class Tickets
             "adminka_tickets`.`tickets_list", 
             "WHERE `author` = {$user} AND `create_timestamp` = '{$time}' AND `reason` = '{$for}' AND `for` = '$group' LIMIT 1");
             
-        if (!$rv) {
+        if (!$rv || $this->database->num_rows($rv) == 0) {
+            $this->database->delete("adminka_tickets`.`tickets_list", ["id"], [$potencial_id]);
             return false;
         }
 
         $ticket_ID = $rv->fetch_object()->id;
+
+        if (!empty($this->vars["img_url"])) {
+            $this->database->insert("adminka_tickets`.`tickets_messages", 
+            [
+                "id", 
+                "ticket_id", 
+                "author", 
+                "params", 
+                "message", 
+                "timestamp", 
+                "date"
+            ], 
+            [
+                "", 
+                $ticket_ID, 
+                $user, 
+                json_encode(["admin" => false, "image" => true]), 
+                $this->vars["img_url"],
+                $time,
+                date("H:i:s d.m.Y")
+            ]);
+        }
 
         $this->database->insert("adminka_tickets`.`tickets_messages", 
         [
@@ -200,6 +293,10 @@ class Tickets
         return true;
     }
 
+    /**
+     * Get current ticket id
+     * @return int
+     */
     private function get_current_ticket_id()
     {
         $router = Main::getApp("\patrick115\Main\Router");
@@ -207,6 +304,11 @@ class Tickets
         return $id;
     }
 
+    /**
+     * Ticket callback for callbacks from
+     * templater
+     * @return mixed
+     */
     public function ticketCallback()
     {
         switch ($this->vars["callback"]) {
@@ -323,7 +425,19 @@ class Tickets
                     $skin = $skin->getSkin();
 
                     if ($data["admin"] === false) {
-                        $return .= "<div class=\"direct-chat-msg\">
+                        if (!empty($data["image"]) && $data["image"] === true) {
+                            $return .= "<div class=\"direct-chat-msg\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            <img src=\"//" . str_replace(["%time%"], [time()], str_replace(["&amp;"], ["&"], $row["message"])) . "\" style=\"width:100%;\">
+                        </div>
+                    </div>";
+                        } else {
+                            $return .= "<div class=\"direct-chat-msg\">
                         <div class=\"direct-chat-info clearfix\">
                             <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
                             <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
@@ -333,7 +447,20 @@ class Tickets
                             " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
                         </div>
                     </div>";
+                        }
                     } else {
+                        if (!empty($data["image"]) && $data["image"] === true) {
+                        $return .= "<div class=\"direct-chat-msg right\">
+                        <div class=\"direct-chat-info clearfix\">
+                            <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
+                            <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
+                        </div>
+                        <img class=\"direct-chat-img\" src=\"{$skin}\">
+                        <div class=\"direct-chat-text\">
+                            <img src=\"//" . str_replace(["%time%"], [time()], str_replace(["&amp;"], ["&"], $row["message"])) . "\" style=\"width:100%;\">
+                        </div>
+                    </div>";
+                        } else {
                         $return .= "<div class=\"direct-chat-msg right\">
                         <div class=\"direct-chat-info clearfix\">
                             <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};font-weight:bold;text-shadow: 0 1px 10px rgba(0,0,0,.6);\">{$player_rank}</span> {$username}</span>
@@ -344,24 +471,46 @@ class Tickets
                             " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
                         </div>
                     </div>";
+                        }
                     }
                 }
                 return $return;
             break;
             case "send_message_check":
                 $id = $this->get_current_ticket_id();
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", Utils::getClientID($this->vars["username"]));
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    $blocked = false;
+                } else {
+                    $blocked = true;
+                }
+
                 $rv = $this->database->select(["waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
                 
                 if ($rv->fetch_object()->waiting_for == self::TICKET_CLOSE) {
                     return "<div class=\"alert alert-danger text-chat\">
                     Tiket je uzavřen, nelze do něj odepisovat!
                     </div>";
+                } elseif ($blocked === true) {
+                    return "<div class=\"alert alert-danger text-chat\">
+                    Jsi na tiketech zablokován, nelze do něj odepisovat!
+                    </div>";
                 } else {
-                    return "<form method=\"post\" action=\"./requests.php\">
+                    return "<form method=\"post\" action=\"./requests.php\"  enctype=\"multipart/form-data\">
                     <input type=\"hidden\" name=\"method\" value=\"ticket-send-message\" required>
                     <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view|id=" . $id . "\" required>
                     <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
                     <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(5) . ";" . $id . ";" . Utils::randomString(5))[1] . "\" required>
+                    <div class=\"form-group\">
+                        <label for=\"file\">Přiložit obrázek <span style=\"color:red;font-size:small;\">maximálně %%ticket_max_file_size%%</span></label>
+                        <div class=\"input-group mb-3\">
+                            <div class=\"custom-file\">
+                                <input type=\"file\" class=\"custom-file-input\" id=\"file\" name=\"file\">
+                                <label class=\"custom-file-label\" for=\"file\">Vybrat soubor</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class=\"form-group\">
                         <label for=\"message\">Zpráva <span style=\"color:red;font-size:small;\">minimálně 10 znaků</span></label>
                         <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" maxlength=\"1000\" required></textarea>
@@ -471,15 +620,38 @@ class Tickets
                     return false;
                 }
 
-                if (mb_strlen($message) > 1000) {
-                    define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
+                if (mb_strlen($message) > 20000) {
+                    define("ERROR", ["Zpráva nesmí být delší než 20000 znaků"]);
                     return false;
                 }
         
-                if (mb_strlen($message) < 10) {
+                if (mb_strlen($message) <= 10) {
                     define("ERROR", ["Zpráva je příliš krátká"]);
                     return false;
                 }
+
+                if (!empty($this->vars["img_url"])) {
+                    $this->database->insert("adminka_tickets`.`tickets_messages",
+                    [
+                        "id",
+                        "ticket_id",
+                        "author",
+                        "params",
+                        "message",
+                        "timestamp",
+                        "date"
+                    ],
+                    [
+                        "",
+                        $id,
+                        Utils::getClientID($username),
+                        json_encode(["admin" => false, "image" => true]),
+                        $this->vars["img_url"],
+                        time(),
+                        date("H:i:s d.m.Y")
+                    ]
+                    );
+                } 
 
                 $this->database->insert("adminka_tickets`.`tickets_messages",
                 [
@@ -503,7 +675,7 @@ class Tickets
                 );
 
                 $this->database->update("adminka_tickets`.`tickets_list", "id", $id, ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
-                die();
+
                 return true;
             break;
 
@@ -612,6 +784,7 @@ class Tickets
                         <th>Stav</th>
                         <th>Datum založení</th>
                         <th>Akce</th>
+                        <th>Smazat</th>
                     </tr>
                 </thead>
                 <tbody>";
@@ -654,6 +827,19 @@ class Tickets
                         {$scnd_button}
                         </form>
                         </td>
+                    ";
+
+                    $app = Session::init();
+
+                    $token = $app->getData("Security/CRF/token");
+
+                    $return .= "<td><form method=\"post\" action=\"./requests.php\">
+                        <input type=\"hidden\" name=\"method\" value=\"delete-ticket\" required>
+                        <input type=\"hidden\" name=\"source_page\" value=\"?ticket-list-admin|type={$type}\" required>
+                        <input type=\"hidden\" name=\"CSRF_token\" value=\"" .$token .  "\" required>
+                        <input type=\"hidden\" name=\"id\" value=\"" .Utils::createPackage(Utils::randomString(10) . ";{$row["id"]};" . Utils::randomString(12))[1] . "\" required>
+                        <button type=\"submit\" style=\"background:none;border:none;\"><i class=\"fas fa-trash\"></i></button></td>
+                    </form></td>
                     </tr>";
                 }
                 $return .= "</tbody></table>";
@@ -763,6 +949,18 @@ class Tickets
                     $skin = $skin->getSkin();
 
                     if ($data["admin"] === false) {
+                        if (!empty($data["image"]) && $data["image"] === true) {
+                        $return .= "<div class=\"direct-chat-msg right\">
+                            <div class=\"direct-chat-info clearfix\">
+                                <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
+                                <span class=\"direct-chat-timestamp pull-left\">{$row["date"]}</span>
+                            </div>
+                            <img class=\"direct-chat-img\" src=\"{$skin}\">
+                            <div class=\"direct-chat-text\">
+                                <img src=\"//" . str_replace(["%time%"], [time()], str_replace(["&amp;"], ["&"], $row["message"])) . "\" style=\"width:100%;\">
+                            </div>
+                        </div>";
+                        } else {
                         $return .= "<div class=\"direct-chat-msg right\">
                         <div class=\"direct-chat-info clearfix\">
                             <span class=\"direct-chat-name pull-right\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
@@ -773,7 +971,20 @@ class Tickets
                             " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
                         </div>
                     </div>";
+                        }
                     } else {
+                        if (!empty($data["image"]) && $data["image"] === true) {
+                        $return .= "<div class=\"direct-chat-msg\">
+                            <div class=\"direct-chat-info clearfix\">
+                                <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
+                                <span class=\"direct-chat-timestamp pull-right\">{$row["date"]}</span>
+                            </div>
+                            <img class=\"direct-chat-img\" src=\"{$skin}\">
+                            <div class=\"direct-chat-text\">
+                                <img src=\"//" . str_replace(["%time%"], [time()], str_replace(["&amp;"], ["&"], $row["message"])) . "\" style=\"width:100%;\">
+                            </div>
+                        </div>";
+                        } else {
                         $return .= "<div class=\"direct-chat-msg\">
                         <div class=\"direct-chat-info clearfix\">
                             <span class=\"direct-chat-name pull-left\"><span class=\"badge badge-primary\" style=\"background-color:{$rank_color};\">{$player_rank}</span> {$username}</span>
@@ -784,6 +995,7 @@ class Tickets
                             " . str_replace(["\r\n", "&amp;"], ["<br>", "&"], $row["message"]) ."
                         </div>
                     </div>";
+                        }
                     }
                 }
                 return $return;
@@ -791,9 +1003,13 @@ class Tickets
             case "player_info_admin":
                 $id = $this->get_current_ticket_id();
                 
-                $rv = $this->database->select(["author"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                $rv = $this->database->select(["author", "for", "title"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
 
-                $username = Utils::getUserByClientId($rv->fetch_object()->author);
+                $rv = $rv->fetch_object();
+
+                $username = Utils::getUserByClientId($rv->author);
+                $group = $this->config->getConfig("Main/ticket-categories")[$rv->for]["name"];
+                $ticket_name = str_replace("&amp;", "&", $rv->title);
 
                 $ip = Utils::getIpOfUser($username);
                 $rank = Main::Create("\patrick115\Adminka\Players\Rank", [$username]);
@@ -812,6 +1028,22 @@ class Tickets
                 
 
                 return "<tr>
+                <td>Název tiketu</td>
+                <td>{$ticket_name}</td>
+            </tr>
+            <tr>
+                <td>ID Tiketu:</td>
+                <td>{$id}</td>
+            </tr>
+            <tr>
+                <td>Tiket vytvořil:</td>
+                <td>{$username}</td>
+            </tr>
+            <tr>
+                <td>Skupina:</td>
+                <td>{$group}</td>
+            </tr>
+            <tr>
                 <td>IP:</td>
                 <td>{$ip} <img src=\"//%%domain%%/public/imgs/{$country}.png\" class=\"flag\"></td>
             </tr>
@@ -854,11 +1086,20 @@ class Tickets
                     Tiket je uzavřen, nelze do něj odepisovat!
                     </div>";
                 } else {
-                    return "<form method=\"post\" action=\"./requests.php\">
+                    return "<form method=\"post\" action=\"./requests.php\"  enctype=\"multipart/form-data\">
                     <input type=\"hidden\" name=\"method\" value=\"ticket-send-message-admin\" required>
                     <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view-admin|id=" . $id . "\" required>
                     <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
                     <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage("AD;" . Utils::randomString(5) . ";" . $id . ";" . Utils::randomString(5))[1] . "\" required>
+                    <div class=\"form-group\">
+                        <label for=\"file\">Přiložit obrázek <span style=\"color:red;font-size:small;\">maximálně %%ticket_max_file_size%%</span></label>
+                        <div class=\"input-group mb-3\">
+                            <div class=\"custom-file\">
+                                <input type=\"file\" class=\"custom-file-input\" id=\"file\" name=\"file\">
+                                <label class=\"custom-file-label\" for=\"file\">Vybrat soubor</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class=\"form-group\">
                         <label for=\"message\">Zpráva <span style=\"color:red;font-size:small;\">minimálně 10 znaků</span></label>
                         <textarea type=\"text\" class=\"form-control\" id=\"message\" name=\"message\" maxlength=\"1000\" required></textarea>
@@ -911,8 +1152,8 @@ class Tickets
                     return false;
                 }
 
-                if (mb_strlen($message) > 1000) {
-                    define("ERROR", ["Zpráva nesmí být delší než 1000 znaků"]);
+                if (mb_strlen($message) > 20000) {
+                    define("ERROR", ["Zpráva nesmí být delší než 20000 znaků"]);
                     return false;
                 }
         
@@ -920,6 +1161,29 @@ class Tickets
                     define("ERROR", ["Zpráva je příliš krátká"]);
                     return false;
                 }
+
+                if (!empty($this->vars["img_url"])) {
+                    $this->database->insert("adminka_tickets`.`tickets_messages",
+                    [
+                        "id",
+                        "ticket_id",
+                        "author",
+                        "params",
+                        "message",
+                        "timestamp",
+                        "date"
+                    ],
+                    [
+                        "",
+                        $id,
+                        Utils::getClientID($username),
+                        json_encode(["admin" => true, "image" => true]),
+                        $this->vars["img_url"],
+                        time(),
+                        date("H:i:s d.m.Y")
+                    ]
+                    );
+                } 
 
                 $this->database->insert("adminka_tickets`.`tickets_messages",
                 [
@@ -950,6 +1214,18 @@ class Tickets
             /**
              * Requests
              */
+
+            case "is_blocked":
+                $username = $this->vars["username"];
+                $id = Utils::getClientID($username);
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $id);
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    return false;
+                }
+                $_SESSION["Request"]["Errors"] = ["Jsi na tiketech zablokován"];
+                Utils::header("./?main");
+                #$_SESSION["Request"]["Errors"]
+            break;
 
             case "get-current-group":
                 $router = Main::getApp("\patrick115\Main\Router");
@@ -1071,8 +1347,48 @@ class Tickets
                     $cls = Utils::createPackage(Utils::randomString(10) . ";close;" . Utils::randomString(10))[1];
                 }
 
-                $return = "<p class=\"title\">Otevřít/Uzavřít tiket</p>
+                $rv = $this->database->select(["author"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    define("ERROR", ["Někde nastala chyba"]);
+                    return false;
+                }
+
+                $author = $rv->fetch_object()->author;
+
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $author);
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    $b_color = "red";
+                    $b_text = "Zablokovat na tiketech";
+                    $b_type = "block";
+                } else {
+                    $b_color = "green";
+                    $b_text = "Odblokovat na tiketech";
+                    $b_type = "unblock";
+                }
+
+
+                $return = "<p class=\"title\">Nastavení tiketu</p>
                 <hr>
+                ";
+                $perms = $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+                $group = $this->config->getConfig("Main/ticket-block-group");
+
+                if ($perms->getUser($this->username)->havePermission()->inGroup($group)) {
+
+                    $return .= "
+                    <form method=\"post\" action=\"./requests.php\">
+                        <input type=\"hidden\" name=\"method\" value=\"block-user\" required>
+                        <input type=\"hidden\" name=\"source_page\" value=\"?ticket-view-admin|id={$id}\" required>
+                        <input type=\"hidden\" name=\"CSRF_token\" value=\"%%CSRF_Token%%\" required>
+                        <input type=\"hidden\" name=\"value\" value=\"" . Utils::createPackage(Utils::randomString(48) . ";{$b_type};" . Utils::randomString(24))[1] . "\" required>
+                        <input type=\"hidden\" name=\"ticket_id\" value=\"" . Utils::createPackage(Utils::randomString(10) . ";{$id};" . Utils::randomString(10))[1] . "\" required>
+                        <input type=\"hidden\" name=\"user\" value=\"" . Utils::createPackage(Utils::randomString(10) . ";{$author};" . Utils::randomString(10))[1] . "\" required>
+                        <button type=\"submit\" class=\"btn btn-light-{$b_color}\">{$b_text}</button>
+                    </form>
+                    <br />
+                    ";
+                }
+                $return .= "
                 <form method=\"post\" action=\"./requests.php\">
                 
                     <input type=\"hidden\" name=\"method\" value=\"toggle-ticket\" required>
@@ -1129,6 +1445,156 @@ class Tickets
                 
             break;
 
+            case "delete-ticket":
+                $username = $this->vars["username"];
+                $ticket_id = explode(";", Utils::getPackage($this->vars["id"]))[1];
+                
+                $rv = $this->database->select(["for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $ticket_id);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    define("ERROR", ["Tiket s tímto ID neexistuje"]);
+                    return false;
+                }
+
+                $perms = $perms = Main::Create("\patrick115\Adminka\Permissions", [""]);
+                $groups = $this->config->getConfig("Main/ticket-group-access");
+
+                if (!$perms->getUser($this->username)->havePermission()->inGroup($groups[$rv->fetch_object()->for])) {
+                    define("ERROR", ["Nemáš právo smazat tento tiket"]);
+                    return false;
+                } 
+
+                $this->database->delete("adminka_tickets`.`tickets_list", ["id"], [$ticket_id]);
+
+                $this->logger->log("Uživatel {$username} smazal tiket s id {$ticket_id}", "tickets");
+
+                return true;
+            break;
+
+            case "block-user":
+                $banner = $this->vars["username"];
+                $banner_id = Utils::getClientID($banner);
+
+                $user_to_block_id = @explode(";", @Utils::getPackage($this->vars["user"]))[1];
+
+                if (empty($user_to_block_id) || !is_numeric($user_to_block_id)) {
+                    define("ERROR", ["Neplatný uživatel"]);
+                    return false;
+                }
+
+                if (!empty($this->vars["skip-block"])) {
+                    $skip_block = @explode(";", @Utils::getPackage($this->vars["skip-block"]))[1];
+
+                    if (empty($skip_block)) {
+                        define("ERROR", ["Neplatná hodnota!"]);
+                        return false;
+                    }
+                    $skip_block = (bool) $skip_block;
+
+                    if (empty($skip_block)) {
+                        define("ERROR", ["skip-block must be boolean"]);
+                        return false;
+                    }
+                } else {
+                    $skip_block = false;
+                }
+
+                if ($banner_id == $user_to_block_id && $skip_block !== true) {
+                    define("ERROR", ["Nemůžeš zablokovat/odblokovat sám sebe"]);
+                    return false;
+                }
+
+                $current_ticket_id = @explode(";", @Utils::getPackage($this->vars["ticket_id"]))[1];
+                if (empty($current_ticket_id) || !is_numeric($current_ticket_id)) {
+                    define("ERROR", ["Neplatné id tiketu"]);
+                    return false;
+                }
+
+                $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $current_ticket_id);
+
+                if (!$rv || $this->database->num_rows($rv) == 0) {
+                    define("ERROR", ["Tiket s tímto id neexistuje!"]);
+                    return false;
+                }
+
+                $action = @explode(";", @Utils::getPackage($this->vars["value"]))[1];
+
+                if (empty($action)) {
+                    define("ERROR", ["Neplatná akce"]);
+                    return false;
+                }
+
+                if (!in_array($action, ["block", "unblock"])) {
+                    define("ERROR", ["Neplatná akce"]);
+                    return false;
+                }
+
+                switch($action) {
+                    case "block":
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $user_to_block_id);
+
+                        if (!$rv) {
+                            define("ERROR", ["Někde nastala chyba!"]);
+                            return false;
+                        }
+                        if ($this->database->num_rows($rv) > 0) {
+                            define("ERROR", ["Tento hráč je již zablokován!"]);
+                            return false;
+                        }
+
+                        $this->database->insert("adminka_tickets`.`tickets_banned_users", 
+                        [
+                            "id",
+                            "user_id",
+                            "banner",
+                            "ticket_id",
+                            "timestamp",
+                            "date"
+                        ],
+                        [
+                            "",
+                            $user_to_block_id,
+                            $banner_id,
+                            $current_ticket_id,
+                            time(),
+                            date("H:i:s d.m.Y")
+                        ]);
+
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $user_to_block_id);
+
+                        if (!$rv || $this->database->num_rows($rv) == 0) {
+                            define("ERROR", ["Někde nastala chyba!"]);
+                            return false;
+                        }
+
+                        $this->logger->log("$banner zablokoval " . Utils::getUserByClientId($user_to_block_id) . " na tiketech (v tiketu {$current_ticket_id})", "tickets");
+
+                        define("MESSAGE", ["Hráč byl zablokován"]);
+                    break;
+                    case "unblock":
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $user_to_block_id);
+                        if (!$rv || $this->database->num_rows($rv) == 0) {
+                            define("ERROR", ["Tento hráč není zablokován!"]);
+                            return false;
+                        }
+                        $this->database->delete("adminka_tickets`.`tickets_banned_users", ["user_id"], [$user_to_block_id], "LIMIT 1");
+
+                        $rv = $this->database->select(["id"], "adminka_tickets`.`tickets_banned_users", "LIMIT 1", "user_id", $user_to_block_id);
+
+                        if (!$rv || $this->database->num_rows($rv) > 0) {
+                            define("ERROR", ["Někde nastala chyba"]);
+                            return false;
+                        }
+
+                        $this->logger->log("$banner odblokoval " . Utils::getUserByClientId($user_to_block_id) . " na tiketech (v tiketu {$current_ticket_id})", "tickets");
+
+                        define("MESSAGE", ["Hráč byl odblokován"]);
+                    break;
+                }
+
+                return true;
+            break;
+
             default:
                 return "No process found";
             break;
@@ -1136,7 +1602,12 @@ class Tickets
         return "";
     }
 
-    private function loadConfig($type)
+    /**
+     * Load data from config
+     * @param string $type - Type what get from config
+     * @return null
+     */
+    private function loadConfig(string $type)
     {
         $types = ["groups", "reasons"];
         if (!in_array($type, $types))
@@ -1172,6 +1643,10 @@ class Tickets
         }
     }
 
+    /**
+     * Create ticket for allow VPN
+     * @return bool
+     */
     public function allowUserVPN()
     {
         $reason = $this->vars["reason"];
@@ -1202,6 +1677,10 @@ class Tickets
         return true;
     }
 
+    /**
+     * Change ticket group
+     * @return bool
+     */
     public function changeTicketGroup()
     {
         $id = @explode(";", @Utils::getPackage([1 => $this->vars["ticket_id"]]))[1];
@@ -1262,7 +1741,11 @@ class Tickets
         ]
         );
 
-        $this->database->update("adminka_tickets`.`tickets_list", ["id"], [$id], ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
+        $rv = $this->database->select(["waiting_for"], "adminka_tickets`.`tickets_list", "LIMIT 1", "id", $id);
+
+        if ($rv->fetch_object()->waiting_for != self::TICKET_CLOSE) {
+            $this->database->update("adminka_tickets`.`tickets_list", ["id"], [$id], ["waiting_for"], [self::TICKET_WAITING_FOR_ADMIN]);
+        }
 
         return true;
 

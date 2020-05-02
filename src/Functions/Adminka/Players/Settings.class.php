@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * Settings class, change settings based
+ * on user changed. If settings don't changed
+ * it does nothing, than it change settings
+ * in database.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka\Players;
 
 use Exception;
@@ -12,13 +26,32 @@ use patrick115\Main\Tools\Utils;
 
 class Settings
 {
-
+    /**
+     * Session Class
+     * @var object
+     */
     private $session;
+    /**
+     * Logger Class
+     * @var object
+     */
     private $logger;
+    /**
+     * Database Class
+     * @var object
+     */
     private $database;
 
+    /**
+     * Data from POST
+     * @var array
+     */
     private $data = [];
 
+    /**
+     * Array for check
+     * @var array
+     */
     private $settings_datas = [
         "settings" => [
             "autologin",
@@ -42,7 +75,12 @@ class Settings
         ]
     ];
 
-    public function __construct($data)
+    /**
+     * Construct Function
+     * 
+     * @param array $data - Data from POST
+     */
+    public function __construct(array $data)
     {
         foreach ($this->settings_datas[$data["method"]] as $datas) {
             if (empty($data[$datas])) {
@@ -58,6 +96,11 @@ class Settings
         $this->logger = Logger::init();
     }
 
+    /**
+     * Remove VPN from user
+     * 
+     * @return bool
+     */
     public function removeVPN()
     {
         $id = explode(";", Utils::getPackage([1 => $this->data["id"]]))[1];
@@ -67,6 +110,11 @@ class Settings
         return true;
     }
 
+    /**
+     * Unregister user
+     * 
+     * @return bool
+     */
     public function unregister()
     {
         $username = $this->data["username"];
@@ -111,6 +159,11 @@ class Settings
         return true;
     }
 
+    /**
+     * Allow access with VPN on server
+     * 
+     * @return bool
+     */
     public function allowVPN()
     {
         $username = $this->data["username"];
@@ -155,6 +208,11 @@ class Settings
         return true;
     }
 
+    /**
+     * Remove or Give Gems for user
+     * 
+     * @return bool
+     */
     public function gems()
     {
         $admin = $this->session->getData("Account/User/Username");
@@ -229,6 +287,12 @@ class Settings
         return true;
     }
 
+    /**
+     * Check settings, if settings is changed,
+     * function update it in database
+     * 
+     * @return bool
+     */
     public function checkSettings()
     {
         $username = $this->session->getData("Account/User/Username");
@@ -244,6 +308,10 @@ class Settings
         if (!empty(trim($this->data["password"], "*"))) {
             $is_changed = true;
             if (strpos($this->data["password"], "*") === false) {
+                if (mb_strlen($this->data["password"]) < 8) {
+                    define("ERROR", ["Heslo musí mít minimálně 8 znaků, aby bylo bezpečné!"]);
+                    return false;
+                }
                 $hash = Utils::hashPassword($this->data["password"], "sha256");
                 $this->database->update("main_authme`.`authme", "realname", $username, ["password"], [$hash]);
 
@@ -315,6 +383,11 @@ class Settings
         return true;
     }
 
+    /**
+     * Remove ban from user
+     * 
+     * @return bool
+     */
     public function unban()
     {
         $username = $this->data["nick"];

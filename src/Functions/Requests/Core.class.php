@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Core class for POST requests
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Requests;
 
 use patrick115\Main\Error;
@@ -40,7 +51,9 @@ class Core
         "player-vpn-allow",
         "ticket-change-group",
         "changeData",
-        "unban"
+        "unban",
+        "delete-ticket",
+        "block-user"
     ];
     /**
      * Store method
@@ -62,6 +75,10 @@ class Core
      * @var array 
      */
     public $errors = [];
+
+    private $uploader;
+
+    private $upload_error = false;
 
     /**
      * Construct class
@@ -95,6 +112,7 @@ class Core
 
     /**
      * Check Post with data from PostChecks
+     * @return mixed
      */
     public function check()
     {
@@ -105,7 +123,7 @@ class Core
         $checkings = \patrick115\Adminka\Main::getApp("\patrick115\Main\Tools\PostChecks")->get();
         if (empty($checkings)) {
             $this->error->catchError("Return from PostChecking is empty, skipping.", debug_backtrace());
-            $this->errors[] = "Někde nastala chyba!";
+            $this->errors[] = "Return from PostChecking is empty, skipping.";
             return;
         }
         if (empty($checkings["check"])) {
@@ -155,64 +173,169 @@ class Core
             }
         }
 
-        if (!empty($checkings["check_with"])) {
-            $data = $checkings["check_with"];
-            if ($data["method"] == "function") {
-                $array = [];
-                foreach ($data["parameters"] as $name => $parameter) {
-                    switch ($parameter["from"]) {
-                        case "post":
-                            if (!empty($parameter["alias"])) {
-                                $array[$name] = $this->post[$parameter["alias"]];
-                            } else {
-                                $array[$name] = $this->post[$name];
+        if (!empty($checkings["uploader"])) {
+            $uploader = $checkings["uploader"];
+            if ($uploader["method"] == "if") {
+                if (!empty($_FILES[$uploader["name"]]) && $_FILES[$uploader["name"]]["error"] !== UPLOAD_ERR_NO_FILE) {
+                    if ($uploader["on"]["upload"]["method"] == "function") {
+                        $array = [
+                            "file_data" => $_FILES[$uploader["name"]],
+                            "allowed_extensions" => $uploader["allowed_extensions"]
+                        ];
+                        foreach ($uploader["on"]["upload"]["parameters"] as $name => $parameter) {
+                            switch ($parameter["from"]) {
+                                case "post":
+                                    if (!empty($parameter["alias"])) {
+                                        $array[$name] = $this->post[$parameter["alias"]];
+                                    } else {
+                                        $array[$name] = $this->post[$name];
+                                    }
+                                break;
+                                case "session":
+                                    if (empty($parameter["path"])) {
+                                        $this->errors[] = "Undefined path for {$name}!";
+                                        continue 2;
+                                    }
+                                    $array[$name] = Session::init()->getData($parameter["path"]);
+                                break;
+                                case "text":
+                                    if (empty($parameter["text"])) {
+                                        $this->errors[] = "Text for {$name} is empty!";
+                                        continue 2;
+                                    }
+                                    $array[$name] = $parameter["text"];
+                                break;
                             }
-                        break;
-                        case "session":
-                            if (empty($parameter["path"])) {
-                                $this->errors[] = "Undefined path for {$name}!";
-                                continue 2;
-                            }
-                            $array[$name] = Session::init()->getData($parameter["path"]);
-                        break;
-                        case "text":
-                            if (empty($parameter["text"])) {
-                                $this->errors[] = "Text for {$name} is empty!";
-                                continue 2;
-                            }
-                            $array[$name] = $parameter["text"];
-                        break;
-                    }
-                }
-                $app = \patrick115\Adminka\Main::Create($data["class"], [$array]);
-                $fce = $data["function"];
-                $rv = $app->$fce();
-            }
+                        }
+                        $app = \patrick115\Adminka\Main::Create($uploader["on"]["upload"]["class"], [$array]);
+                        $fce = $uploader["on"]["upload"]["function"];
+                        $rv = $app->$fce();
 
-            if (!$rv) {
-                if (isset($data["custom_error"])) {
-                    if (!empty(constant("ERROR"))) {
-                        $error = constant("ERROR");
-                    } else {
-                        $error = $data["custom_error"];
+                        if ($rv !== true) {
+                            $this->errors[] = $rv;
+                            $this->upload_error = true;
+                        } else {
+                            $this->uploader = $app->url;
+                        }
+                    }
+                }
+            } else if ($uploader["method"] == "contains") {
+                if (!empty($_FILES[$uploader["name"]]) && $_FILES[$uploader["name"]]["error"] !== UPLOAD_ERR_NO_FILE) {
+                    if ($uploader["on"]["upload"]["method"] == "function") {
+                        $array = [
+                            "file_data" => $_FILES[$uploader["name"]],
+                            "allowed_extensions" => $uploader["allowed_extensions"]
+                        ];
+                        foreach ($uploader["on"]["upload"]["parameters"] as $name => $parameter) {
+                            switch ($parameter["from"]) {
+                                case "post":
+                                    if (!empty($parameter["alias"])) {
+                                        $array[$name] = $this->post[$parameter["alias"]];
+                                    } else {
+                                        $array[$name] = $this->post[$name];
+                                    }
+                                break;
+                                case "session":
+                                    if (empty($parameter["path"])) {
+                                        $this->errors[] = "Undefined path for {$name}!";
+                                        continue 2;
+                                    }
+                                    $array[$name] = Session::init()->getData($parameter["path"]);
+                                break;
+                                case "text":
+                                    if (empty($parameter["text"])) {
+                                        $this->errors[] = "Text for {$name} is empty!";
+                                        continue 2;
+                                    }
+                                    $array[$name] = $parameter["text"];
+                                break;
+                            }
+                        }
+                        $app = \patrick115\Adminka\Main::Create($uploader["on"]["upload"]["class"], [$array]);
+                        $fce = $uploader["on"]["upload"]["function"];
+                        $rv = $app->$fce();
+
+                        if ($rv !== true) {
+                            $this->errors[] = $rv;
+                            $this->upload_error = true;
+                        } else {
+                            $this->uploader = $app->url;
+                        }
                     }
                 } else {
-                    $error = "Ověření dat neproblěhlo úspěšně!";
-                }
-                if (is_array($error)) {
-                    foreach ($error as $er) {
-                        $this->errors[] = $er;
-                    }
-                } else {
-                    $this->errors[] = $error;
-                }
-            } else {
-                if (isset($data["success_message"])) {
-                    $_SESSION["Request"]["Messages"][] = $data["success_message"];
+                    $this->errors[] = "Žádný soubor nebyl odeslán";
+                    $this->upload_error = true;
                 }
             }
         }
 
+        if (!$this->upload_error) {
+            
+            if (!empty($checkings["check_with"])) {
+                $data = $checkings["check_with"];
+                if ($data["method"] == "function") {
+                    $array = [];
+                    foreach ($data["parameters"] as $name => $parameter) {
+                        switch ($parameter["from"]) {
+                            case "post":
+                                if (!empty($parameter["alias"])) {
+                                    $array[$name] = @$this->post[$parameter["alias"]];
+                                } else {
+                                    $array[$name] = @$this->post[$name];
+                                }
+                            break;
+                            case "session":
+                                if (empty($parameter["path"])) {
+                                    $this->errors[] = "Undefined path for {$name}!";
+                                    continue 2;
+                                }
+                                $array[$name] = Session::init()->getData($parameter["path"]);
+                            break;
+                            case "text":
+                                if (empty($parameter["text"])) {
+                                    $this->errors[] = "Text for {$name} is empty!";
+                                    continue 2;
+                                }
+                                $array[$name] = $parameter["text"];
+                            break;
+                            case "uploader":
+                                if (!empty($this->uploader)) {
+                                    $array[$name] = @$this->uploader;
+                                } else {
+                                    $array[$name] = null;
+                                }
+                            break;
+                        }
+                    }
+                    $app = \patrick115\Adminka\Main::Create($data["class"], [$array]);
+                    $fce = $data["function"];
+                    $rv = $app->$fce();
+                }
+            
+                if (!$rv) {
+                    if (isset($data["custom_error"])) {
+                        if (!empty(constant("ERROR"))) {
+                            $error = constant("ERROR");
+                        } else {
+                            $error = $data["custom_error"];
+                        }
+                    } else {
+                        $error = "Ověření dat neproblěhlo úspěšně!";
+                    }
+                    if (is_array($error)) {
+                        foreach ($error as $er) {
+                            $this->errors[] = $er;
+                        }
+                    } else {
+                        $this->errors[] = $error;
+                    }
+                } else {
+                    if (isset($data["success_message"])) {
+                        $_SESSION["Request"]["Messages"][] = $data["success_message"];
+                    }
+                }
+            }
+        }
         if ($checkings["db_requests"]["use"]) {
             foreach ($checkings["db_requests"]["databases"] as $database => $tables) {
                 foreach ($tables as $table_name => $data) {
@@ -220,10 +343,10 @@ class Core
                         if ($values["by"] !== null) {
                             if (is_array($values["by"])) {
                                 $where = $values["by"]["alias"];
-                                $value = $this->post[$values["by"]["post"]];
+                                $value = @$this->post[$values["by"]["post"]];
                             } else {
                                 $where = $values["by"];
-                                $value = $this->post[$values["by"]];
+                                $value = @$this->post[$values["by"]];
                             }
                         } else {
                             $where = "null";
@@ -265,6 +388,8 @@ class Core
             $_SESSION["Request"]["Check"] = true;
         }
 
+        
+
         if (isset($dbdata) && $dbdata = "fail") {
             if (!empty($checkings["db_requests"]["custom_error"])) {
                 $this->errors[] = $checkings["db_requests"]["custom_error"];
@@ -275,11 +400,19 @@ class Core
         }
     }
 
+    /**
+     * Get errors
+     * @return mixed
+     */
     public function getErrors()
     {
         return $this->errors;
     }
 
+    /**
+     * Get post
+     * @return array
+     */
     public function getPost()
     {
         return $this->post;

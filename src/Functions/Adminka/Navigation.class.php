@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Navigation class, create navigation based
+ * your group.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Config;
@@ -10,11 +22,26 @@ use patrick115\Main\Tools\Utils;
 
 class Navigation
 {
-
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
 
+    /**
+     * Cache from config
+     * @var array
+     */
     private $nav_cache;
+    /**
+     * Cache of generated navigation
+     * @var array
+     */
     private $nav_html;
 
     public function __construct()
@@ -23,12 +50,20 @@ class Navigation
         $this->error = Error::init();
     }
 
+    /**
+     * Get navigation
+     * @return string
+     */
     public function getNav()
     {
         $this->nav_cache = $this->config->getConfig("Main/navigation");
         return Main::Create("\patrick115\Adminka\Navigation", []);
     }
 
+    /**
+     * Crete navigation based config
+     * @return object
+     */
     public function createNav()
     {
         $nav_final = "";
@@ -163,6 +198,10 @@ class Navigation
         return Main::Create("\patrick115\Adminka\Navigation", []);
     }
 
+    /**
+     * Get cached generated navigation
+     * @return string
+     */
     public function get()
     {
         return $this->nav_html;

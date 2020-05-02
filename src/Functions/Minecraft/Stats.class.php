@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Statistics about player
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Minecraft;
 
 use patrick115\Adminka\Main;
@@ -11,15 +22,38 @@ use patrick115\Main\Tools\Utils;
 
 class Stats
 {
+    /**
+     * Database class
+     * @var object
+     */
     private $database;
+    /**
+     * Config class
+     * @var object
+     */
     private $config;
+    /**
+     * Session class
+     * @var object
+     */
     private $session;
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
 
+    /**
+     * Username of user
+     * @var string
+     */
     private $username;
 
-
-    public function __construct($username)
+    /**
+     * Construct function 
+     * @param string $username
+     */
+    public function __construct(string $username)
     {
         $this->database = Database::init();
         $this->config = Config::init();
@@ -29,33 +63,113 @@ class Stats
         $this->username = $username;
     }
 
-    public function getRegisteredUsers()
+    /**
+     * Get main informations about server
+     * by config
+     * @return string
+     */
+    public function getInfo()
     {
-        return $this->database->getCountRows("main_authme`.`authme");
+        $data = $this->config->getConfig("Main/server_info");
+        
+        $return = "";
+        foreach ($data as $info) {
+            $_name = $info["name"];
+            $_color = $info["color"];
+            if (strtolower($info["source"]["source_name"]) != "multiple") {
+                $arr = [0 => $info];
+                $type = "single";
+            } else {
+                $arr = $info["source"]["multiple"];
+                $type = "multiple";
+                $_mdata = 0;
+                $_operator = $info["source"]["operator"];
+                $_currency = (!empty($info["source"]["currency"])) ? $info["source"]["currency"] : false;
+            }
+            foreach ($arr as $info) {
+                switch (strtolower($info["source"]["source_name"])) {
+                    case "session":
+                        $_data = $this->session->getData($info["source"]["data"]);
+                    break;
+                    case "function":
+                        if (!empty($info["source"]["create_param"])) {
+                            switch (strtolower($info["source"]["create_param"]["from"])) {
+                                case "session":
+                                    $param = $this->session->getData($info["source"]["create_param"]["data"]);
+                                break;
+                            }
+                        } else {
+                            $param = null;
+                        }
+                        $app = Main::Create($info["source"]["class"], [$param]);
+                        $function = $info["source"]["function"];
+                        $_data = $app->$function();
+                    break;
+                    case "database":
+                        $prepare_command = $info["source"]["command"];
+                        if (!empty($info["source"]["vars"])) {
+                            foreach ($info["source"]["vars"] as $var_name => $var_data) {
+                                switch (strtolower($var_data["from"])) {
+                                    case "session":
+                                        $prepare_command = str_replace($var_name, $this->session->getData($var_data["data"]), $prepare_command);
+                                    break;
+                                }
+                            }
+                        }
+                        $rv = $this->database->execute($prepare_command, true);
+                        $get = $info["source"]["select"];
+                        $_data = @$rv->fetch_object()->$get;
+                        if (!empty($info["source"]["currency"]) && $info["source"]["currency"] === true) {
+                            $_data = Utils::fixCurrency($_data);
+                        }
+                        if (Utils::newNull($_data)) $_data = "Error";
+                    break;
+                }
+                if ($type == "multiple") {
+                    switch ($_operator) {
+                        case "+":
+                            $_mdata = $_mdata + $_data;
+                        break;
+                        case "-":
+                            $_mdata = $_mdata - $_data;
+                        break;
+                        case "*":
+                            $_mdata = $_mdata * $_data;
+                        break;
+                        case "/":
+                            $_mdata = $_mdata / $_data;
+                        break;
+                        default:
+                            $this->error->catchError("Invalid operator {$_operator}!", debug_backtrace());
+                            return false;
+                        break;
+                    }
+                    
+                }
+            }
+            if ($type == "multiple") {
+                $_data = $_mdata;
+                if ($_currency === true) {
+                    $_data = Utils::fixCurrency($_data);
+                }
+            }
+            $return .= "<div class=\"col-md-3 col-sm-6 col-12\">
+            <div class=\"info-box {$_color}\">
+                <span class=\"info-box-icon\"><i class=\"fas fa-users\"></i></span>
+                <div class=\"info-box-content\">
+                    <span class=\"text\">{$_name}</span>
+                    <span class=\"number\">{$_data}</span>
+                </div>
+            </div>
+        </div>";
+        }
+        return $return;
     }
 
-    public function getBannedUsers()
-    {
-        return $this->database->execute("SELECT COUNT(*) as `bany` FROM `main_bans`.`litebans_bans` WHERE `active` = 1", true)->fetch_object()->bany;
-    }
-
-    public function getAllVotes()
-    {
-        return $this->database->execute("SELECT SUM(`votifier`) AS `votes` FROM `survival_cmi`.`cmi_users`", true)->fetch_object()->votes;
-    }
-
-    public function getGlobalCurrency()
-    {
-        return \patrick115\Main\Tools\Utils::fixCurrency(
-            $this->database->execute(
-                "SELECT SUM(`Balance`) AS `money` FROM `survival_cmi`.`cmi_users`", 
-                true
-            )
-            ->
-            fetch_object()->money
-            );
-    }
-
+    /**
+     * Get autologin status
+     * @return string
+     */
     public function getAutologinStatus()
     {
         $rv = $this->database->select(["Premium"], "main_autologin`.`premium", "LIMIT 1", "Name", $this->username);
@@ -67,6 +181,10 @@ class Stats
         return "Vypnut";
     }
 
+    /**
+     * Get Allow VPN status
+     * @return string
+     */
     public function getAntiVPNStatus()
     {
         $rv = $this->database->select(["uuid"], "main_perms`.`perms_players", "LIMIT 1", "username", strtolower($this->username));
@@ -79,6 +197,10 @@ class Stats
         return "Zakázan";
     }
 
+    /**
+     * Get user money
+     * @return string
+     */
     public function getMoney()
     {
         $rv = $this->database->select(["Balance"], "survival_cmi`.`cmi_users", "LIMIT 1", "username", $this->username);
@@ -87,6 +209,10 @@ class Stats
         return \patrick115\Main\Tools\Utils::fixCurrency($balance);
     }
 
+    /**
+     * Get date when VIP expiry
+     * @return string
+     */
     public function getVipExpiry()
     {
         $rank = Main::Create("\patrick115\Adminka\Players\Rank", [$this->username])->getRank();
@@ -113,6 +239,10 @@ class Stats
             ) . ")";
     }
 
+    /**
+     * Get user e-mail
+     * @return string
+     */
     public function getEMail()
     {
         $user_id = Utils::getAuthmeIDByName($this->username);
@@ -128,6 +258,10 @@ class Stats
         return $email;
     }
 
+    /**
+     * Get length of user password
+     * @return int
+     */
     public function getUserPassword()
     {
         $cid = Utils::getClientID($this->username);
@@ -135,12 +269,20 @@ class Stats
         return $rv->fetch_object()->pass_length;
     }
 
+    /**
+     * Get count of gemgs
+     * @return int
+     */
     public function getGems()
     {
         $rv = $this->database->select(["value"], "main_kredity`.`supercredits", "LIMIT 1", "name", $this->username);
         return $rv->fetch_object()->value;
     }
 
+    /**
+     * Get informations about user, by config
+     * @return string
+     */
     public function getUserData()
     {
         $data = $this->config->getConfig("Main/player_info");
@@ -178,6 +320,9 @@ class Stats
                     $rv = $this->database->execute($prepare_command, true);
                     $get = $info["source"]["select"];
                     $_data = @$rv->fetch_object()->$get;
+                    if (!empty($info["source"]["currency"]) && $info["source"]["currency"] === true) {
+                        $_data = Utils::fixCurrency($_data);
+                    }
                     if (Utils::newNull($_data)) $_data = "Error";
                 break;
             }
@@ -189,6 +334,10 @@ class Stats
         return $return;
     }
 
+    /**
+     * Check if user is banned
+     * @return string
+     */
     public function isBanned()
     {
         $uuid = Utils::getUUIDByNick($this->username);

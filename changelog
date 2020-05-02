@@ -1,0 +1,30 @@
+0.5.0 (Not Released):
+- Přidáno nahrávání obrázku do tiketů
+- Přidáno mazání tiketů
+- Blokování uživatelů v tiketech
+- Opraveno vyhledávání hráče, kdy to při prázdném inputu házelo, že je neplatný.
+- Změna limitu pro maximum textu v tiketu z 1000 na 20000
+- Přesun informací o serveru do configu
+- Přidán parametr currency pro informace o hráči
+- Badge v todo listu
+- Badge v správě gemů (Přidáno/Odebráno)
+- Opraven bug, kdy zůstal vytvořený prázný tiket, když nastala chyba.
+- Přidány multiple operace při získávání server informací
+- Nyní je minimální délka hesla v nastavení 8 znaků
+0.4.4:
+- Opraveno to, že při uzavřeném tiketu šlo do něho odepisovat
+- Opraveno kódování názvů tiketů
+0.4.3:
+- Přidán footer
+- Přesunuto místo changelogu z navbaru do footeru
+0.4.2:
+- Upraven style ranků v tiketech a admin nastaveních
+- Přidáno logování do přesunu dat mezi hráči a unbanu
+- Při odbanovávání hráče je nutne nově zadat důvod unbanu
+- Opraven style badgů
+- Nyní nelze přidat hráči záporný počet gemů
+- Přidán changelog
+0.4.1:
+- Opraveny buttony na uzavírání/otevírání tiketů
+- Upraven styling
+- Opraveno řazení tiketů (řadí se podle statusu a nejnovějšího tiketu)

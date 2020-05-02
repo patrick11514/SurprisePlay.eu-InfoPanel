@@ -99,6 +99,7 @@ $(function() {
                 $("#nicks").text("Nelze kontaktovat API.");
             });
         } else {
+            ("#nick").addClass("is-invalid");
             $("#nicks").text("");
         }
     });

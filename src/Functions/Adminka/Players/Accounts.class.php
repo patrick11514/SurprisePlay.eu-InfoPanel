@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Account Class, check if user is logged in,
+ * or login user. Run router Class. 
+ * One of main Classes.
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka\Players;
 
 use patrick115\Adminka\Logger;
@@ -20,8 +33,15 @@ class Accounts
      * @var object
      */
     private $session;
-
+    /**
+     * Database Class
+     * @var object
+     */
     private $database;
+    /**
+     * Logger Class
+     * @var object
+     */
     private $logger;
 
     public function __construct()
@@ -77,7 +97,10 @@ class Accounts
             }
         }
     }
-
+    
+    /**
+     * Check if logged
+     */
     private function checkLoginStatus()
     {
         return $this->session->getData("Account/User/Logged", true);
@@ -87,9 +110,8 @@ class Accounts
      * Login user
      * @param string $username
      * @param string $group
-     * @param string $lenght - passlength
      */
-    private function loginUser($username, $group)
+    private function loginUser(string $username, string $group)
     {
         session_destroy();
         session_start();

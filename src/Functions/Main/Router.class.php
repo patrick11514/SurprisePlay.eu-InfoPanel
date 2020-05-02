@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Router class, routing pages and sending request
+ * to prepare template
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Main;
 
 use patrick115\Main\Tools\Utils;
@@ -13,6 +25,10 @@ class Router
      */
     private $server_data;
 
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
     /**
      * Aliases
@@ -34,7 +50,8 @@ class Router
         "ticket-view-admin" => "Ticket-View-Admin",
         "ticket-list-admin" => "Ticket-List-Admin",
         "change-user-data" => "ChangUserData",
-        "unban" => "Unban"
+        "unban" => "Unban",
+        "blocked-list" => "Blocked-list"
     ];
 
     /**
@@ -83,6 +100,7 @@ class Router
 
     /**
      * Check if page is /
+     * @return bool
      */
     public function page_is_null()
     {
@@ -110,13 +128,23 @@ class Router
         $this->server_data = rtrim($this->server_data, "/");
     }
 
+    /**
+     * Get current page
+     * @return string
+     */
     public function getCurrentPage()
     {
         $this->getFromServer_Data();
         return $this->server_data;
     }
 
-    public function getURIData($data, $error = true) 
+    /**
+     * Get data from uri
+     * @param string $data - data from uri
+     * @param bool $error - show error?
+     * @return mixed
+     */
+    public function getURIData(string $data, bool $error = true) 
     {
         if (empty($_GET[$data])) {
             if ($error === true) {

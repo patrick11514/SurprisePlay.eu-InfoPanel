@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * File for POST Requests
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 use patrick115\Adminka\Main;
 use patrick115\Main\Tools\Utils;
 
@@ -30,6 +41,7 @@ if (empty($app->getErrors())) {
     \patrick115\Main\Tools\Utils::header("./" . str_replace("|", "&", $app->getPost()["source_page"]));
 } else {
     $_SESSION["Request"]["Errors"] = $app->getErrors();
+    
     \patrick115\Main\Tools\Utils::header("./" . str_replace("|", "&", Utils::chars($_POST["source_page"])));
 }
 #$errors->returnError();

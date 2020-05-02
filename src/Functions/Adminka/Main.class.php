@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Main class of InfoPanel
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 namespace patrick115\Adminka;
 
 use patrick115\Main\Error;
@@ -141,6 +152,9 @@ class Main
         self::Create($constanter->get("3"), [])->run();
     }
 
+    /**
+     * Check if database exists
+     */
     public static function Check()
     {
         $_2xgf6 = \patrick115\Main\Database::init();
@@ -163,16 +177,28 @@ class Main
         
     }
 
+    /**
+     * Return work directory
+     * @return string
+     */
     public static function getWorkDirectory()
     {
         return self::$workDirectory;
     }
 
+    /**
+     * Return config directory
+     * @return string
+     */
     public static function getConfigDirectory()
     {
         return self::$workDirectory . "src/config/config.php";
     }
 
+    /**
+     * Return templates directory
+     * @return string
+     */
     public static function getTemplateDirectory()
     {
         return self::$workDirectory . "src/Pages";

@@ -36,11 +36,15 @@ class Config
      */
     private static $configDir;
 
+    /**
+     * Error class
+     * @var object
+     */
     private $error;
 
     /**
      * Prevence to construct this function
-     * 
+     * @return mixed
      */
     private function __construct() {
 
@@ -56,6 +60,10 @@ class Config
         }
     }
 
+    /**
+     * Check if config exists
+     * @return bool
+     */
     public static function existConfig()
     {
         if (file_exists(self::$configDir)) {
@@ -68,6 +76,7 @@ class Config
      * Get config value
      * 
      * @param string $path Get path from config
+     * @return mixed
      */
     public function getConfig($path)
     {

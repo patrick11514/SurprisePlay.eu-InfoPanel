@@ -1,16 +1,36 @@
 <?php
 
+/**
+ * Autoload file
+ * 
+ * @author    patrick115 <info@patrick115.eu>
+ * @copyright ©2020
+ * @link      https://patrick115.eu
+ * @link      https://github.com/patrick11514
+ * @version   1.0.0
+ * 
+ */
+
 use patrick115\Main\Error;
 use patrick115\Main\Session;
 use patrick115\Main\Config;
 use patrick115\Main\Tools\Constanter;
 
-define("CURRENT_VERSION", "0.4.4");
+/**
+ * Define current version
+ */
+define("CURRENT_VERSION", "0.5.0");
 
+/**
+ * Set Error reporting
+ */
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+/**
+ * Load functions
+ */
 spl_autoload_register(function ($class) {
     $first     = __DIR__ . '/';
     $extension = '.class.php';
@@ -33,6 +53,9 @@ spl_autoload_register(function ($class) {
     include_once $path;
 });
 
+/**
+ * Check if debug mode is enabled
+ */
 $__DEBUG = Config::init()->getConfig("debug");
 
 if ($__DEBUG === true) {
@@ -43,18 +66,28 @@ if ($__DEBUG === true) {
     define("DEBUG", NULL);
 }
 
+/**
+ * Used extensions
+ */
 $exts = [
-    "mbstring"
+    "mbstring",
+    "mysqli"
 ];
 
 $ext_errs = [];
 
+/**
+ * Check if you have all extensions
+ */
 foreach ($exts as $ext) {
     if (!extension_loaded($ext)) {
         $ext_errs[] = $ext;
     }
 }
 
+/**
+ * Anonymous functions
+ */
 $_616e6f6e796d6f7573 = function($_646174616261736573, $_64625f696e7374616e6365, $_6572726f725f66756e6374696f6e) {
     $error = [];
     foreach ($_646174616261736573 as $_6461746162617365)
@@ -100,7 +133,9 @@ $_ghn4d8hn = function($_gdh45nbd, $_hg4hd5f4bh1df54hd) {
 
 $const = Constanter::init();
 
-
+/**
+ * Sendind constants
+ */
 
 $const->send(@\patrick115\Main\Tools\Utils::getPackage("6473676e6473676e34383438686466346a6e31646667386a64"), $_fhd48fhdf8djmn);
 $const->send(@\patrick115\Main\Tools\Utils::getPackage("686e316664356a346466386e313867666466386a386e7631336a"), $_4h5df4j48nb1dfj8dsfzhh);
@@ -146,13 +181,18 @@ $const->send(@\patrick115\Main\Tools\Utils::getPackage("676c6f62616c2d66696c652d
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f52657175657374732f436f72652e636c6173732e706870"),
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f54656d706c617465732f54656d706c617465722e636c6173732e706870"),
                 @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f6175746f6c6f61642e706870"),
-
+                @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f496d616765732f4c6f616465722e636c6173732e706870"),
+                @\patrick115\Main\Tools\Utils::getPackage("2f7372632f46756e6374696f6e732f496d616765732f55706c6f616465722e636c6173732e706870"),
             ]);
 $const->send(\patrick115\Main\Tools\Utils::getPackage("6d6e6a346e386466346a3564683834646e313364"), $_ghn4d8hn);
 
 Session::init()->create();
 
 $errors = Error::init();
+
+/**
+ * Check extensions check
+ */
 
 if (!empty($ext_errs)) {
     foreach ($ext_errs as $ext_err) {

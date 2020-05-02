@@ -15,6 +15,11 @@
 
  class Utils {
      
+    /**
+     * Escape characters
+     * @param mixed $string - String, or array to escape
+     * @return mixed
+     */
     public static function chars($string)
     {
         if (is_array($string)) {
@@ -27,13 +32,22 @@
         return htmlspecialchars($string, ENT_QUOTES);
     }
 
-    public static function header($page)
+    /**
+     * Anti HeaderBypass header
+     * @param string $page - Page to redirect
+     */
+    public static function header(string $page)
     {
         header("location: $page");
         exit;
     }
 
-    public static function randomString($length = 16) {
+    /**
+     * Generate random string
+     * @param int $length - length of generated string
+     * @return string
+     */
+    public static function randomString(int $length = 16) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -43,6 +57,10 @@
         return $randomString;
     }
 
+    /**
+     * Get current user ip
+     * @return string
+     */
     public static function getUserIP()
     {
         $ipaddress = '';
@@ -65,7 +83,14 @@
         return $ipaddress;
     }
 
-    public static function compare_passwords($password, $hash, $hash_type)
+    /**
+     * Check if password equals with hashed password
+     * @param string $password - password to compare
+     * @param string $hash - hash to compare
+     * @param string $hash_type - type of hash
+     * @return bool
+     */
+    public static function compare_passwords(string $password, string $hash, string $hash_type)
     {
         switch ($hash_type) {
             case "sha256":
@@ -87,7 +112,13 @@
         }
     }
 
-    public static function hashPassword($pass, $hash_type)
+    /**
+     * Hash password to hash
+     * @param string $pass - Password
+     * @param string $hash_type - Type of hash
+     * @return string
+     */
+    public static function hashPassword(string $pass, string $hash_type)
     {
         switch ($hash_type) {
             case "sha256":
@@ -101,6 +132,11 @@
         }
     }
 
+    /**
+     * Check if input is empty
+     * @param mixed $data
+     * @return bool
+     */
     public static function newEmpty($data)
     {
         if (empty($data) && $data !== false && $data !== "0" && $data !== 0) {
@@ -109,6 +145,11 @@
         return false;
     }
 
+    /**
+     * Check if input is null
+     * @param mixed $data
+     * @return bool
+     */
     public static function newNull($data)
     {
         if (is_null($data) || strtolower($data) === "null") {
@@ -119,13 +160,19 @@
 
     /**
      * Convert rank `Vedení` to `vedeni`...
+     * @return string
      */
-    public static function ConvertRankToRaw($rank)
+    public static function ConvertRankToRaw(string $rank)
     {
         $group_arr = \patrick115\Main\Config::init()->getConfig("Main/group_names");
         return array_search($rank, $group_arr);
     }
 
+    /**
+     * Fix currency style
+     * @param mixed $currency
+     * @return mixed
+     */
     public static function fixCurrency($currency)
     {
         return strrev(
@@ -139,11 +186,22 @@
         ) . " $";
     }
 
+    /**
+     * Fix date
+     * @param mixed $timestamp
+     * @return string
+     */
     public static function fixDate($timestamp)
     {
         return date("H:i:s d.m.Y", $timestamp);
     }
 
+    /**
+     * Difference between two dates
+     * @param mixed $timestamp
+     * @param mixed $timestamp2
+     * @return string
+     */
     public static function dateDiff($timestamp, $timestamp2) 
     {
         if ($timestamp2 < $timestamp) {
@@ -155,7 +213,12 @@
         return $day . "Dní";
     }
 
-    public static function getAuthmeIDByName($username)
+    /**
+     * Get authme id of user
+     * @param string $username - Username
+     * @return mixed
+     */
+    public static function getAuthmeIDByName(string $username)
     {
         $app = \patrick115\Main\Database::init();
         $rv = $app->
@@ -168,17 +231,32 @@
         }
     }
     
+    /**
+     * Std Object to array
+     * @param object $stdOject
+     * @return array
+     */
     public static function stdObjectToArray($stdObject)
     {
         return json_decode(json_encode($stdObject),true);
     }
 
-    public static function arrayToStdObject($array)
+    /**
+     * Array to Std Object
+     * @param array $array
+     * @return object
+     */
+    public static function arrayToStdObject(array $array)
     {
         return json_decode(json_encode($array));
     }
 
-    public static function getIpOfUser($user)
+    /**
+     * Get id of user
+     * @param string $user
+     * @return string
+     */
+    public static function getIpOfUser(string $user)
     {
         $authme_id = self::getAuthmeIDByName($user);
         $rv = \patrick115\Main\Database::init()->select(["last-ip"], "accounts", "LIMIT 1", "authme_id", $authme_id);
@@ -186,7 +264,12 @@
         return self::stdObjectToArray($stdObject)["last-ip"];
     }
 
-    public static function getUserByClientId($cid) 
+    /**
+     * Get username by CliendID
+     * @param int $cid - ClientID
+     * @return string
+     */
+    public static function getUserByClientId(int $cid) 
     {
         $db = \patrick115\Main\Database::init();
         $rv = $db->select(["authme_id"], "accounts", "LIMIT 1", "id", $cid);
@@ -206,7 +289,12 @@
 
     }
 
-    public static function getClientID($username)
+    /**
+     * Get ClientID by username
+     * @param string $username - username
+     * @return int
+     */
+    public static function getClientID(string $username)
     {
         $a_id = self::getAuthmeIDByName($username);
         if ($a_id == "%NULL%") {
@@ -241,13 +329,23 @@
         }
     }
 
+    /**
+     * Check if input is json
+     * @param string $string - json
+     * @return bool
+     */
     public static function isJson($string)
     {
         @json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
-    public static function getUUIDByNick($nick)
+    /**
+     * Get UUID of nick
+     * @param string $nick - Username
+     * @return string
+     */
+    public static function getUUIDByNick(string $nick)
     {
         $app = \patrick115\Main\Database::init();
 
@@ -259,7 +357,12 @@
         return $rv->fetch_object()->uuid;
     }
 
-    public static function getOriginalUUIDByNick($nick)
+    /**
+     * Get mojang UUID of username
+     * @param string $nick - username
+     * @return mixed
+     */
+    public static function getOriginalUUIDByNick(string $nick)
     {
         $fg = file_get_contents("https://api.mojang.com/users/profiles/minecraft/{$nick}");
         if (empty($fg)) {
@@ -269,7 +372,12 @@
         return $json["id"];
     }
 
-    public static function getNickByUUID($uuid)
+    /**
+     * Get username by UUID
+     * @param string $uuid - UUID of username
+     * @return string
+     */
+    public static function getNickByUUID(string $uuid)
     {
         $app = \patrick115\Main\Database::init();
 
@@ -288,6 +396,11 @@
         }
     }
 
+    /**
+     * Create Dots by count
+     * @param int $length - length of dots
+     * @return string
+     */
     public static function createDots(int $length)
     {
         $return = "";
@@ -298,6 +411,11 @@
         return $return;
     }
 
+    /**
+     * Transfer password to dotted
+     * @param string $password
+     * @return string
+     */
     public static function transferPasswordToDots(string $password)
     {
         $return = "";
@@ -308,13 +426,23 @@
         return $return;
     }
 
-    public static function createPackage($data)
+    /**
+     * Create package of string
+     * @param string $data - text to hash
+     * @return array
+     */
+    public static function createPackage(string $data)
     {
         $method = "H*";
-        $return = unpack($method, $data);
+        $return = @unpack($method, $data);
         return $return;
     }
 
+    /**
+     * Unpack data
+     * @param mixed $data - data to unhash
+     * @return mixed
+     */
     public static function getPackage($data)
     {
         $method = "H*";
@@ -322,7 +450,7 @@
             $data = [1 => $data];
         }
         $path = $data[1];
-        $return = pack($method, $path);
+        $return = @pack($method, $path);
         if (empty($return)) {
             return null;
         }
