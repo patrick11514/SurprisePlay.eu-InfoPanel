@@ -36,11 +36,13 @@
                 <div class="card">
                     <div class="card-body">
                         <p class="title">Informace o hráči</p>
-                        <table class="table table-condensed" style="background-color:white;">
-                            <tbody>
-                                %%ticket_callback_player_info_admin%%
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-condensed" style="background-color:white;">
+                                <tbody>
+                                    %%ticket_callback_player_info_admin%%
+                                </tbody>
+                            </table>
+                        </div>
                         %%ticket_callback_change_group%%
                     </div>
                 </div>

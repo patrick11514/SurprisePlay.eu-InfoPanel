@@ -76,6 +76,7 @@ class Stats
         foreach ($data as $info) {
             $_name = $info["name"];
             $_color = $info["color"];
+            $_icon = $info["icon"];
             if (strtolower($info["source"]["source_name"]) != "multiple") {
                 $arr = [0 => $info];
                 $type = "single";
@@ -155,7 +156,7 @@ class Stats
             }
             $return .= "<div class=\"col-md-3 col-sm-6 col-12\">
             <div class=\"info-box {$_color}\">
-                <span class=\"info-box-icon\"><i class=\"fas fa-users\"></i></span>
+                <span class=\"info-box-icon\"><i class=\"{$_icon}\"></i></span>
                 <div class=\"info-box-content\">
                     <span class=\"text\">{$_name}</span>
                     <span class=\"number\">{$_data}</span>

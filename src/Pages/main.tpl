@@ -19,7 +19,7 @@
         <nav id="sidebar">
             <div class="sidebar-header">
                 <img src="//%%domain%%/public/imgs/nav_icon.png" class="logo"> 
-                <p>SuprisePlay.eu</p>
+                <p>SurprisePlay.eu</p>
             </div>
 
             <ul class="list-unstyled">
